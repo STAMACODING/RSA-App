@@ -18,3 +18,7 @@
 - Debug Application für den Server-Host um Nachrichten, Logs, etc. zu verfolgen
 - Settings für Clients und Server
 - C#
+
+## Useful Links
+
+[Präsentation "Einführung in Git(-Hub)"](https://docs.google.com/presentation/d/1CcJrfBZer-sNxg7leW6UvKjbexlPjSmiAAHfRJONaNM/edit?usp=sharing "Henris Docs")
