@@ -6,6 +6,7 @@
 - Automatisierte Erstellung von individuellen Schlüsseln für Nutzer
 - Register für alle public Keys
 - manueller Modus, in welchem man seine Schlüssel zur Ver- und Entschlüsselung selber eingeben muss und alle Rechenprozesse angezeigt werden
+- GUI for user
 
 ## Set Up
 
