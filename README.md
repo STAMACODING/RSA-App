@@ -21,4 +21,5 @@
 
 ## Useful Links
 
-[Präsentation "Einführung in Git(-Hub)"](https://docs.google.com/presentation/d/1CcJrfBZer-sNxg7leW6UvKjbexlPjSmiAAHfRJONaNM/edit?usp=sharing "Henris Docs")
+- [Präsentation "Einführung in Git(-Hub)"](https://docs.google.com/presentation/d/1CcJrfBZer-sNxg7leW6UvKjbexlPjSmiAAHfRJONaNM/edit?usp=sharing "Henris Docs")
+- [Präsentation "Weiterführendes zu Git(-Hub)"](https://docs.google.com/presentation/d/18bI_mpbGnbtUDnJkaeWkIxeqehT_2uBLlOfyQU_-jDE/edit?usp=sharing)
