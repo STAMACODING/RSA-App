@@ -5,7 +5,7 @@
 - Chatapp/ Web or Android app based, welche mit dem RSA verschlüsselte Nachrichten versendet, automated für ungf. 10 Nutzer, hosted auf Rasberry Pie
 - Automatisierte Erstellung von individuellen Schlüsseln für Nutzer
 - Register für alle public Keys
-- manueller Modus, in welchem man seine schlüssel zur Ver- und Entschlüsselung selber eingeben muss und alle Rechenprozesse angezeigt werden
+- manueller Modus, in welchem man seine Schlüssel zur Ver- und Entschlüsselung selber eingeben muss und alle Rechenprozesse angezeigt werden
 
 ## Set Up
 
