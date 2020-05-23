@@ -11,5 +11,3 @@
 - [Cheat-Sheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet "Activate Cheats")
 
 - :smirk: [List of Emojis](https://gist.github.com/rxaviers/7360908 "Emojis")
-
-## Java
