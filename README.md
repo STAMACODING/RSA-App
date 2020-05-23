@@ -1,25 +1,20 @@
 # RSA-App
 
-## Goals
+## Project Goals
 
-- Chatapp/ Web or Android app based, welche mit dem RSA verschlüsselte Nachrichten versendet, automated für ungf. 10 Nutzer, hosted auf Rasberry Pie
-- Automatisierte Erstellung von individuellen Schlüsseln für Nutzer
-- Register für alle public Keys
-- manueller Modus, in welchem man seine Schlüssel zur Ver- und Entschlüsselung selber eingeben muss und alle Rechenprozesse angezeigt werden
-- GUI for user
+#### Nächstes Ziel
 
-## Set Up
+- Desktop Chat-App mit folgenden Funktionalitäten
 
-- Backend using Java
-- Front end Android in ??
-- Appache um server auf Rasberry Pie zu hosten ??
+  - **Übertragung von Nachrichten** von Client über Server (Raspberry Pi) an andere Clients
+- **Verschlüsselung** der Nachrichten **per RSA**
+  - Wechsel zwischen **manuellem und automatischen Modus**
 
-## Other Ideas
+    - Manuelle Schlüsseleingabe (und Darstellung aller Rechenvorgänge) im manuellen Modus
+- Automatische Schlüsselgenerierung im automatischen Modus
+  - Darstellung des Ganzen durch ein simples **GUI**
+- **Automatisches** Loggen aller Ereignisse zum Debuggen und für Bug-Fixes
 
-- Debug Application für den Server-Host um Nachrichten, Logs, etc. zu verfolgen
-- Settings für Clients und Server
-- C#
+#### Hauptziel
 
-## Useful Links
-
-[Präsentation "Einführung in Git(-Hub)"](https://docs.google.com/presentation/d/1CcJrfBZer-sNxg7leW6UvKjbexlPjSmiAAHfRJONaNM/edit?usp=sharing "Henris Docs")
+- Android Chat-App mit obigen Funktionalitäten  
