@@ -12,7 +12,7 @@ Unter Windows ist es sinnvoll _Git Bash_ zu installieren. Hier eine Schritt für
 
 #### 1. Git Bash downloaden
 
-Gehe auf diese [Webseite](https://gitforwindows.org/). Dann klicke auf **Download** um den Installer zu öffnen.
+Gehe auf diese [Webseite](https://gitforwindows.org/). Dann klicke auf **Download** um den Installer zu downloaden.
 
 #### 2. Git Bash installieren
 
@@ -100,7 +100,7 @@ Eclipse ist die IDE, die wir für unser Projekt benutzen.
 2. Downloade den dir vorgeschlagenen Installer (orangener "Download"-Button).
 3. Öffne den Installer.
 4. Wähle "Eclipse IDE for Java Developers".
-5. Wähle bei der Einstellung "Java 1.8+ VM" das zuvor installiere JDK in der **Version 14**.
+5. Wähle bei der Einstellung "Java 1.8+ VM" das zuvor installiere JDK in der **Version 14** (sollte dann ungefähr so aussehen: "C:\Program Files\Java\jdk-14.0.1").
 6. Klicke "Install".
 
 ## 6. Eclipse einrichten
@@ -115,7 +115,7 @@ Die Eclipse IDE muss noch ein wenig konfiguriert werden.
    - Wenn dieses Paket in der Liste schon aufgelistet ist, musst du Eclipse nicht weiter einrichten. Wichtig wäre dann nur, das links neben dem Paket ein Häkchen ist.
 6. Wähle "Standard VM" und klicke "Next"
 7. Drücke rechts neben "JRE home" auf "Directory..."
-8. Wähle den Ordner aus, wo du das _JDK 14_ installiert hast.
+8. Wähle den Ordner aus, wo du das _JDK 14_ installiert hast (ist standardmäßig "C:\Program Files\Java\jdk-14.0.1").
 9. Klicke "Finish".
 10. Setze ein Häkchen bei _jdk-14.0.1_.
 11. Klicke "Apply and Close".
