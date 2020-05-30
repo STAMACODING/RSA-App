@@ -5,13 +5,13 @@ import java.io.IOException;
 
 /**
  * 
- * This class contains static functions providing the ability to exclude specific the meta information from a transferred byte array.
+ * This class contains static functions providing the ability to exclude specific meta information from a transferred byte array.
  *
  */
 public class MetaUtils {
 	/**
 	 * Gets the IPv4 address of the sending device.
-	 * @param dataPackage data package holding meta information and the crypted message
+	 * @param dataPackage data package holding meta information and the encrypted message
 	 * @return the IPv4 address of the sending device
 	 */
 	public static String getSending(byte[] dataPackage) {
@@ -35,9 +35,9 @@ public class MetaUtils {
 	}
 	
 	/**
-	 * Gets the IPv4 adress of the receiving device.
-	 * @param dataPackage data package holding meta information and the crypted message
-	 * @return the IPv4 adress of the receiving device
+	 * Gets the IPv4 address of the receiving device.
+	 * @param dataPackage data package holding meta information and the encrypted message
+	 * @return the IPv4 address of the receiving device
 	 */
 	public static String getReceiving(byte[] dataPackage) {
 		byte[] receiving = new byte[15];
@@ -60,13 +60,13 @@ public class MetaUtils {
 	}
 	
 	/**
-	 * Adds the meta information to the crypted message.
-	 * @param sendingIpAdress ip address of the sending device
-	 * @param receivingIpAdress ip address of the receiving device
-	 * @param cryptedMessage crypted message
-	 * @return array holding meta information and the crypted message
+	 * Adds the meta information to the encrypted message.
+	 * @param sendingIpAdress IP address of the sending device
+	 * @param receivingIpAdress IP address of the receiving device
+	 * @param encryptedMessage encrypted message
+	 * @return array holding meta information and the encrypted message
 	 */
-	public static byte[] addMetaToMessage(String sendingIpAdress, String receivingIpAdress, byte[] cryptedMessage) {
+	public static byte[] addMetaToMessage(String sendingIpAdress, String receivingIpAdress, byte[] encryptedMessage) {
 		// Converts sendingIpAdress into a byte array (length: 15)
 		byte[] sending = new byte[15];
 		byte[] tempArray1 = sendingIpAdress.getBytes();
@@ -94,7 +94,7 @@ public class MetaUtils {
 		try {
 			outputStream.write(sending);
 			outputStream.write(receiving);
-			outputStream.write(cryptedMessage);
+			outputStream.write(encryptedMessage);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -120,14 +120,14 @@ public class MetaUtils {
 		
 		String ipSending = "192.123.123";
 		String ipReceiving = "121.23.1123";
-		byte[] cryptedMessage = {22, 11, 23, 11, 0, 3, 3, 23, 12, 12, 60, 90, 11, 10};
+		byte[] encryptedMessage = {22, 11, 23, 11, 0, 3, 3, 23, 12, 12, 60, 90, 11, 10};
 		
-		// Adds meta information to the crypted message
-		byte[] dataPackage = addMetaToMessage(ipSending, ipReceiving, cryptedMessage);
+		// Adds meta information to the encrypted message
+		byte[] dataPackage = addMetaToMessage(ipSending, ipReceiving, encryptedMessage);
 		
-		System.out.println("Crypted message: \t");
-		printByteArray(cryptedMessage);
-		System.out.println("Crypted message + meta information: \t");
+		System.out.println("encrypted message: \t");
+		printByteArray(encryptedMessage);
+		System.out.println("encrypted message + meta information: \t");
 		printByteArray(dataPackage);
 		
 		// Excludes meta information
