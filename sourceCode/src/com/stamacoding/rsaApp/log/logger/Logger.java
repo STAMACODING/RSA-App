@@ -1,4 +1,4 @@
-package com.stamacoding.rsaApp.log;
+package com.stamacoding.rsaApp.log.logger;
 
 public class Logger {
 	/** only for test runs and unimportant information 
@@ -37,4 +37,12 @@ public class Logger {
 	public void error(String className, String message) {
 	
 	}
+}
+
+enum logType
+{
+	TEST,
+	DEBUG,
+	WARNING,
+	ERROR
 }
