@@ -144,7 +144,7 @@ Man kann Git sehr einfach in Eclipse integrieren, was den Workflow vereinfacht.
 7. Setze jetzt Häkchen neben dem Eintrag der auf _RSA-App.git_ endet.
 8. Klicke "Add".
 9. Nun drücke mit der rechten Maustaste auf den Eintrag _RSA-App_ und wähle "Import Projects".
-10. Wähle in der Liste bitte nur das Projekt "RSA-App\sourceCode" aus, aber nicht das Projekt "RSA-App". Entferne also das Häkchen bei "RSA-App".
+10. Wähle in der Liste bitte die Projekte "RSA-App\sourceCode" und "RSA-App\testCode" aus, aber nicht das Projekt "RSA-App". Entferne also das Häkchen bei "RSA-App".
 11. Drücke "Finish".
-12. Jetzt erscheint das Java-Projekt oben rechts im Workspace und ist mit unserem Github-Repository verbunden.
+12. Jetzt erscheint die Java-Projekte oben rechts im Workspace und sind mit unserem Github-Repository verbunden.
 

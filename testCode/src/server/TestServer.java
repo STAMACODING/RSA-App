@@ -1,4 +1,4 @@
-package testpackage;
+package server;
 
 import java.io.*;
 import java.net.*;
@@ -26,7 +26,7 @@ public class TestServer {
 
 	private String getTestO() {
 		String x = " Hello Client";
-		System.out.println("new server up!!") //////somehwo this part of the function doesn't get called on a second try,
+		System.out.println("new server up!!"); //////somehwo this part of the function doesn't get called on a second try,
 		//but the client still receives the message from first server who shouldn't be running anymore
 		
 		return x;
