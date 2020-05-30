@@ -7,7 +7,7 @@ public class TestServer {
 
 	public void go() {
 		try {
-			ServerSocket serverSock = new ServerSocket(9000); // here insert any free port number
+			ServerSocket serverSock = new ServerSocket(10000); // here insert any free port number
 
 			while (true) {
 				Socket sock = serverSock.accept();
