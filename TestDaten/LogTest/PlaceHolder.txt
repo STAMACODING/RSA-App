@@ -1,0 +1,3 @@
+This is just a place holder!!!!!!!!!
+
+You can upload your test versions of classes into this ordner to collaborate on them within your team before putting them into the real sourceCode!!!!!
