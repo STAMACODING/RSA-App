@@ -5,26 +5,27 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import com.stamacoding.rsaApp.log.logger.Logger;
+
 public class RaspberryPi {
 	public static void main(String[] args) {
-		System.out.println("Starting server application");
+		Logger.debug(RaspberryPi.class.getSimpleName(), "Starting server application");
 		try {
 			ServerSocket serverSock = new ServerSocket(1001);
-			System.out.println("Server application running");
+			Logger.debug(RaspberryPi.class.getSimpleName(), "Server application running");
 			while (true) {
 				Socket sock = serverSock.accept();
-				System.out.println("Accepted client");
+				Logger.debug(RaspberryPi.class.getSimpleName(), "Accepted client");
 				PrintWriter writer = new PrintWriter(sock.getOutputStream());
 				String raspberryMessage = "Hello, I'm raspberry pi 4b!";
 				System.out.println("Sending message to client");
-				writer.println(raspberryMessage);
+				Logger.debug(RaspberryPi.class.getSimpleName(), raspberryMessage);
 				writer.close();
-				System.out.println("Sent message to client");
+				Logger.debug(RaspberryPi.class.getSimpleName(), "Sent message to client");
 			}
 
 		} catch (IOException ex) {
-			System.err.println("Server crashed");
-			ex.printStackTrace();
+			Logger.error(RaspberryPi.class.getSimpleName(), "Server crashed \n" + ex.getMessage());
 		}
 	}
 }
