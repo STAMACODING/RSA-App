@@ -17,3 +17,15 @@
 #### Hauptziel
 
 - Android Chat-App mit obigen Funktionalitäten  
+
+## Repository Struktur
+Zurzeit ist unser Repository in drei Ordner unterteilt: **organization**, **sourceCode** und **testCode**.
+- **organization**
+  - In diesem Ordner liegen alle Dateien zur Planung und Organisation des Projektes. Der Ordner ist noch einmal in fünf Ordner unterteilt. Je ein Ordner für jedes Team und ein einziger Ordner für alle. Im Ordner für alle sind beispielsweise Tutorials für alle und Meeting Protokolle von größeren Meetings, auf denen grundlegende Sachen besprochen wurden, festgehalten. Auch die festgelegten Konvetionen sind im _organization_-Verzeichnis zu finden.
+- **sourceCode**
+  - Hier liegt schlicht und einfach der Source-Code unserer RSA-App. Der Source-Code enthält wenige Metadateien eines Eclipse-Projekts, sodass man diesen einfach als Eclipse-Projekt importieren kann.
+- **testCode**
+  - Ebenso ist es mit dem _testCode_-Verzeichnis. Nur ist hier abgelegter Code nur zum Testen und auch Debuggen da.
+
+## Beim Projekt mitmachen
+Wenn du zu diesem Repository hinzugefügt wurdest, fehlen nur noch wenige Schritte, um auch selbst den Source-Code aktiv zu entwickeln. Eine detaillierte Schritt-für-Schritt Anleitung findest du [hier](https://github.com/STAMACODING/RSA-App/blob/master/organization/all/tutorials/setupTutorial.md).
