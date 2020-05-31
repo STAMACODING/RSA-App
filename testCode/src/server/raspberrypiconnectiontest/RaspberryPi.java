@@ -9,7 +9,7 @@ public class RaspberryPi {
 	public static void main(String[] args) {
 		System.out.println("Starting server application");
 		try {
-			ServerSocket serverSock = new ServerSocket(10000);
+			ServerSocket serverSock = new ServerSocket(1001);
 			System.out.println("Server application running");
 			while (true) {
 				Socket sock = serverSock.accept();
