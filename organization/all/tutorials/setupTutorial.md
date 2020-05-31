@@ -127,7 +127,7 @@ Man kann Git sehr einfach in Eclipse integrieren, was den Workflow vereinfacht.
 
 1. Öffne die Eclipse IDE.
 2. Navigiere zu "Help" => "Install new Software"
-3. Füge neben "Work with" diesen Link ein: http://download.eclipse.org/egit/updates und klicke "Add".
+3. Füge neben "Work with" diesen Link ein: http://download.eclipse.org/egit/updates.
 4. Wähle alle erscheinenden Einträge aus und klicke "Next".
 5. Klicke noch einmal "Next".
 6. Akzeptiere die Lizenzvereinbarung.
