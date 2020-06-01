@@ -28,4 +28,4 @@ Zurzeit ist unser Repository in drei Ordner unterteilt: **organization**, **sour
   - Ebenso ist es mit dem _testCode_-Verzeichnis. Nur ist hier abgelegter Code nur zum Testen und auch Debuggen da.
 
 ## Beim Projekt mitmachen
-Wenn du zu diesem Repository hinzugefügt wurdest, fehlen nur noch wenige Schritte, um auch selbst den Source-Code aktiv zu entwickeln. Eine detaillierte Schritt-für-Schritt Anleitung findest du [hier](https://github.com/STAMACODING/RSA-App/blob/master/organization/all/tutorials/setupTutorial.md).
+Wenn du zu diesem Repository hinzugefügt wurdest, fehlen nur noch wenige Schritte, um auch selbst den Source-Code aktiv zu entwickeln. Eine detaillierte Schritt-für-Schritt Anleitung findest du [hier](https://github.com/STAMACODING/RSA-App/blob/master/organization/all/tutorials/setupTutorial.md). Genau!
