@@ -18,7 +18,7 @@ Ausgehend von der Idee, dass wir einen String haben, der die Nachricht enthält 
    
    Es wurde festgelegt, dass wir uns aus übertragungstechnischen Gründen auf **256 Zeichen** (Zahlen von 0 bis 255) begrenzen. Dies entspricht einem **unsigned byte** in Java.
    
-2. Nun wird mit Hilfe des **öffentlichen Schlüssels** des Empfängers jeder **einzelne Eintrag** des  Arrays verschlüsselt. Das Schlüsselgenerierungsteam muss sicherstellen, dass das Modul n des Schlüssels kleiner gleich 65 536 ist, so dass
+2. Nun wird mit Hilfe des **öffentlichen Schlüssels** des Empfängers jeder **einzelne Eintrag** des  Arrays verschlüsselt. Das Schlüsselgenerierungsteam muss sicherstellen, dass das Modul n des Schlüssels kleiner gleich 65 536 ist.
 
    _Beispiel (Pseudocode)_
 
