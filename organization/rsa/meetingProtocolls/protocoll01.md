@@ -13,7 +13,7 @@ Ausgehend von der Idee, dass wir einen String haben, der die Nachricht enthält 
    'H' => 7
    'a' => 26
     ...
-long[] array = {7, 26, 37, 37, ...}
+   long[] array = {7, 26, 37, 37, ...}
     ```
    
    Es wurde festgelegt, dass wir uns aus übertragungstechnischen Gründen auf **256 Zeichen** (Zahlen von 0 bis 255) begrenzen. Dies entspricht einem **unsigned byte** in Java.
