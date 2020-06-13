@@ -1,5 +1,5 @@
 package com.stamacoding.rsaApp.rsa;
 
-public class Placerholder {
+public class Convert {
 
 }
