@@ -100,9 +100,9 @@ public class Logger {
 		FileWriter logFileWriter = null;
 		// try-catch just to make sure, all is in place
 		try {
-			logFileWriter = new FileWriter(fileName);
-			String data = read(fileName, logFile); //ISSUE: method cannot read the things from log-file
-			logFileWriter.write(data + logMessage); //writes the things, that are already there, and the log-message
+			logFileWriter = new FileWriter(fileName, true);
+			//String data = read(fileName, logFile); //ISSUE: method cannot read the things from log-file
+			logFileWriter.write("\n" + logMessage); //writes the things, that are already there, and the log-message
 			logFileWriter.close(); //saves the file
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
