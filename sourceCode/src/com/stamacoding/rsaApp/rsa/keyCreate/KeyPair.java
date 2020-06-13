@@ -2,10 +2,23 @@ package com.stamacoding.rsaApp.rsa.keyCreate;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 
+/**
+ * Represents a RSA key pair consisting of a public and a fitting private key. Invoking the constructor {@link #KeyPair()} automatically generates the both keys.
+ */
 public class KeyPair {
+	/**
+	 * The private key (d, n).
+	 */
 	private Key privateKey;
+	/**
+	 * The public key (e, n).
+	 */
 	private Key publicKey;
 	
+	/**
+	 * Generates a RSA key pair.
+	 * @see KeyPair
+	 */
 	public KeyPair() {
 		// Variables
 		int p, q, n, phi, e, d;
