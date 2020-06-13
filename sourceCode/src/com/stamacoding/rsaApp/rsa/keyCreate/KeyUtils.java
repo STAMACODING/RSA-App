@@ -7,9 +7,20 @@ public class KeyUtils {
 		return 0;
 	}
 
-	public static int modularInverse(int phi, int e) {
-		// TODO Auto-generated method stub
-		return 0;
+	public static int modularInverse(int e, int m) {
+		boolean gefunden = false;
+		int d = 1;
+		while(d <= m && !gefunden) {
+		    if((e*d) % m == 1) {
+		        gefunden = true;
+		    }else {
+		        d += 1;
+		    }
+		}
+		if(d > m) {
+		    d = -1;
+		}
+		return d;
 	}
 
 	public static int primeNumb(int i) {
