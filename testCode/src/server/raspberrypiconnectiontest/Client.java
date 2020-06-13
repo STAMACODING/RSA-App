@@ -10,6 +10,10 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 
 public class Client {
 	public static void main(String[] args) {
+		System.out.println("--------------------------------------------------------------------------------------------------------------------");
+		System.out.println("Raspberry Pi Connection Test (Client Application)");
+		System.out.println("--------------------------------------------------------------------------------------------------------------------");
+		
 		Scanner s = new Scanner(System.in);
 		
 		System.out.println("Enter raspberry's IP: ");
@@ -17,8 +21,10 @@ public class Client {
 		System.out.println("Enter raspberry's port: ");
 		int raspberryPort = s.nextInt();
 		s.close();
+		System.out.println("--------------------------------------------------------------------------------------------------------------------");
 		try {
 			Logger.debug(RaspberryPi.class.getSimpleName(), "Trying to connect to raspberry pi (" + raspberryIP + ":" + raspberryPort + ")");
+			
 			Socket socket = new Socket(raspberryIP, raspberryPort);
 			
 			InputStreamReader streamReader = new InputStreamReader(socket.getInputStream());
@@ -27,12 +33,17 @@ public class Client {
 			Logger.debug(RaspberryPi.class.getSimpleName(), "Connected to raspberry pi (" + raspberryIP + ":" + raspberryPort + ")");
 			
 			String messageFromRaspberry = reader.readLine();
-			Logger.debug(RaspberryPi.class.getSimpleName(), "Raspberry said: " + messageFromRaspberry);
 			reader.close();
 			socket.close();
-			Logger.debug(RaspberryPi.class.getSimpleName(), "Test was successfull!");
+			System.out.println("--------------------------------------------------------------------------------------------------------------------");
+			Logger.debug(RaspberryPi.class.getSimpleName(), "Result: SUCCESS");
+			System.out.println("--------------------------------------------------------------------------------------------------------------------");
+			
 		} catch (IOException e) {
-			Logger.error(RaspberryPi.class.getSimpleName(), "Connection failed :( \n" + e.getMessage());
+			System.out.println("--------------------------------------------------------------------------------------------------------------------");
+			Logger.debug(RaspberryPi.class.getSimpleName(), "Result: ERROR (NOT UNAVAILABLE)");
+			System.out.println("--------------------------------------------------------------------------------------------------------------------");
+			
 		}
 	}
 }
