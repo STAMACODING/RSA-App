@@ -83,7 +83,7 @@ public class Logger {
 	 */
 	static void printToFile(String logMessage) { // <-- again, looool
 		//defines the FILE
-		String fileName = "logFile.txt"; //at the moment, the file is here: \StamaCoding\RSA-App\sourceCode\file.log
+		String fileName = "logFile.log"; //at the moment, the file is here: \StamaCoding\RSA-App\sourceCode\file.log
 		File logFile = new File(fileName);
 		if (!logFile.exists()) {
 			// try-catch just to make sure, all is in place
