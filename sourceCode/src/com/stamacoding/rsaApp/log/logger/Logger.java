@@ -100,33 +100,13 @@ public class Logger {
 		FileWriter logFileWriter = null;
 		// try-catch just to make sure, all is in place
 		try {
-			logFileWriter = new FileWriter(fileName, true);
-			//String data = read(fileName, logFile); //ISSUE: method cannot read the things from log-file
-			logFileWriter.write("\n" + logMessage); //writes the things, that are already there, and the log-message
+			logFileWriter = new FileWriter(fileName, true); //true sets property of appending text to file and not overwriting it
+			logFileWriter.write("\n" + logMessage); //writes the log-message
 			logFileWriter.close(); //saves the file
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * returns all the things that are already in the log-file
-	 * @param logFile name of the log-file
-	 */
-	static String read(String fileName, File logFile) {
-		String data = "";
-		try {
-			Scanner scanFile = new Scanner(new File("C:\\Users\\Admin\\Documents\\Bene privat\\Programmieren\\Git\\StamaCoding\\RSA-App\\sourceCode\\logFile.txt"));
-			while (scanFile.hasNextLine()){
-				data += scanFile.nextLine(); //reads the data from the log-file with a scanner
-				System.out.println("Daten: " + data);
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return data;
 	}
 }
 
