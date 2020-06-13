@@ -21,4 +21,9 @@ public class Key {
 	public void setMod(int mod) {
 		this.mod = mod;
 	}
+	
+	@Override
+	public String toString() {
+		return "(" + getExp() + ", " + getMod() + ")";
+	}
 }

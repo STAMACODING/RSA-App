@@ -1,5 +1,7 @@
 package com.stamacoding.rsaApp.rsa.keyCreate;
 
+import com.stamacoding.rsaApp.log.logger.Logger;
+
 public class KeyPair {
 	private Key privateKey;
 	private Key publicKey;
@@ -20,7 +22,15 @@ public class KeyPair {
 		e = KeyUtils.primeNumb(phi);
 		
 		// 4
-		d = KeyUtils.modularInverse(phi, e);
+		d = KeyUtils.modularInverse(e, phi);
+		
+		
+		Logger.debug(this.getClass().getSimpleName(), "p: " + p);
+		Logger.debug(this.getClass().getSimpleName(), "q: " + q);
+		Logger.debug(this.getClass().getSimpleName(), "n: " + n);
+		Logger.debug(this.getClass().getSimpleName(), "phi(n): " + phi);
+		Logger.debug(this.getClass().getSimpleName(), "e: " + e);
+		Logger.debug(this.getClass().getSimpleName(), "d: " + d);
 		
 		Key privateKey = new Key(d, n);
 		Key publicKey = new Key(e, n);
@@ -39,5 +49,11 @@ public class KeyPair {
 	}
 	public void setPublicKey(Key publicKey) {
 		this.publicKey = publicKey;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "private" + getPrivateKey() + " <> public" + getPublicKey();
 	}
 }
