@@ -7,18 +7,18 @@ public class Server {
 	
 	Socket sock;
 	PrintWriter writer;
-	static String SERVER_IP = "127.0.0.1";
-	static int SERVER_PORT = 455;
+	public final static String SERVER_IP = "127.0.0.1";
+	public final static int SERVER_PORT = 455;
 
-	public static void main(String [] args) {
+	public static void run() {
 		
-		Runnable startServer = new server.New.ServerRunnable(SERVER_IP, SERVER_PORT);
-		Runnable runNetwork = new server.New.NetworkingRunnable(SERVER_IP, SERVER_PORT);
+		Runnable receive = new server.New.ReceiveRunnable(SERVER_IP, SERVER_PORT);
+		Runnable runNetwork = new server.New.SendRunnable(SERVER_IP, SERVER_PORT);
 		
-		Thread alphaThread = new Thread(startServer);
+		Thread alphaThread = new Thread(receive);
+		
 		
 		alphaThread.start();
-		
-		
+			
 	}
 }
