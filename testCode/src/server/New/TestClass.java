@@ -1,0 +1,6 @@
+package server.New;
+
+public class TestClass {
+
+	// this Class is to simulate when the main Java applicatioin calls the run() method in either Server.java or Client.java
+}
