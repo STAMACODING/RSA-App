@@ -9,6 +9,7 @@ import java.io.IOException;
  *
  */
 public class MetaUtils {
+	
 	/**
 	 * Gets the IPv4 address of the sending device.
 	 * @param dataPackage data package holding meta information and the encrypted message
