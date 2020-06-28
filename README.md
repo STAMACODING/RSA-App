@@ -36,8 +36,8 @@ Wenn du zu diesem Repository hinzugefügt wurdest, fehlen nur noch wenige Schrit
 
 ## Unsere Webseite
 
-Eine Übersicht über unser Repository kannst du auch über unsere [Webseite](stamacoding.github.io/RSA-App/) finden.
+Eine Übersicht über unser Repository kannst du auch über unsere [Webseite](https://stamacoding.github.io/RSA-App/) finden.
 
 **Statistiken**
 
-Die Webseite bietet auch eine [Statistik-Ansicht](stamacoding.github.io/RSA-App/statistics/activity.html), die Graphen zur Aktivität, Contributors und Dateien mehr oder weniger hübsch darstellt.
+Die Webseite bietet auch eine [Statistik-Ansicht](https://stamacoding.github.io/RSA-App/statistics/activity.html), die Graphen zur Aktivität, Contributors und Dateien mehr oder weniger hübsch darstellt.
