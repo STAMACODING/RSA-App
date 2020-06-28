@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Repostat: git repository statistics.</title>
+	<link type="text/css" rel="stylesheet" href="c:\users\harry\appdata\local\programs\python\python38-32\lib\site-packages\report\assets/gitstats.css">
+    <link type="text/css" rel="stylesheet" href="c:\users\harry\appdata\local\programs\python\python38-32\lib\site-packages\report\assets/nv.d3.css">
+	<script type="text/javascript" src="c:\users\harry\appdata\local\programs\python\python38-32\lib\site-packages\report\assets/d3.v3.min.js"></script>
+	<script type="text/javascript" src="c:\users\harry\appdata\local\programs\python\python38-32\lib\site-packages\report\assets/nv.d3.min.js"></script>
+    <script type="text/javascript" src="c:\users\harry\appdata\local\programs\python\python38-32\lib\site-packages\report\assets/sortable.js"></script>
+    <meta name="author" content="Viktor Kopp">
+    <meta name="generator" content="Repostat ">
+</head>
+<body>
+    <h1>Authors</h1>
+    <ul class="nav">
+                    <li>
+                <a href="general.html">General</a></li>
+                    <li>
+                <a href="activity.html">Activity</a></li>
+                    <li class="active">
+                <a href="authors.html">Authors</a></li>
+                    <li>
+                <a href="files.html">Files</a></li>
+                    <li>
+                <a href="tags.html">Tags</a></li>
+                    <li>
+                <a href="about.html">About</a></li>
+        </ul>
+    <h2 id="list_of_authors"><a href="#list_of_authors">Authors statistics (top-9) </a></h2>
+<table class="authors sortable" id="authors">
+    <tr>
+        <th>Author</th>
+        <th>Commits</th><th>Merge commits</th>
+        <th>+ lines</th><th>- lines</th>
+        <th>First commit</th><th>Latest commit</th>
+        <th>Contributed (days)</th><th>Actively contributed (days)</th>
+    </tr>
+        <tr>
+        <td>harrydehix</td>
+        <td>34 (37.36%)</td>
+        <td>2 (2.20%)</td>
+        <td>2337</td><td>1301</td>
+        <td>2020-05-23</td>
+        <td>2020-06-27</td>
+        <td>35</td><td>7</td>
+    </tr>
+        <tr>
+        <td>BeneCodecademy</td>
+        <td>17 (18.68%)</td>
+        <td>1 (1.10%)</td>
+        <td>365</td><td>67</td>
+        <td>2020-05-30</td>
+        <td>2020-06-13</td>
+        <td>14</td><td>3</td>
+    </tr>
+        <tr>
+        <td>MrTK</td>
+        <td>10 (10.99%)</td>
+        <td>1 (1.10%)</td>
+        <td>574</td><td>74</td>
+        <td>2020-05-17</td>
+        <td>2020-06-01</td>
+        <td>15</td><td>5</td>
+    </tr>
+        <tr>
+        <td>Henri Hollmann</td>
+        <td>7 (7.69%)</td>
+        <td>0 (0.00%)</td>
+        <td>24</td><td>12</td>
+        <td>2020-05-22</td>
+        <td>2020-06-06</td>
+        <td>15</td><td>5</td>
+    </tr>
+        <tr>
+        <td>rHedBull</td>
+        <td>7 (7.69%)</td>
+        <td>0 (0.00%)</td>
+        <td>118</td><td>6</td>
+        <td>2020-05-16</td>
+        <td>2020-05-30</td>
+        <td>13</td><td>2</td>
+    </tr>
+        <tr>
+        <td>saltyMrTK</td>
+        <td>6 (6.59%)</td>
+        <td>0 (0.00%)</td>
+        <td>44</td><td>23</td>
+        <td>2020-05-21</td>
+        <td>2020-05-24</td>
+        <td>2</td><td>3</td>
+    </tr>
+        <tr>
+        <td>Hendrik Wirthwein</td>
+        <td>4 (4.40%)</td>
+        <td>1 (1.10%)</td>
+        <td>475</td><td>302</td>
+        <td>2020-06-27</td>
+        <td>2020-06-27</td>
+        <td>1</td><td>1</td>
+    </tr>
+        <tr>
+        <td>Benedikt Schnörr</td>
+        <td>3 (3.30%)</td>
+        <td>2 (2.20%)</td>
+        <td>8</td><td>0</td>
+        <td>2020-05-22</td>
+        <td>2020-05-22</td>
+        <td>1</td><td>1</td>
+    </tr>
+        <tr>
+        <td>MeineHTMLCodes</td>
+        <td>3 (3.30%)</td>
+        <td>0 (0.00%)</td>
+        <td>62</td><td>2</td>
+        <td>2020-05-22</td>
+        <td>2020-05-22</td>
+        <td>1</td><td>1</td>
+    </tr>
+    </table>
+<div>
+<p class="moreauthors">These didn't make it to the top:</p>
+<ul class="nontop">
+</ul>
+</div>
+
+
+<h2 id="cumulated_added_lines_of_code_per_author"><a href="#cumulated_added_lines_of_code_per_author">Cumulated Added Lines of Code per Author</a></h2>
+<div id="chart_loc" style="border: 1px solid #808080; width: 1014px"><svg style="height: 480px; width: 100%"></svg></div>
+
+<h2 id="commits_per_author"><a href="#commits_per_author">Commits per Author</a></h2>
+
+<div style="border: 1px solid #808080; width: 1014px">
+<div id="chart_commits"><svg style="height: 480px; width: 100%"></svg></div>
+<div id="chart_steam"><svg style="height: 480px; width: 100%"></svg></div>
+</div>
+
+<h2 id="author_of_month"><a href="#author_of_month">Author of the Month</a></h2>
+<table class="sortable" id="aom">
+    <tr>
+        <th>Month</th>
+        <th>Author</th><th>Commits count</th>
+        <th class="unsortable">Next top 5</th>
+        <th>Total authors count</th>
+    </tr>
+        <tr>
+        <td>2020-06</td>
+        <td>BeneCodecademy</td>
+        <td align="center">13 (of 32)</td>
+        <td>harrydehix, Hendrik Wirthwein, Henri Hollmann, MrTK</td>
+        <td align="center">5</td>
+    </tr>
+        <tr>
+        <td>2020-05</td>
+        <td>harrydehix</td>
+        <td align="center">22 (of 59)</td>
+        <td>MrTK, rHedBull, saltyMrTK, Henri Hollmann</td>
+        <td align="center">8</td>
+    </tr>
+    </table>
+
+<h2 id="author_of_year"><a href="#author_of_year">Author of the Year</a></h2>
+<table class="sortable" id="aoy">
+    <tr>
+        <th>Year</th>
+        <th>Author</th><th>Commits count</th>
+        <th class="unsortable">Next top 5</th>
+        <th>Total authors count</th>
+    </tr>
+        <tr>
+        <td>2020</td>
+        <td>harrydehix</td>
+        <td align="center">34 (of 91)</td>
+        <td>BeneCodecademy, MrTK, rHedBull, Henri Hollmann, saltyMrTK</td>
+        <td align="center">9</td>
+    </tr>
+    </table>
+
+
+<h2 id="commits_by_domains"><a href="#commits_by_domains">Commits by Email Domains</a></h2>
+<div id="chart_domains" style="border: 1px solid #808080; width: 507px"><svg style="height: 480px; width: 100%"></svg></div>
+<script src="authors.js"></script>
+</body>
+</html>
