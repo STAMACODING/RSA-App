@@ -12,6 +12,10 @@ public class Client {
 	public static String CLIENT_IP;
 	public static int CLIENT_PORT;
 	
+	// the server ip does not change
+	public final static String SERVER_IP = "127.0.0.1";
+	public final static int SERVER_PORT = 455;
+	
 	public Client(String ip, int port) {
 		this.CLIENT_IP = ip;
 		this.CLIENT_PORT = port;
@@ -19,18 +23,21 @@ public class Client {
 
 	public static void run() {
 		
-		Runnable receive = new server.New.ReceiveRunnable(CLIENT_IP, CLIENT_PORT);
-		Runnable runNetwork = new server.New.SendRunnable(CLIENT_IP, CLIENT_PORT);
+		Runnable receive = new server.New.ReceiveRunnable(SERVER_PORT, false);
+		Runnable send = new server.New.SendRunnable(CLIENT_PORT);
 		
-		Thread alphaThread = new Thread(receive);
+		Thread receiveThread = new Thread(receive);
+		Thread sendThread = new Thread(send);
 		
+		receiveThread.start();
+		receiveThread.setName("receiveThread");
 		
-		alphaThread.start();
-		
+		sendThread.start();	
+		sendThread.setName("sendThread");
 	}
 }
 
 
-//this is just a test about the annotations
+
 
 

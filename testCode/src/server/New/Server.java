@@ -12,13 +12,19 @@ public class Server {
 
 	public static void run() {
 		
-		Runnable receive = new server.New.ReceiveRunnable(SERVER_IP, SERVER_PORT);
-		Runnable runNetwork = new server.New.SendRunnable(SERVER_IP, SERVER_PORT);
+		Runnable receive = new server.New.ReceiveRunnable(SERVER_PORT, true);
+		Runnable send = new server.New.SendRunnable(SERVER_PORT);
 		
-		Thread alphaThread = new Thread(receive);
+		Thread receiveThread = new Thread(receive);
+		Thread sendThread = new Thread(send);
 		
+		receiveThread.start();
+		receiveThread.setName("receiveThread");
 		
-		alphaThread.start();
-			
+		sendThread.start();	
+		sendThread.setName("sendThread");
 	}
+	
 }
+
+//this is just a test about the annotations
