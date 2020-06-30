@@ -12,6 +12,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
  */
 public class SendQueue {
 	private static Queue<byte[]> queue = new LinkedList<byte[]>();
+	public static Runnable sendRunnable;
 	
 	/**
 	 * Adds a message to the queue.
@@ -21,6 +22,7 @@ public class SendQueue {
 		if(messageIncludingMeta == null) return;
 		Logger.debug(SendQueue.class.getSimpleName(), "Added message to queue");
 		queue.add(messageIncludingMeta);
+		if(sendRunnable != null) sendRunnable.notify();
 	}
 	
 	/**

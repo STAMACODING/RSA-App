@@ -32,6 +32,7 @@ public class SendRunnable implements Runnable{
 	public SendRunnable(int port, boolean server) {
 		setPort(port);
 		this.server = server;
+		SendQueue.sendRunnable = this;
 	}
 
 	/**
@@ -41,6 +42,11 @@ public class SendRunnable implements Runnable{
 	public void run() {
 		Logger.debug(SendRunnable.class.getSimpleName(), "SendThread is running");
 		while(true) {
+			try {
+				this.wait();
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
 			// If there is a message to be sent
 			if(!SendQueue.isEmpty()) {
 				Logger.debug(SendRunnable.class.getSimpleName(), "SendQueue is not empty");
