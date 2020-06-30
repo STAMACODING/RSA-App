@@ -38,6 +38,7 @@ public class ReceiveRunnable implements Runnable{
 				receiveServer = new ServerSocket(Server.RECEIVE_PORT);
 				Logger.debug(ReceiveRunnable.class.getSimpleName(), "Successfully started the receive server");
 			} catch (IOException e) {
+				e.printStackTrace();
 				Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to start receive server");
 			}
 			while(true) {
@@ -63,6 +64,7 @@ public class ReceiveRunnable implements Runnable{
 					Logger.debug(Server.class.getSimpleName(), "Forwarding message");
 					SendQueue.add(messageIncludingMeta);
 				} catch (IOException e) {
+					e.printStackTrace();
 					Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to receive message from a client");
 				}
 			}
@@ -72,6 +74,7 @@ public class ReceiveRunnable implements Runnable{
 				connectionToServer = new Socket(Server.IP, Server.SEND_PORT);
 				Logger.debug(ReceiveRunnable.class.getSimpleName(), "Successfully connected to the send server");
 			} catch (IOException e) {
+				e.printStackTrace();
 				Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to connect to the send server");
 			}
 			try {
@@ -88,6 +91,7 @@ public class ReceiveRunnable implements Runnable{
 				    Logger.debug(Server.class.getSimpleName(), "Successfully received new message from the send server");
 				}
 			} catch (IOException | InterruptedException e) {
+				e.printStackTrace();
 				Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to receive message from the send server");
 			}
 		}
