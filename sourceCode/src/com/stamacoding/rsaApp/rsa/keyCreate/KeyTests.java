@@ -6,8 +6,6 @@ public class KeyTests {
 	public static void main(String[] args) {
 		KeyPair pair = new KeyPair();
 		Logger.debug(KeyTests.class.getSimpleName(), pair.toString());
-		
-		Key k;
 	}
 
 }

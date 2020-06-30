@@ -1,4 +1,4 @@
-package server.New;
+package server;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 
@@ -9,9 +9,9 @@ public class Server {
 	public static int RECEIVE_PORT = -1;
 
 	public static void run() {
-		Runnable receive = new server.New.ReceiveRunnable(RECEIVE_PORT, true);
+		Runnable receive = new server.ReceiveRunnable(RECEIVE_PORT, true);
 		Logger.debug(Server.class.getSimpleName(), "ReceiveRunnable of Server:(" + serverName + ") initiated as: receive");
-		Runnable send = new server.New.SendRunnable(Client.RECEIVE_PORT, true);
+		Runnable send = new server.SendRunnable(Client.RECEIVE_PORT, true);
 		Logger.debug(Server.class.getSimpleName(), "SendRunnable of Server:(" + serverName + ") initiated as: send");
 		
 		Thread receiveThread = new Thread(receive);

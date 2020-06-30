@@ -1,4 +1,4 @@
-package server.New;
+package server;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -6,7 +6,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.Server;
 
 /**
  * {@link Runnable} to receive new messages from other clients. Works using a socket server that listens on the specified {@link #port}.

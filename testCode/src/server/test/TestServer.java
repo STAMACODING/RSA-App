@@ -1,13 +1,14 @@
-package server.New.test;
+package server.test;
 
 import java.util.Scanner;
 
-import server.New.Client;
-import server.New.Server;
+import server.Client;
+import server.Server;
 
-public class TestClient {
+public class TestServer {
 	public static void main(String[] args) {
 		Scanner s = new Scanner(System.in);
+		System.out.println("------------------------------------------------------------");
 		System.out.println("Client receive port: ");
 		Client.RECEIVE_PORT = s.nextInt();
 		System.out.println("Server receive port: ");
@@ -15,7 +16,8 @@ public class TestClient {
 		System.out.println("Server ip: ");
 		Server.SERVER_IP = s.next();
 		s.close();
+		System.out.println("------------------------------------------------------------");
 		
-		Client.run();
+		Server.run();
 	}
 }

@@ -1,4 +1,4 @@
-package server.New;
+package server;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -11,8 +11,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
  *
  */
 public class SendQueue {
-	private static Queue<byte[]> queue = new LinkedList<byte[]>();
-	public static Runnable sendRunnable;
+	private static volatile Queue<byte[]> queue = new LinkedList<byte[]>();
 	
 	/**
 	 * Adds a message to the queue.
@@ -22,7 +21,6 @@ public class SendQueue {
 		if(messageIncludingMeta == null) return;
 		Logger.debug(SendQueue.class.getSimpleName(), "Added message to queue");
 		queue.add(messageIncludingMeta);
-		if(sendRunnable != null) sendRunnable.notify();
 	}
 	
 	/**

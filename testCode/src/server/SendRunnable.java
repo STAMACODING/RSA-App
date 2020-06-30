@@ -1,11 +1,10 @@
-package server.New;
+package server;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.MetaUtils;
 
 
 /**
@@ -32,7 +31,6 @@ public class SendRunnable implements Runnable{
 	public SendRunnable(int port, boolean server) {
 		setPort(port);
 		this.server = server;
-		SendQueue.sendRunnable = this;
 	}
 
 	/**
@@ -42,11 +40,6 @@ public class SendRunnable implements Runnable{
 	public void run() {
 		Logger.debug(SendRunnable.class.getSimpleName(), "SendThread is running");
 		while(true) {
-			try {
-				this.wait();
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
 			// If there is a message to be sent
 			if(!SendQueue.isEmpty()) {
 				Logger.debug(SendRunnable.class.getSimpleName(), "SendQueue is not empty");
@@ -54,8 +47,9 @@ public class SendRunnable implements Runnable{
 				
 				if(isServer()) {
 					// Extract the receiver's ip from the message
-					setIp(MetaUtils.getReceiving(messageIncludingMeta));
+					setIp(Utils.Meta.getReceiving(messageIncludingMeta));
 				}else {
+					// Use server ip
 					setIp(Server.SERVER_IP);
 				}
 				
