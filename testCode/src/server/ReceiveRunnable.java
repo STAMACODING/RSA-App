@@ -12,10 +12,6 @@ import com.stamacoding.rsaApp.log.logger.Logger;
  *
  */
 public class ReceiveRunnable implements Runnable{
-	/** The used server socket to listen to new messages from other clients. **/
-	private ServerSocket serverSocket;
-	/** The used port to listen to new messages from other clients. **/
-	private int port;
 	/** Describes if the used device acts as server or as client. If this attribute is set to <i>true</i> incoming messages get forwarded. **/
 	private final boolean server;
 	
@@ -24,8 +20,7 @@ public class ReceiveRunnable implements Runnable{
 	 * @param port the used port to listen to new messages from other clients
 	 * @param server describes if the used device acts as server or as client. If this attribute is set to <i>true</i> incoming messages get forwarded
 	 */
-	public ReceiveRunnable(int port, boolean server) {
-		setPort(port);
+	public ReceiveRunnable(boolean server) {
 		this.server = server;
 	}
 	
@@ -35,77 +30,67 @@ public class ReceiveRunnable implements Runnable{
 	 */
 	public void run() {
 		Logger.debug(ReceiveRunnable.class.getSimpleName(), "ReceiveThread is running");
-		// Creates server socket listening on specified port (client should send message to this port)
-		try {
-			setServerSocket(new ServerSocket(getPort()));
-			Logger.debug(ReceiveRunnable.class.getSimpleName(), "Receiving server socket started successfully");
-		} catch (IOException e) {
-			Logger.error(ReceiveRunnable.class.getSimpleName(), "Receiving server socket failed to start");
-		}
-		while(true) {
-			// Accept message from client and if this is a server forward it to another client
+		
+		if(isServer()) {
+			// Creates server socket listening on specified port (client should send message to this port)
+			ServerSocket receiveServer = null;
 			try {
-				Socket receiver = getServerSocket().accept();
-				Logger.debug(Server.class.getSimpleName(), "Receiving new message from a client");
-				DataInputStream inputStream = new DataInputStream(receiver.getInputStream());
-				
-				// Check if message is not empty
-				int length = inputStream.readInt();
-				
-				if(length>0) {
-					byte[] messageIncludingMeta = new byte[length];
-					
-				    // Write message into byte[] messageIncludingMeta
-				    inputStream.readFully(messageIncludingMeta, 0, messageIncludingMeta.length);
-				    Logger.debug(Server.class.getSimpleName(), "Received new message from a client");
-					
-					if(isServer()) {
-						// Forward message
-						Logger.debug(Server.class.getSimpleName(), "Forwarding message");
-						SendQueue.add(messageIncludingMeta);
-					}
-				}
+				receiveServer = new ServerSocket(Server.RECEIVE_PORT);
+				Logger.debug(ReceiveRunnable.class.getSimpleName(), "Successfully started the receive server");
 			} catch (IOException e) {
-				Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to receive message from a client");
+				Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to start receive server");
+			}
+			while(true) {
+				// Accept message from client and if this is a server forward it to another client
+				try {
+					Socket connectionFromClient = receiveServer.accept();
+					Logger.debug(Server.class.getSimpleName(), "Receiving new message from a client");
+					DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
+					
+					// Check if message is not empty
+					int length = inputStream.readInt();
+					
+				    // Read message from client
+					byte[] messageIncludingMeta = null;
+					if(length>0) {
+						messageIncludingMeta = new byte[length];
+						
+					    inputStream.readFully(messageIncludingMeta, 0, messageIncludingMeta.length);
+					    Logger.debug(Server.class.getSimpleName(), "Successfully received new message from a client");
+					}
+						
+					// Forward message
+					Logger.debug(Server.class.getSimpleName(), "Forwarding message");
+					SendQueue.add(messageIncludingMeta);
+				} catch (IOException e) {
+					Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to receive message from a client");
+				}
+			}
+		}else {
+			Socket connectionToServer = null;
+			try {
+				connectionToServer = new Socket(Server.IP, Server.SEND_PORT);
+				Logger.debug(ReceiveRunnable.class.getSimpleName(), "Successfully connected to the send server");
+			} catch (IOException e) {
+				Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to connect to the send server");
+			}
+			try {
+				DataInputStream inputStream = new DataInputStream(connectionToServer.getInputStream());
+				while(true) {
+					Thread.sleep(10000);
+					// Check if there is some input from server
+					while(inputStream.readInt() == 0) {}
+					// Read message from server
+					byte[] messageIncludingMeta = null;
+					messageIncludingMeta = new byte[inputStream.readInt()];
+				    inputStream.readFully(messageIncludingMeta, 0, messageIncludingMeta.length);
+				    
+				    Logger.debug(Server.class.getSimpleName(), "Successfully received new message from the send server");
+				}
+			} catch (IOException | InterruptedException e) {
+				Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to receive message from the send server");
 			}
 		}
-		// server.close();
-	}
-
-	/**
-	 * Gets the used server socket.
-	 * @return the used server socket
-	 * @see #serverSocket
-	 */
-	public ServerSocket getServerSocket() {
-		return serverSocket;
-	}
-
-	/**
-	 * Sets the used server socket
-	 * @param serverSocket the used server socket
-	 * @see #serverSocket
-	 */
-	private void setServerSocket(ServerSocket serverSocket) {
-		this.serverSocket = serverSocket;
-	}
-
-	/**
-	 * Gets the used port to listen to new messages from other clients.
-	 * @return the used port to listen to new messages from other clients.
-	 * @see #port
-	 */
-	public int getPort() {
-		return port;
-	}
-
-	/**
-	 * Sets the used port to listen to new messages from other clients.
-	 * @param port the used port to listen to new messages from other clients
-	 * @see #port
-	 */
-	private void setPort(int port) {
-		this.port = port;
 	}
 
 	/**

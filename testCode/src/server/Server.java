@@ -5,13 +5,14 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 public class Server {
 	
 	public static String serverName = "raspberrypi";
-	public static String SERVER_IP = null;
+	public static String IP = null;
+	public static int SEND_PORT = -2;
 	public static int RECEIVE_PORT = -1;
 
 	public static void run() {
-		Runnable receive = new server.ReceiveRunnable(RECEIVE_PORT, true);
+		Runnable receive = new server.ReceiveRunnable(true);
 		Logger.debug(Server.class.getSimpleName(), "ReceiveRunnable of Server:(" + serverName + ") initiated as: receive");
-		Runnable send = new server.SendRunnable(Client.RECEIVE_PORT, true);
+		Runnable send = new server.SendRunnable(true);
 		Logger.debug(Server.class.getSimpleName(), "SendRunnable of Server:(" + serverName + ") initiated as: send");
 		
 		Thread receiveThread = new Thread(receive);

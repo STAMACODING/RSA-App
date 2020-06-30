@@ -17,11 +17,11 @@ public class TestClient {
 		System.out.println("------------------------------------------------------------");
 		Scanner s = new Scanner(System.in);
 		System.out.print("Client receive port: ");
-		Client.RECEIVE_PORT = s.nextInt();
+		Server.SEND_PORT = s.nextInt();
 		System.out.print("Server receive port: ");
 		Server.RECEIVE_PORT = s.nextInt();
 		System.out.print("Server ip: ");
-		Server.SERVER_IP = s.next();
+		Server.IP = s.next();
 		System.out.println("------------------------------------------------------------");
 		
 		System.out.print("Do you want to send a message? (y/n): ");

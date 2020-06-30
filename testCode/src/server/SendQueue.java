@@ -1,7 +1,7 @@
 package server;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 
@@ -11,7 +11,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
  *
  */
 public class SendQueue {
-	private static volatile Queue<byte[]> queue = new LinkedList<byte[]>();
+	private static volatile LinkedList<byte[]> queue = new LinkedList<byte[]>();
 	
 	/**
 	 * Adds a message to the queue.
@@ -37,6 +37,15 @@ public class SendQueue {
 	 */
 	public static boolean isEmpty() {
 		return queue.size() == 0;
+	}
+	
+	public static ArrayList<byte[]> getMessages(String receivingIp){
+		ArrayList<byte[]> messages = new ArrayList<byte[]>();
+		for(int i = 0; i<queue.size(); i++) {
+			String receivingIpOfMessage = Utils.Meta.getReceiving(queue.get(i));
+			if(receivingIpOfMessage.equals(receivingIp)) messages.add(queue.get(i));
+		}
+		return messages;
 	}
 	
 	public static void main(String[] args) {

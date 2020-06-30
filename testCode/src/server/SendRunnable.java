@@ -2,7 +2,9 @@ package server;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 
@@ -12,14 +14,6 @@ import com.stamacoding.rsaApp.log.logger.Logger;
  *
  */
 public class SendRunnable implements Runnable{
-	/** The used port to send messages. **/
-	private int port;
-	/** The current receiver's ip. The receiver is the one messages are sent to. This variable changes with every new message listed in the {@link SendQueue}.**/
-	private String ip;
-	/** The current connection to the receiver. Gets recreated after every message.
-	 * @see #run()
-	 */
-	private Socket socket;
 	/** Describes if the used device acts as server or as client. If this attribute is set to <i>true</i> incoming messages get forwarded. **/
 	private final boolean server;
 	
@@ -28,8 +22,7 @@ public class SendRunnable implements Runnable{
 	 * Instantiates an object of the {@link SendRunnable} class.
 	 * @param port the used port to send messages
 	 */
-	public SendRunnable(int port, boolean server) {
-		setPort(port);
+	public SendRunnable(boolean server) {
 		this.server = server;
 	}
 
@@ -39,96 +32,68 @@ public class SendRunnable implements Runnable{
 	 */
 	public void run() {
 		Logger.debug(SendRunnable.class.getSimpleName(), "SendThread is running");
-		while(true) {
-			// If there is a message to be sent
-			if(!SendQueue.isEmpty()) {
-				Logger.debug(SendRunnable.class.getSimpleName(), "SendQueue is not empty");
-				byte[] messageIncludingMeta = SendQueue.poll();
-				
-				if(isServer()) {
-					// Extract the receiver's ip from the message
-					setIp(Utils.Meta.getReceiving(messageIncludingMeta));
-				}else {
-					// Use server ip
-					setIp(Server.SERVER_IP);
-				}
-				
-				Logger.debug(SendRunnable.class.getSimpleName(), "Sending message to " + getIp());
-					
+		
+		if(isServer()) {
+			ServerSocket sendServer = null;
+			try {
+				sendServer = new ServerSocket(Server.SEND_PORT);
+				Logger.debug(SendRunnable.class.getSimpleName(), "Successfully started send server");
+			} catch (IOException e) {
+				Logger.error(SendRunnable.class.getSimpleName(), "Failed to start send server");
+			}
+			while(true) {
 				try {
-					// Create connection to the receiver via socket
-					setSocket(new Socket(getIp(), getPort()));
-					DataOutputStream outputStream = new DataOutputStream(getSocket().getOutputStream());
-					
-					// Send message to the receiver
-					outputStream.writeInt(messageIncludingMeta.length);
-					outputStream.write(messageIncludingMeta);
-						
-					Logger.debug(SendRunnable.class.getSimpleName(), "Sent message successfully to " + getIp());
-					
-					// Close connection to the receiver
-					getSocket().close();
+					Socket connectionFromClient = sendServer.accept();
+					if(!SendQueue.isEmpty()) {
+						String receivingIp = connectionFromClient.getInetAddress().getHostAddress();
+						ArrayList<byte[]> messagesToSend = SendQueue.getMessages(receivingIp);
+						for(byte[] message : messagesToSend) {
+							DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
+							
+							// Send message to the receiver
+							outputStream.writeInt(message.length);
+							outputStream.write(message);
+							Logger.debug(SendRunnable.class.getSimpleName(), "Successfully sent message to a client");
+						}
+					}
 				} catch (IOException e) {
-					e.printStackTrace();
-					Logger.error(SendRunnable.class.getSimpleName(), "Failed to send message to " + getIp());
+					Logger.error(SendRunnable.class.getSimpleName(), "Failed to send message to a client");
 				}
+			}
+		}else {
+			while(true) {
+				// If there is a message to be sent
+				if(!SendQueue.isEmpty()) {
+					Logger.debug(SendRunnable.class.getSimpleName(), "SendQueue is not empty");
+					byte[] message = SendQueue.poll();
+						
+					Socket connectionToServer = null;
+					try {
+						connectionToServer = new Socket(Server.IP, Server.RECEIVE_PORT);
+						Logger.debug(SendRunnable.class.getSimpleName(), "Successfully conntected to the receive server");
+					} catch (IOException e) {
+						Logger.error(SendRunnable.class.getSimpleName(), "Failed to connect to receive server");
+					}
+					try {
+						DataOutputStream outputStream = new DataOutputStream(connectionToServer.getOutputStream());
+						
+						// Send message to the receiver
+						outputStream.writeInt(message.length);
+						outputStream.write(message);
+							
+						Logger.debug(SendRunnable.class.getSimpleName(), "Successfully sent message to the receive server");
+						
+						// Close connection to the receiver
+						connectionToServer.close();
+					} catch (IOException e) {
+						Logger.error(SendRunnable.class.getSimpleName(), "Failed to send message to the receive server");
+					}
 
+				}
 			}
 		}
-	}
-	
-	/**
-	 * Sets the current receiver's ip. The receiver is the one messages are sent to. This variable changes with every new message listed in the {@link SendQueue}.
-	 * @param ip
-	 * @see #ip
-	 */
-	private void setIp(String ip){
-		this.ip = ip;
-	}
-	
-	/**
-	 * Gets the current receiver's ip. The receiver is the one messages are sent to. This variable changes with every new message listed in the {@link SendQueue}.
-	 * @return the current receiver's ip
-	 * @see #ip
-	 */
-	public String getIp() {
-		return this.ip;
-	}
-	
-	/**
-	 * Sets the used port to send messages.
-	 * @param port the used port to send messages
-	 * @see #port
-	 */
-	private void setPort(int port){
-		this.port = port;
-	}
-	
-	/**
-	 * Gets the used port to send messages.
-	 * @return the used port to send messages
-	 * @see #port
-	 */
-	public int getPort() {
-		return this.port;
-	}
-	
-	/**
-	 * Gets the current connection to the receiver. Gets recreated after every message.
-	 * @return the current connection to the receiver
-	 * @see #socket
-	 */
-	public Socket getSocket() {
-		return socket;
-	}
-
-	/**
-	 * Sets the current connection to the receiver. Gets recreated after every message.
-	 * @param socket the current connection to the receiver
-	 * @see #socket
-	 */
-	private void setSocket(Socket socket) {
-		this.socket = socket;
+		
+		
 	}
 	
 	/**
