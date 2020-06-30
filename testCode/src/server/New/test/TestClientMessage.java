@@ -17,29 +17,19 @@ public class TestClientMessage {
 		Server.RECEIVE_PORT = s.nextInt();
 		System.out.println("Server ip: ");
 		Server.SERVER_IP = s.next();
+	
+		byte[] message = new byte[] {12, 23, 23, 34, 1};
+		String ipSending = "", ipReceiving = "";
 		
-		Client.run();
+		System.out.println("Sending ip (your ip!): ");
+		ipSending = s.next();
+		System.out.println("Receiving ip (your friend's ip!): ");
+		ipReceiving = s.next();
 		
-		
-		boolean exit = false;
-		while(!exit) {
-			byte[] message = new byte[] {12, 23, 23, 34, 1};
-			String ipSending = "", ipReceiving = "", wannaExit = "";
-			
-			System.out.println("Sending ip (your ip!): ");
-			ipSending = s.next();
-			System.out.println("Receiving ip (your friend's ip!): ");
-			ipReceiving = s.next();
-			
-			SendQueue.add(MetaUtils.addMetaToMessage(ipSending, ipReceiving, message));
-			
-			System.out.println("Wanna exit? (y/n)");
-			wannaExit = s.next();
-			
-			if(wannaExit.equals("y")) exit = true;
-			s.close();
-		}
+		SendQueue.add(MetaUtils.addMetaToMessage(ipSending, ipReceiving, message));
 		
 		s.close();
+		
+		Client.run();
 	}
 }

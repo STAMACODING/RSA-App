@@ -2,12 +2,10 @@ package server.New;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.MetaUtils;
-import com.stamacoding.rsaApp.server.Server;
 
 
 /**
@@ -23,14 +21,17 @@ public class SendRunnable implements Runnable{
 	 * @see #run()
 	 */
 	private Socket socket;
+	/** Describes if the used device acts as server or as client. If this attribute is set to <i>true</i> incoming messages get forwarded. **/
+	private final boolean server;
 	
 	
 	/**
 	 * Instantiates an object of the {@link SendRunnable} class.
 	 * @param port the used port to send messages
 	 */
-	public SendRunnable(int port) {
+	public SendRunnable(int port, boolean server) {
 		setPort(port);
+		this.server = server;
 	}
 
 	/**
@@ -42,10 +43,15 @@ public class SendRunnable implements Runnable{
 		while(true) {
 			// If there is a message to be sent
 			if(!SendQueue.isEmpty()) {
+				Logger.debug(SendRunnable.class.getSimpleName(), "SendQueue is not empty");
 				byte[] messageIncludingMeta = SendQueue.poll();
 				
-				// Extract the receiver's ip from the message
-				setIp(MetaUtils.getReceiving(messageIncludingMeta));
+				if(isServer()) {
+					// Extract the receiver's ip from the message
+					setIp(MetaUtils.getReceiving(messageIncludingMeta));
+				}else {
+					setIp(Server.SERVER_IP);
+				}
 				
 				Logger.debug(SendRunnable.class.getSimpleName(), "Sending message to " + getIp());
 					
@@ -63,6 +69,7 @@ public class SendRunnable implements Runnable{
 					// Close connection to the receiver
 					getSocket().close();
 				} catch (IOException e) {
+					e.printStackTrace();
 					Logger.error(SendRunnable.class.getSimpleName(), "Failed to send message to " + getIp());
 				}
 
@@ -122,5 +129,14 @@ public class SendRunnable implements Runnable{
 	 */
 	private void setSocket(Socket socket) {
 		this.socket = socket;
+	}
+	
+	/**
+	 * Describes if the used device acts as server or as client. If this attribute is set to <i>true</i> incoming messages get forwarded.
+	 * @return if the used device acts as server or as client
+	 * @see #serer
+	 */
+	public boolean isServer() {
+		return server;
 	}
 }

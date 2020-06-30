@@ -3,6 +3,8 @@ package server.New;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import com.stamacoding.rsaApp.log.logger.Logger;
+
 /**
  * Queue for sending messages to other clients. Use {@link #add(byte[])} to send a new message to
  * a client.
@@ -17,7 +19,7 @@ public class SendQueue {
 	 */
 	public static void add(byte[] messageIncludingMeta) {
 		if(messageIncludingMeta == null) return;
-		
+		Logger.debug(SendQueue.class.getSimpleName(), "Added message to queue");
 		queue.add(messageIncludingMeta);
 	}
 	
@@ -35,5 +37,11 @@ public class SendQueue {
 	 */
 	public static boolean isEmpty() {
 		return queue.size() == 0;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(SendQueue.isEmpty());
+		SendQueue.add(new byte[]{3, 2, 4});
+		System.out.println(SendQueue.isEmpty());
 	}
 }

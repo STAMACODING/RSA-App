@@ -9,7 +9,7 @@ public class Client {
 	public static void run() {
 		Runnable receive = new server.New.ReceiveRunnable(RECEIVE_PORT, false);
 		Logger.debug(Server.class.getSimpleName(), "ReceiveRunnable of Client:(" + clientName + ") initiated as: receive");
-		Runnable send = new server.New.SendRunnable(Server.RECEIVE_PORT);
+		Runnable send = new server.New.SendRunnable(Server.RECEIVE_PORT, false);
 		Logger.debug(Server.class.getSimpleName(), "SendRunnable of Client:(" + clientName + ") initiated as: send");
 		
 		Thread receiveThread = new Thread(receive);

@@ -11,7 +11,7 @@ public class Server {
 	public static void run() {
 		Runnable receive = new server.New.ReceiveRunnable(RECEIVE_PORT, true);
 		Logger.debug(Server.class.getSimpleName(), "ReceiveRunnable of Server:(" + serverName + ") initiated as: receive");
-		Runnable send = new server.New.SendRunnable(Client.RECEIVE_PORT);
+		Runnable send = new server.New.SendRunnable(Client.RECEIVE_PORT, true);
 		Logger.debug(Server.class.getSimpleName(), "SendRunnable of Server:(" + serverName + ") initiated as: send");
 		
 		Thread receiveThread = new Thread(receive);
