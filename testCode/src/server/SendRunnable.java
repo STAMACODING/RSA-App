@@ -49,7 +49,7 @@ public class SendRunnable implements Runnable{
 					if(!SendQueue.isEmpty()) {
 						String receivingIp = connectionFromClient.getInetAddress().getHostAddress();
 						ArrayList<byte[]> messagesToSend = SendQueue.getMessages(receivingIp);
-						Logger.debug(SendRunnable.class.getSimpleName(), "Searching for messages that belong to the client");
+						Logger.debug(SendRunnable.class.getSimpleName(), "Searching for messages that belong to the client (" + receivingIp + ")");
 						DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
 						
 						// Send one message to the receiver TODO send multiple messages to the receiver
@@ -58,6 +58,8 @@ public class SendRunnable implements Runnable{
 							outputStream.write(messagesToSend.get(0));
 							
 							Logger.debug(SendRunnable.class.getSimpleName(), "Successfully sent message to a client");
+						}{
+							Logger.debug(SendRunnable.class.getSimpleName(), "Found no message!");
 						}
 
 					}
