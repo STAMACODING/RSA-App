@@ -1,22 +1,17 @@
 package server.New;
 
-import java.io.PrintWriter;
-
-import java.net.Socket;
-
 import com.stamacoding.rsaApp.log.logger.Logger;
 
 public class Server {
 	
-	public static String serverName;
+	public static String serverName = "raspberrypi";
 	public final static String SERVER_IP = "127.0.0.1";
-	public final static int SERVER_PORT = 455;
+	public final static int RECEIVE_PORT = 455;
 
 	public static void run() {
-		
-		Runnable receive = new server.New.ReceiveRunnable(SERVER_PORT, true);
+		Runnable receive = new server.New.ReceiveRunnable(RECEIVE_PORT, true);
 		Logger.debug(Server.class.getSimpleName(), "ReceiveRunnable of Server:(" + serverName + ") initiated as: receive");
-		Runnable send = new server.New.SendRunnable(SERVER_PORT);
+		Runnable send = new server.New.SendRunnable(Client.RECEIVE_PORT);
 		Logger.debug(Server.class.getSimpleName(), "SendRunnable of Server:(" + serverName + ") initiated as: send");
 		
 		Thread receiveThread = new Thread(receive);
