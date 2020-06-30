@@ -50,14 +50,13 @@ public class SendRunnable implements Runnable{
 						String receivingIp = connectionFromClient.getInetAddress().getHostAddress();
 						ArrayList<byte[]> messagesToSend = SendQueue.getMessages(receivingIp);
 						Logger.debug(SendRunnable.class.getSimpleName(), "Searching for messages that belong to the client");
-						for(byte[] message : messagesToSend) {
-							DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
-							
-							// Send message to the receiver
-							outputStream.writeInt(message.length);
-							outputStream.write(message);
-							Logger.debug(SendRunnable.class.getSimpleName(), "Successfully sent message to a client");
-						}
+						DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
+						
+						// Send one message to the receiver TODO send multiple messages to the receiver
+						outputStream.writeInt(messagesToSend.get(0).length);
+						outputStream.write(messagesToSend.get(0));
+						
+						Logger.debug(SendRunnable.class.getSimpleName(), "Successfully sent message to a client");
 					}
 					connectionFromClient.close();
 				} catch (IOException e) {

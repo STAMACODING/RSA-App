@@ -37,61 +37,68 @@ public class ReceiveRunnable implements Runnable{
 			try {
 				receiveServer = new ServerSocket(Server.RECEIVE_PORT);
 				Logger.debug(ReceiveRunnable.class.getSimpleName(), "Successfully started the receive server");
+				
+				while(true) {
+					// Accept message from client and if this is a server forward it to another client
+					try {
+						Socket connectionFromClient = receiveServer.accept();
+						Logger.debug(Server.class.getSimpleName(), "Receiving new message from a client");
+						DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
+						
+						// Check if message is not empty
+						int length = inputStream.readInt();
+						
+					    // Read message from client
+						byte[] messageIncludingMeta = null;
+						if(length>0) {
+							messageIncludingMeta = new byte[length];
+							
+						    inputStream.readFully(messageIncludingMeta, 0, messageIncludingMeta.length);
+						    Logger.debug(Server.class.getSimpleName(), "Successfully received new message from a client");
+						}
+							
+						// Forward message
+						Logger.debug(Server.class.getSimpleName(), "Forwarding message");
+						SendQueue.add(messageIncludingMeta);
+					} catch (IOException e) {
+						e.printStackTrace();
+						Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to receive message from a client");
+					}
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 				Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to start receive server");
 			}
-			while(true) {
-				// Accept message from client and if this is a server forward it to another client
-				try {
-					Socket connectionFromClient = receiveServer.accept();
-					Logger.debug(Server.class.getSimpleName(), "Receiving new message from a client");
-					DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
-					
-					// Check if message is not empty
-					int length = inputStream.readInt();
-					
-				    // Read message from client
-					byte[] messageIncludingMeta = null;
-					if(length>0) {
-						messageIncludingMeta = new byte[length];
-						
-					    inputStream.readFully(messageIncludingMeta, 0, messageIncludingMeta.length);
-					    Logger.debug(Server.class.getSimpleName(), "Successfully received new message from a client");
-					}
-						
-					// Forward message
-					Logger.debug(Server.class.getSimpleName(), "Forwarding message");
-					SendQueue.add(messageIncludingMeta);
-				} catch (IOException e) {
-					e.printStackTrace();
-					Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to receive message from a client");
-				}
-			}
 		}else {
-			Socket connectionToServer = null;
 			try {
-				connectionToServer = new Socket(Server.IP, Server.SEND_PORT);
-				Logger.debug(ReceiveRunnable.class.getSimpleName(), "Successfully connected to the send server");
-			} catch (IOException e) {
-				e.printStackTrace();
-				Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to connect to the send server");
-			}
-			try {
-				DataInputStream inputStream = new DataInputStream(connectionToServer.getInputStream());
 				while(true) {
-					Logger.debug(ReceiveRunnable.class.getSimpleName(), "Querying messages from the send server");
-					// Check if there is some input from server
-					while(inputStream.available() == 0) {}
-					// Read message from server
-					byte[] messageIncludingMeta = null;
-					messageIncludingMeta = new byte[inputStream.readInt()];
-				    inputStream.readFully(messageIncludingMeta, 0, messageIncludingMeta.length);
-				    
-				    Logger.debug(Server.class.getSimpleName(), "Successfully received new message from the send server");
+					try {
+						Socket connectionToServer = new Socket(Server.IP, Server.SEND_PORT);
+						Logger.debug(ReceiveRunnable.class.getSimpleName(), "Successfully connected to the send server");
+						
+						Logger.debug(ReceiveRunnable.class.getSimpleName(), "Querying messages from the send server");
+						// Read message from server
+						DataInputStream inputStream = new DataInputStream(connectionToServer.getInputStream());
+						byte[] messageIncludingMeta = null;
+						try {
+							int length = inputStream.readInt();
+							if(length!=0) {
+								messageIncludingMeta = new byte[length];
+							    inputStream.readFully(messageIncludingMeta, 0, messageIncludingMeta.length);
+							    
+							    Logger.debug(Server.class.getSimpleName(), "Successfully received new message from the send server");
+							}
+						}catch(Exception e) {
+							Logger.debug(ReceiveRunnable.class.getSimpleName(), "No new messages available");
+						}
+						connectionToServer.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+						Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to connect to the send server");
+					}
 					Thread.sleep(10000);
 				}
-			} catch (IOException | InterruptedException e) {
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 				Logger.error(ReceiveRunnable.class.getSimpleName(), "Failed to receive message from the send server");
 			}
