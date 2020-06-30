@@ -8,16 +8,9 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 
 public class Server {
 	
-	Socket sock;
-	PrintWriter writer;
-	
 	public static String serverName;
 	public final static String SERVER_IP = "127.0.0.1";
 	public final static int SERVER_PORT = 455;
-	
-	public Server(String name) {
-		this.serverName = name;
-	}
 
 	public static void run() {
 		

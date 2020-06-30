@@ -17,12 +17,6 @@ public class Client {
 	// the server ip does not change
 	public final static String SERVER_IP = "127.0.0.1";
 	public final static int SERVER_PORT = 455;
-	
-	public Client(String name, String ip, int port) {
-		this.clientName = name;
-		this.CLIENT_IP = ip;
-		this.CLIENT_PORT = port;
-	}
 
 	public static void run() {
 		
