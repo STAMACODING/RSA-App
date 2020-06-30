@@ -89,6 +89,7 @@ public class ReceiveRunnable implements Runnable{
 							    Logger.debug(Server.class.getSimpleName(), "Successfully received new message from the send server");
 							}
 						}catch(Exception e) {
+							e.printStackTrace();
 							Logger.debug(ReceiveRunnable.class.getSimpleName(), "No new messages available");
 						}
 						connectionToServer.close();

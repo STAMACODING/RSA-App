@@ -53,10 +53,13 @@ public class SendRunnable implements Runnable{
 						DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
 						
 						// Send one message to the receiver TODO send multiple messages to the receiver
-						outputStream.writeInt(messagesToSend.get(0).length);
-						outputStream.write(messagesToSend.get(0));
-						
-						Logger.debug(SendRunnable.class.getSimpleName(), "Successfully sent message to a client");
+						if(messagesToSend.size() > 0) {
+							outputStream.writeInt(messagesToSend.get(0).length);
+							outputStream.write(messagesToSend.get(0));
+							
+							Logger.debug(SendRunnable.class.getSimpleName(), "Successfully sent message to a client");
+						}
+
 					}
 					connectionFromClient.close();
 				} catch (IOException e) {
