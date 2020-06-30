@@ -5,8 +5,8 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 public class Server {
 	
 	public static String serverName = "raspberrypi";
-	public final static String SERVER_IP = "127.0.0.1";
-	public final static int RECEIVE_PORT = 455;
+	public static String SERVER_IP = null;
+	public static int RECEIVE_PORT = -1;
 
 	public static void run() {
 		Runnable receive = new server.New.ReceiveRunnable(RECEIVE_PORT, true);

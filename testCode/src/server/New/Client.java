@@ -3,8 +3,8 @@ package server.New;
 import com.stamacoding.rsaApp.log.logger.Logger;
 
 public class Client {
-	public static String clientName;
-	public final static int RECEIVE_PORT = 455;
+	public static String clientName = "client";
+	public static int RECEIVE_PORT = -2;
 
 	public static void run() {
 		Runnable receive = new server.New.ReceiveRunnable(RECEIVE_PORT, false);
