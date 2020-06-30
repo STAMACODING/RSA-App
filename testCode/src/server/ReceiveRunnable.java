@@ -80,15 +80,16 @@ public class ReceiveRunnable implements Runnable{
 			try {
 				DataInputStream inputStream = new DataInputStream(connectionToServer.getInputStream());
 				while(true) {
-					Thread.sleep(10000);
+					Logger.debug(ReceiveRunnable.class.getSimpleName(), "Querying messages from the send server");
 					// Check if there is some input from server
-					while(inputStream.readInt() == 0) {}
+					while(inputStream.available() == 0) {}
 					// Read message from server
 					byte[] messageIncludingMeta = null;
 					messageIncludingMeta = new byte[inputStream.readInt()];
 				    inputStream.readFully(messageIncludingMeta, 0, messageIncludingMeta.length);
 				    
 				    Logger.debug(Server.class.getSimpleName(), "Successfully received new message from the send server");
+					Thread.sleep(10000);
 				}
 			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();

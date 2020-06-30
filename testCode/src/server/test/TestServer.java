@@ -12,7 +12,7 @@ public class TestServer {
 		System.out.println("RSA-App Test Server BETA");
 		System.out.println("------------------------------------------------------------");
 		
-		System.out.print("Client receive port: ");
+		System.out.print("Server send port: ");
 		Server.SEND_PORT = s.nextInt();
 		
 		System.out.print("Server receive port: ");

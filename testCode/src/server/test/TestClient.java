@@ -16,7 +16,7 @@ public class TestClient {
 		System.out.println("RSA-App Test Client BETA");
 		System.out.println("------------------------------------------------------------");
 		Scanner s = new Scanner(System.in);
-		System.out.print("Client receive port: ");
+		System.out.print("Server send port: ");
 		Server.SEND_PORT = s.nextInt();
 		System.out.print("Server receive port: ");
 		Server.RECEIVE_PORT = s.nextInt();
