@@ -9,7 +9,7 @@ public class TestServer {
 	public static void main(String[] args) {
 		Scanner s = new Scanner(System.in);
 		System.out.println("------------------------------------------------------------");
-		System.out.println("RSA-App Test Client BETA");
+		System.out.println("RSA-App Test Server BETA");
 		System.out.println("------------------------------------------------------------");
 		
 		System.out.print("Client receive port: ");
