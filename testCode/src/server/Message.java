@@ -2,7 +2,6 @@ package server;
 
 import java.sql.*;
 
-
 public class Message {
 
 	private final int messageId;
@@ -42,9 +41,5 @@ public class Message {
 	public void setstatus(byte s) {
 		this.status = s;
 	}
-	
-	
-	
-	
 	
 }
