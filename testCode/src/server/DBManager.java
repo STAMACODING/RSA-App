@@ -6,6 +6,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class DBManager implements MessageDBInterface{
+	private static DBManager singleton = new DBManager();
+	
+	private DBManager() {}
+	
+	public static DBManager getInstance() {
+		return singleton;
+	}
+	
 
 	private final String url = "jdbc:sqlite:ChatHistory.db";
 	private final String userName = "root";
