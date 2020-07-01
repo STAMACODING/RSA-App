@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 
 public class DBManager implements MessageDBInterface{
 
-	private final String url = "jdbc:sqlite:ChatHistory.db";
+	private final String url = "jdbc:sqlite:ChatHistory.Test.db";
 	private final String userName = "root";
 	private final String password = "root";
 
