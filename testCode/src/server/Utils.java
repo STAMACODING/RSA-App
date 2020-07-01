@@ -12,24 +12,8 @@ public class Utils {
 		 * @param dataPackage data package holding meta information and the encrypted message
 		 * @return the IPv4 address of the sending device
 		 */
-		public static String getSending(byte[] dataPackage) {
-			byte[] sending = new byte[15];
-			
-			// Excludes bytes holding the IPv4 address of the sending device
-			for(int i=0; i<sending.length; i++) {
-				sending[i] = dataPackage[i];
-			}
-			// Converts bytes into string
-			String rawResult = new String(sending);
-			
-			// Removes '-' from meta information (StringBuilder is faster in concatenating strings)
-			StringBuilder result = new StringBuilder();
-			for(int i=0; i<rawResult.length(); i++) {
-				if(rawResult.charAt(i) != '-') {
-					result.append(rawResult.charAt(i));
-				}
-			}
-			return result.toString();
+		public static byte getSending(byte[] messageIncludingMeta) {
+			return messageIncludingMeta[0];
 		}
 		
 		/**
@@ -37,24 +21,8 @@ public class Utils {
 		 * @param dataPackage data package holding meta information and the encrypted message
 		 * @return the IPv4 address of the receiving device
 		 */
-		public static String getReceiving(byte[] dataPackage) {
-			byte[] receiving = new byte[15];
-			
-			// Excludes bytes holding the IPv4 address of the receiving device
-			for(int i=15; i<15+receiving.length; i++) {
-				receiving[i-15] = dataPackage[i];
-			}
-			// Converts bytes into string
-			String rawResult = new String(receiving);
-			
-			// Removes '-' from meta information (StringBuilder is faster in concatenating strings)
-			StringBuilder result = new StringBuilder();
-			for(int i=0; i<rawResult.length(); i++) {
-				if(rawResult.charAt(i) != '-') {
-					result.append(rawResult.charAt(i));
-				}
-			}
-			return result.toString();
+		public static byte getReceiving(byte[] messageIncludingMeta) {
+			return messageIncludingMeta[1];
 		}
 		
 		/**
@@ -64,40 +32,14 @@ public class Utils {
 		 * @param encryptedMessage encrypted message
 		 * @return array holding meta information and the encrypted message
 		 */
-		public static byte[] addMetaToMessage(String sendingIpAdress, String receivingIpAdress, byte[] encryptedMessage) {
-			// Converts sendingIpAdress into a byte array (length: 15)
-			byte[] sending = new byte[15];
-			byte[] tempArray1 = sendingIpAdress.getBytes();
-			for(int i=0; i<sending.length; i++) {
-				if(i >= tempArray1.length) {
-					sending[i] = "-".getBytes()[0];
-				}else {
-					sending[i] = tempArray1[i];
-				}
+		public static byte[] addMetaToMessage(byte sendingClientId, byte receivingClientId, byte[] message) {
+			byte[] messageIncludingMeta = new byte[message.length + 2];
+			messageIncludingMeta[0] = sendingClientId;
+			messageIncludingMeta[1] = receivingClientId;
+			for(int i = 2; i<messageIncludingMeta.length; i++) {
+				messageIncludingMeta[i] = message[i-2];
 			}
-			
-			// Converts receivingIpAdress into a byte array (length: 15)
-			byte[] receiving = new byte[15];
-			byte[] tempArray2 = receivingIpAdress.getBytes();
-			for(int i=0; i<receiving.length; i++) {
-				if(i >= tempArray2.length) {
-					receiving[i] = "-".getBytes()[0];
-				}else {
-					receiving[i] = tempArray2[i];
-				}
-			}
-
-			// Merges all arrays together
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-			try {
-				outputStream.write(sending);
-				outputStream.write(receiving);
-				outputStream.write(encryptedMessage);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			return outputStream.toByteArray();
+			return messageIncludingMeta;
 		}
 		
 		/**
@@ -116,21 +58,21 @@ public class Utils {
 		public static void main(String[] args) {
 			// Example
 			
-			String ipSending = "192.123.123";
-			String ipReceiving = "121.23.1123";
-			byte[] encryptedMessage = {22, 11, 23, 11, 0, 3, 3, 23, 12, 12, 60, 90, 11, 10};
+			byte idSending = 23;
+			byte idReceiving = 11;
+			byte[] message = {22, 11, 23, 11, 0, 3, 3, 23, 12, 12, 60, 90, 11, 10};
 			
 			// Adds meta information to the encrypted message
-			byte[] dataPackage = addMetaToMessage(ipSending, ipReceiving, encryptedMessage);
+			byte[] messageIncludingMeta = addMetaToMessage(idSending, idReceiving, message);
 			
 			System.out.println("encrypted message: \t");
-			printByteArray(encryptedMessage);
+			printByteArray(message);
 			System.out.println("encrypted message + meta information: \t");
-			printByteArray(dataPackage);
+			printByteArray(messageIncludingMeta);
 			
 			// Excludes meta information
-			System.out.println("Sending: \t" + getSending(dataPackage));
-			System.out.println("Receiving: \t" + getReceiving(dataPackage));
+			System.out.println("Sending: \t" + getSending(messageIncludingMeta));
+			System.out.println("Receiving: \t" + getReceiving(messageIncludingMeta));
 		}
 	}
 	

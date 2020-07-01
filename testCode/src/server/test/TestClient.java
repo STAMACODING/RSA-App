@@ -22,15 +22,15 @@ public class TestClient {
 		Server.RECEIVE_PORT = s.nextInt();
 		System.out.print("Server ip: ");
 		Server.IP = s.next();
+		System.out.print("Setup your id: ");
+		Client.ID = s.nextByte();
 		System.out.println("------------------------------------------------------------");
 		
 		System.out.print("Do you want to send a message? (y/n): ");
-		String input = s.next(), message = "", ipReceiving = "";
+		String input = s.next(), message = "";
+		byte idReceiving = 0;
 		
 		if(input.equals("y")) {
-			//byte[] message = new byte[] {12, 23, 23, 34, 1};
-			
-			
 			System.out.print("Type in the message: ");
 			try {
 				message = new BufferedReader(new InputStreamReader(System.in)).readLine();
@@ -38,8 +38,8 @@ public class TestClient {
 				e.printStackTrace();
 			}
 			
-			System.out.print("Type in the receiver's local ip address: ");
-			ipReceiving = s.next();
+			System.out.print("Type in the receiver's id: ");
+			idReceiving = s.nextByte();
 		}
 	
 
@@ -48,6 +48,6 @@ public class TestClient {
 		System.out.println("------------------------------------------------------------");
 		
 		Client.run();
-		if(input.equals("y")) SendQueue.add(Utils.Meta.addMetaToMessage(Utils.Ip.getIpAdress(), ipReceiving, message.getBytes()));
+		if(input.equals("y")) SendQueue.add(Utils.Meta.addMetaToMessage(Client.ID, idReceiving, message.getBytes()));
 	}
 }

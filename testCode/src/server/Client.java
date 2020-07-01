@@ -4,6 +4,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 
 public class Client {
 	public static String clientName = "client";
+	public static byte ID = -1;
 
 	public static void run() {
 		Runnable receive = new ReceiveRunnable(false);

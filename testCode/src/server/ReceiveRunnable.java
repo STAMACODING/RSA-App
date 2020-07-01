@@ -1,6 +1,7 @@
 package server;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -78,6 +79,9 @@ public class ReceiveRunnable implements Runnable{
 						
 						Logger.debug(ReceiveRunnable.class.getSimpleName(), "Querying messages from the send server");
 						// Read message from server
+						DataOutputStream outputStream = new DataOutputStream(connectionToServer.getOutputStream());
+						outputStream.writeByte(Client.ID);
+						
 						DataInputStream inputStream = new DataInputStream(connectionToServer.getInputStream());
 						byte[] messageIncludingMeta = null;
 						try {

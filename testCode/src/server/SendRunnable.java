@@ -1,5 +1,6 @@
 package server;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -47,9 +48,11 @@ public class SendRunnable implements Runnable{
 					Socket connectionFromClient = sendServer.accept();
 					Logger.debug(SendRunnable.class.getSimpleName(), "Received client request");
 					if(!SendQueue.isEmpty()) {
-						String receivingIp = connectionFromClient.getLocalAddress().getHostAddress();
-						ArrayList<byte[]> messagesToSend = SendQueue.getMessages(receivingIp);
-						Logger.debug(SendRunnable.class.getSimpleName(), "Searching for messages that belong to the client (" + receivingIp + ")");
+						DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
+						byte clientId = inputStream.readByte();
+						
+						ArrayList<byte[]> messagesToSend = SendQueue.getMessages(clientId);
+						Logger.debug(SendRunnable.class.getSimpleName(), "Searching for messages that belong to the client (" + clientId + ")");
 						DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
 						
 						// Send one message to the receiver TODO send multiple messages to the receiver

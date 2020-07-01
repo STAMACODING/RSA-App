@@ -39,11 +39,11 @@ public class SendQueue {
 		return queue.size() == 0;
 	}
 	
-	public static ArrayList<byte[]> getMessages(String receivingIp){
+	public static ArrayList<byte[]> getMessages(byte clientId){
 		ArrayList<byte[]> messages = new ArrayList<byte[]>();
 		for(int i = 0; i<queue.size(); i++) {
-			String receivingIpOfMessage = Utils.Meta.getReceiving(queue.get(i));
-			if(receivingIpOfMessage.equals(receivingIp)) messages.add(queue.get(i));
+			byte receivingIdOfMessage = Utils.Meta.getReceiving(queue.get(i));
+			if(receivingIdOfMessage == clientId) messages.add(queue.get(i));
 		}
 		return messages;
 	}
