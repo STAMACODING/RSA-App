@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 
@@ -83,17 +84,17 @@ public class ReceiveRunnable implements Runnable{
 						outputStream.writeByte(Client.ID);
 						
 						DataInputStream inputStream = new DataInputStream(connectionToServer.getInputStream());
-						byte[] messageIncludingMeta = null;
+						byte[] messagesIncludingMeta = null;
 						try {
 							int length = inputStream.readInt();
 							if(length!=0) {
-								messageIncludingMeta = new byte[length];
-							    inputStream.readFully(messageIncludingMeta, 0, messageIncludingMeta.length);
+								messagesIncludingMeta = new byte[length];
+							    inputStream.readFully(messagesIncludingMeta, 0, messagesIncludingMeta.length);
 							    
-							    Logger.debug(Server.class.getSimpleName(), "Successfully received new message from the send server");
+							    ArrayList<byte[]> messages = SendQueue.byteArrayToMessageList(messagesIncludingMeta);
+							    Logger.debug(Server.class.getSimpleName(), "Successfully received " + messages.size() + " new message(s) from the send server");
 							}
 						}catch(Exception e) {
-							e.printStackTrace();
 							Logger.debug(ReceiveRunnable.class.getSimpleName(), "No new messages available");
 						}
 						connectionToServer.close();

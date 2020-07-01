@@ -51,16 +51,18 @@ public class SendRunnable implements Runnable{
 						DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
 						byte clientId = inputStream.readByte();
 						
-						ArrayList<byte[]> messagesToSend = SendQueue.getMessages(clientId);
+						ArrayList<byte[]> messagesToSendAsList = SendQueue.pollMessages(clientId);
+						int messageCount = messagesToSendAsList.size();
+						byte[] messagesToSend = SendQueue.messageListToByteArray(messagesToSendAsList);
 						Logger.debug(SendRunnable.class.getSimpleName(), "Searching for messages that belong to the client (" + clientId + ")");
 						DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
 						
 						// Send one message to the receiver TODO send multiple messages to the receiver
-						if(messagesToSend.size() > 0) {
-							outputStream.writeInt(messagesToSend.get(0).length);
-							outputStream.write(messagesToSend.get(0));
+						if(messageCount > 0) {
+							outputStream.writeInt(messagesToSend.length);
+							outputStream.write(messagesToSend);
 							
-							Logger.debug(SendRunnable.class.getSimpleName(), "Successfully sent message to a client");
+							Logger.debug(SendRunnable.class.getSimpleName(), "Successfully sent " + messageCount + " message(s) to a client");
 						}{
 							Logger.debug(SendRunnable.class.getSimpleName(), "Found no message!");
 						}

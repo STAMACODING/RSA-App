@@ -1,9 +1,14 @@
 package server;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
+
+import com.stamacoding.rsaApp.log.logger.Logger;
 
 public class Utils {
 	public static class Meta{
@@ -85,5 +90,34 @@ public class Utils {
 				return null;
 			}
 		}
+	}
+	
+	public static class Serialization{
+		
+		public static byte[] serialize(Object obj){
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			ObjectOutputStream os;
+			try {
+				os = new ObjectOutputStream(out);
+				os.writeObject(obj);
+			} catch (Exception e) {
+				Logger.error(Serialization.class.getSimpleName(), "Failed to serialize object!");
+				return null;
+			}
+			return out.toByteArray();
+		}
+		
+		public static Object deserialize(byte[] data){
+			ByteArrayInputStream in = new ByteArrayInputStream(data);
+			ObjectInputStream is = null;
+			try {
+				is = new ObjectInputStream(in);
+				return is.readObject();
+			} catch (Exception e) {
+				Logger.error(Serialization.class.getSimpleName(), "Failed to serialize object!");
+				return null;
+			}
+		}
+		
 	}
 }
