@@ -34,11 +34,11 @@ public class DBManager implements MessageDBInterface{
 		
 	}
 	
-	public void addMessageToDb(Message m) {
+	public void addMessageToDb(UnstoredMessage unstoredMessage) {
 		
 	}
 	
-	public void updateMessage(Message mUpdatedMessage) {
+	public void updateMessage(Message updatedMessage) {
 		
 	}
 	

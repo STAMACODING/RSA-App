@@ -1,7 +1,7 @@
 package server;
 
 public interface MessageDBInterface {
-	public void addMessageToDb(Message m); 
-	public void updateMessage(Message mUpdatedMessage);
+	public void addMessageToDb(UnstoredMessage unstoredMessage); 
+	public void updateMessage(Message updatedMessage);
 	public Message[] getMessagesFromDb();
 }
