@@ -3,12 +3,14 @@ package server.test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Date;
 import java.util.Scanner;
 
-import server.Client;
-import server.SendQueue;
-import server.Server;
-import server.Utils;
+import server.NetworkService;
+import server.config.NetworkConfig;
+import server.config.Type;
+import server.services.transferServices.TransferMessage;
+import server.services.transferServices.sendService.SendQueue;
 
 public class TestClient {
 	public static void main(String[] args) {
@@ -16,14 +18,19 @@ public class TestClient {
 		System.out.println("RSA-App Test Client BETA");
 		System.out.println("------------------------------------------------------------");
 		Scanner s = new Scanner(System.in);
+		
 		System.out.print("Server send port: ");
-		Server.SEND_PORT = s.nextInt();
+		NetworkConfig.Server.SEND_PORT = s.nextInt();
+		
 		System.out.print("Server receive port: ");
-		Server.RECEIVE_PORT = s.nextInt();
+		NetworkConfig.Server.RECEIVE_PORT = s.nextInt();
+		
 		System.out.print("Server ip: ");
-		Server.IP = s.next();
+		NetworkConfig.Server.IP = s.next();
+		
 		System.out.print("Setup your id: ");
-		Client.ID = s.nextByte();
+		NetworkConfig.Client.ID = s.nextByte();
+		
 		System.out.println("------------------------------------------------------------");
 		
 		System.out.print("Do you want to send a message? (y/n): ");
@@ -47,7 +54,13 @@ public class TestClient {
 		s.close();
 		System.out.println("------------------------------------------------------------");
 		
-		Client.run();
-		if(input.equals("y")) SendQueue.add(Utils.Meta.addMetaToMessage(Client.ID, idReceiving, message.getBytes()));
+		NetworkConfig.TYPE = Type.CLIENT;
+		NetworkService.getInstance().start();
+		if(input.equals("y")) {
+			for(int i=0; i<200; i++) {
+				TransferMessage t = new TransferMessage(message.getBytes(), NetworkConfig.Client.ID, idReceiving, new Date(System.currentTimeMillis()));
+				SendQueue.add(t);
+			}
+		}
 	}
 }

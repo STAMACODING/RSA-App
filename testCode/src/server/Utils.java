@@ -1,41 +1,34 @@
 package server;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
-
-import com.stamacoding.rsaApp.log.logger.Logger;
 
 public class Utils {
 	public static class Meta{
 		/**
-		 * Gets the IPv4 address of the sending device.
-		 * @param dataPackage data package holding meta information and the encrypted message
-		 * @return the IPv4 address of the sending device
+		 * Gets the id of the sending device.
+		 * @param messageIncludingMeta data package holding meta information and the plain message
+		 * @return the id of the sending device
 		 */
 		public static byte getSending(byte[] messageIncludingMeta) {
 			return messageIncludingMeta[0];
 		}
 		
 		/**
-		 * Gets the IPv4 address of the receiving device.
-		 * @param dataPackage data package holding meta information and the encrypted message
-		 * @return the IPv4 address of the receiving device
+		 * Gets the id of the receiving device.
+		 * @param messageIncludingMeta message holding meta information and the plain message
+		 * @return the id of the receiving device
 		 */
 		public static byte getReceiving(byte[] messageIncludingMeta) {
 			return messageIncludingMeta[1];
 		}
 		
 		/**
-		 * Adds the meta information to the encrypted message.
-		 * @param sendingIpAdress IP address of the sending device
-		 * @param receivingIpAdress IP address of the receiving device
-		 * @param encryptedMessage encrypted message
-		 * @return array holding meta information and the encrypted message
+		 * Adds the meta information to the plain message.
+		 * @param sendingClientId id of the sending device
+		 * @param receivingClientId id of the receiving device
+		 * @param message the plain message
+		 * @return byte array holding meta information and the plain message
 		 */
 		public static byte[] addMetaToMessage(byte sendingClientId, byte receivingClientId, byte[] message) {
 			byte[] messageIncludingMeta = new byte[message.length + 2];
@@ -59,29 +52,13 @@ public class Utils {
 			}
 			System.out.println("]");
 		}
-		
-		public static void main(String[] args) {
-			// Example
-			
-			byte idSending = 23;
-			byte idReceiving = 11;
-			byte[] message = {22, 11, 23, 11, 0, 3, 3, 23, 12, 12, 60, 90, 11, 10};
-			
-			// Adds meta information to the encrypted message
-			byte[] messageIncludingMeta = addMetaToMessage(idSending, idReceiving, message);
-			
-			System.out.println("encrypted message: \t");
-			printByteArray(message);
-			System.out.println("encrypted message + meta information: \t");
-			printByteArray(messageIncludingMeta);
-			
-			// Excludes meta information
-			System.out.println("Sending: \t" + getSending(messageIncludingMeta));
-			System.out.println("Receiving: \t" + getReceiving(messageIncludingMeta));
-		}
 	}
 	
 	public static class Ip{
+		/**
+		 * Gets the current device's local ip address.
+		 * @return
+		 */
 		public static String getIpAdress() {
 			try {
 				return Inet4Address.getLocalHost().getHostAddress();
@@ -92,32 +69,10 @@ public class Utils {
 		}
 	}
 	
-	public static class Serialization{
+	public static class Convert{
 		
-		public static byte[] serialize(Object obj){
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			ObjectOutputStream os;
-			try {
-				os = new ObjectOutputStream(out);
-				os.writeObject(obj);
-			} catch (Exception e) {
-				Logger.error(Serialization.class.getSimpleName(), "Failed to serialize object!");
-				return null;
-			}
-			return out.toByteArray();
+		public static String byteArrayToString(byte[] byteMessage) {
+			return "Placeholder-Text";
 		}
-		
-		public static Object deserialize(byte[] data){
-			ByteArrayInputStream in = new ByteArrayInputStream(data);
-			ObjectInputStream is = null;
-			try {
-				is = new ObjectInputStream(in);
-				return is.readObject();
-			} catch (Exception e) {
-				Logger.error(Serialization.class.getSimpleName(), "Failed to serialize object!");
-				return null;
-			}
-		}
-		
 	}
 }

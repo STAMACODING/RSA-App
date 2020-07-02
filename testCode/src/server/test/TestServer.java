@@ -2,8 +2,10 @@ package server.test;
 
 import java.util.Scanner;
 
-import server.Server;
+import server.NetworkService;
 import server.Utils;
+import server.config.NetworkConfig;
+import server.config.Type;
 
 public class TestServer {
 	public static void main(String[] args) {
@@ -13,15 +15,17 @@ public class TestServer {
 		System.out.println("------------------------------------------------------------");
 		
 		System.out.print("Server send port: ");
-		Server.SEND_PORT = s.nextInt();
+		NetworkConfig.Server.SEND_PORT = s.nextInt();
 		
 		System.out.print("Server receive port: ");
-		Server.RECEIVE_PORT = s.nextInt();
+		NetworkConfig.Server.RECEIVE_PORT = s.nextInt();
 		
 		s.close();
 		System.out.println("------------------------------------------------------------");
 		
-		Server.IP = Utils.Ip.getIpAdress();
-		Server.run();
+		NetworkConfig.Server.IP = Utils.Ip.getIpAdress();
+		NetworkConfig.TYPE = Type.SERVER;
+		
+		NetworkService.getInstance().start();
 	}
 }
