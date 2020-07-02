@@ -57,8 +57,9 @@ public class Logger {
 	{
 		if (OutputType != outputType.NONE)
 		{
-			String logMessage = "[" + Debug.Time() + "]" + /*"[" + status + "]" +*/ /*"[" + client/server + "]" +*/ "[" + className + "]" + "[" + Type.toString() + "]" + ": "+ "[" + message + "]";
-
+			//Struktur für zukünftiges Arbeiten: "[" + Debug.Time() + "]" + /*"[" + status + "]" +*/ /*"[" + client/server + "]" +*/ "[" + className + "]" + "[" + Type.toString() + "]" + ": "+ "[" + message + "]";
+			String logMessage = String.format("[%s][%-25s][%-7s]:[%s]", Debug.TimeFormat(), className, Type.toString(), message);
+			
 			if (OutputType == outputType.onlyConsole || OutputType == outputType.ALL) {
 				printToConsole(logMessage);
 			}
