@@ -2,6 +2,8 @@ package server.services.databaseServices;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 
@@ -37,9 +39,14 @@ public class DBManager{
 		
 		try {
 			Class.forName("org.sqlite.JDBC");
-			Connection c = DriverManager.getConnection(url, userName, password);
+			Connection con = DriverManager.getConnection(url, userName, password);
 			Logger.debug(this.getClass().getSimpleName(), "Connectin to ChatHistory DB succesful");
 			
+			Statement state = con.createStatement();
+			Logger.debug(this.getClass().getSimpleName(), "Statement instance initiated");
+			
+			ResultSet rs = state.executeQuery("SELECT * from Chats");
+			//getMessagesFromDb(state);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -56,12 +63,28 @@ public class DBManager{
 		
 	}
 	
-	public void updateMessage(DatabaseMessage updatedMessage) {
-		
+	public void updateMessage(DatabaseMessage updatedMessage, Statement st) {
+		Statement state = st;
+		try {
+			ResultSet rs = state.executeQuery("SELECT * from Test");
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			Logger.debug(this.getClass().getSimpleName(),"Failed to get Messages from DB due to failed execution of Query");
+		}
 	}
 	
 	public DatabaseMessage[] getMessagesFromDB() {
 		return null;
+	}
+	
+	public static void main(String [] args) {
+		try {
+			DBManager.getInstance().setUpConnection();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 }
