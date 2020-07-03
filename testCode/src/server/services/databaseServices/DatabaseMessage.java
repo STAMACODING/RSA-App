@@ -40,20 +40,26 @@ public class DatabaseMessage implements Serializable{
 	 */
 	private int id; 
 	
+	/**
+	 * the message's status
+	 */
+	private byte status;
+	
 	public DatabaseMessage(TransferMessage m) {
 		this.textMessage = Utils.Convert.byteArrayToString(m.getByteMessage());
 		this.date = m.getDate();
 		this.receivingId = m.getReceivingId();
 		this.sendingId = m.getSendingId();
-		setId(id);
+		setStatus((byte) 0);
 	}
 	
-	public DatabaseMessage(int id, String textMessage, byte sendingId, byte receivingId, Date date) {
+	public DatabaseMessage(int id, String textMessage, byte sendingId, byte receivingId, Date date, byte status) {
 		this.textMessage = textMessage;
 		this.date = date;
 		this.receivingId = receivingId;
 		this.sendingId = sendingId;
 		setId(id);
+		setStatus(status);
 	}
 	
 	/**
@@ -102,5 +108,21 @@ public class DatabaseMessage implements Serializable{
 	 */
 	protected void setId(int id) {
 		this.id = id;
+	}
+
+	/**
+	 * Gets the message's status.
+	 * @return the message's status
+	 */
+	public byte getStatus() {
+		return status;
+	}
+	
+	/**
+	 * Sets the message's status.
+	 * @param status the message's status
+	 */
+	public void setStatus(byte status) {
+		this.status = status;
 	}
 }
