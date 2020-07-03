@@ -26,7 +26,7 @@ public class ChatHistoryService extends Service{
 	public void run() {
 		super.run();
 		while(!requestedShutDown()) {
-			setMessages(DBManager.getInstance().getAllMessages());
+			setMessages(DBManager.getInstance().getMessagesFromDB());
 			setLastUpdate(new Date(System.currentTimeMillis()));
 			
 			Logger.debug(this.getClass().getSimpleName(), "Successfully synchonized message array with database");
