@@ -1,8 +1,10 @@
 package server.services.databaseServices;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
@@ -31,26 +33,24 @@ public class DBManager{
 	}
 	
 
-	private final String url = "jdbc:sqlite:ChatHistory.Test.db";
+	private final String url = "jdbc:sqlite:DB/UserDatabase.db";
 	private final String userName = "root";
 	private final String password = "root";
 
-	public void setUpConnection() throws Exception{
+	public Connection connect() throws Exception{
 		
+		Connection con = null;
 		try {
 			Class.forName("org.sqlite.JDBC");
-			Connection con = DriverManager.getConnection(url, userName, password);
-			Logger.debug(this.getClass().getSimpleName(), "Connectin to ChatHistory DB succesful");
+			con = DriverManager.getConnection(url, userName, password);
+			Logger.debug(this.getClass().getSimpleName(), "Connectin to Connection to DB/UserDatabse.db succesful");
 			
-			Statement state = con.createStatement();
-			Logger.debug(this.getClass().getSimpleName(), "Statement instance initiated");
+			return con;
 			
-			ResultSet rs = state.executeQuery("SELECT * from Chats");
-			//getMessagesFromDb(state);
-			
-		}catch(Exception e) {
+		}catch(ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
-			Logger.debug(this.getClass().getSimpleName(), "Connection to ChatHistory DB failed");
+			Logger.debug(this.getClass().getSimpleName(), "Connection to DB/UserDatabse.db failed");
+			return con;
 		}
 		
 	}
@@ -63,25 +63,97 @@ public class DBManager{
 		
 	}
 	
-	public void updateMessage(DatabaseMessage updatedMessage, Statement st) {
-		Statement state = st;
+	public void updateMessage(DatabaseMessage updatedMessage) {
+		
+	}
+	
+	public DatabaseMessage[] getMessagesFromDB() {
+		
 		try {
-			ResultSet rs = state.executeQuery("SELECT * from Test");
+			Connection con = DBManager.getInstance().connect();
 			
+			String query = "SELECT * from ChatHistory";
+			
+			Statement state = con.createStatement();
+			Logger.debug(this.getClass().getSimpleName(), "Statement instance initiated");
+			
+			ResultSet rs = state.executeQuery(query);
+			Logger.debug(this.getClass().getSimpleName(), "Query executed succesfully");
+			
+			int messageId;
+			Date date;
+			String message;
+			int sendingId;
+			int status;
+			
+			while(rs.next()) {
+				messageId = rs.getInt("messageId");
+				date = new Date(rs.getLong("time"));	
+				message = rs.getString("message");
+				sendingId = rs.getInt("sendingID");
+				status = rs.getInt("status");
+	
+			}
+			//printMessageFromDB(rs);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
 			Logger.debug(this.getClass().getSimpleName(),"Failed to get Messages from DB due to failed execution of Query");
 		}
-	}
-	
-	public DatabaseMessage[] getMessagesFromDB() {
+		
 		return null;
 	}
 	
+	public void printMessageFromDB(ResultSet rs) {
+		int messageId;
+		Date date;
+		String message;
+		int sendingId;
+		int status;
+		
+		System.out.print("messageId");
+		System.out.print("|");
+		System.out.print("date");
+		System.out.print("|");
+		System.out.print("message");
+		System.out.print("|");
+		System.out.print("sendingId");
+		System.out.print("|");
+		System.out.print("status");
+		System.out.println("");
+		
+		try {
+			while(rs.next()) {
+				messageId = rs.getInt("messageId");
+			
+				 date = new Date(rs.getLong("time"));
+				
+				message = rs.getString("message");
+				sendingId = rs.getInt("sendingID");
+				status = rs.getInt("status");
+				
+			
+				System.out.print(messageId);
+				System.out.print("|");
+				System.out.print(date);
+				System.out.print("|");
+				System.out.print(message);
+				System.out.print("|");
+				System.out.print(sendingId);
+				System.out.print("|");
+				System.out.print(status);
+				System.out.println("");
+			}
+		}catch(Exception e) {
+				e.printStackTrace();
+		}
+		
+	}
+	
+	
 	public static void main(String [] args) {
 		try {
-			DBManager.getInstance().setUpConnection();
+			DatabaseMessage[] messges = DBManager.getInstance().getMessagesFromDB();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
