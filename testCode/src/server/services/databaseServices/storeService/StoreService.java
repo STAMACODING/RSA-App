@@ -1,5 +1,7 @@
 package server.services.databaseServices.storeService;
 
+import com.stamacoding.rsaApp.log.logger.Logger;
+
 import server.services.Service;
 import server.services.databaseServices.DBManager;
 import server.services.databaseServices.DatabaseMessage;
@@ -37,8 +39,11 @@ public class StoreService extends Service{
 		while(!requestedShutDown()) {
 			if(!StoreQueue.isEmpty()) {
 				DatabaseMessage m = StoreQueue.poll();
+				Logger.debug(this.getClass().getSimpleName(), "Polled new message from the StoreQueue");
 				DBManager.getInstance().addMessageToDB(m);
+				Logger.debug(this.getClass().getSimpleName(), "Stored new message in the StoreQueue");
 			}
 		}
+		Logger.debug(this.getClass().getSimpleName(), "Shut down " + getName());
 	}
 }

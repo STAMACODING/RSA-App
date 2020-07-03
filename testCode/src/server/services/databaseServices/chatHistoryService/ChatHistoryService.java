@@ -55,13 +55,14 @@ public class ChatHistoryService extends Service{
 			setMessages(DBManager.getInstance().getMessagesFromDB());
 			setRecentUpdate(new Date(System.currentTimeMillis()));
 			
-			Logger.debug(this.getClass().getSimpleName(), "Successfully synchonized message array with database");
+			Logger.debug(this.getClass().getSimpleName(), "Successfully synchronized message array with database");
 			try {
 				Thread.sleep(NetworkConfig.Client.UPDATE_CHAT_HISTORY_INTERVAL);
 			} catch (InterruptedException e) {
 				Logger.error(this.getClass().getSimpleName(), "chat-history-service interrupted");
 			}
 		}
+		Logger.debug(this.getClass().getSimpleName(), "Shut down " + getName());
 	}
 	
 	/**

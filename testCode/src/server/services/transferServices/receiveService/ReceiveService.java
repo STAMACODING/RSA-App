@@ -53,10 +53,13 @@ public class ReceiveService extends Service{
 	public void run() {
 		super.run();
 		if(NetworkConfig.TYPE == Type.CLIENT) {
+			Logger.debug(this.getClass().getSimpleName(), "Running on client");
 			runClient();
 		}else if(NetworkConfig.TYPE == Type.SERVER) {
+			Logger.debug(this.getClass().getSimpleName(), "Running on server");
 			runServer();
 		}
+		Logger.debug(this.getClass().getSimpleName(), "Shut down " + getName());
 	}
 
 	/**
@@ -78,7 +81,7 @@ public class ReceiveService extends Service{
 				// Accept message from client and if this is a server forward it to another client
 				try {
 					Socket connectionFromClient = receiveServer.accept();
-					Logger.debug(this.getClass().getSimpleName(), "Receiving new message from a client");
+					Logger.debug(this.getClass().getSimpleName(), "Receiving a new message from a client");
 					DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
 					
 					// Check if message is not empty
@@ -123,7 +126,7 @@ public class ReceiveService extends Service{
 					Socket connectionToServer = new Socket(NetworkConfig.Server.IP, NetworkConfig.Server.SEND_PORT);
 					Logger.debug(this.getClass().getSimpleName(), "Successfully connected to the send server");
 					
-					Logger.debug(this.getClass().getSimpleName(), "Querying messages from the send server");
+					Logger.debug(this.getClass().getSimpleName(), "Querying messages from the send server using the client id (" + NetworkConfig.Client.ID + ")");
 					// Read message from server
 					DataOutputStream outputStream = new DataOutputStream(connectionToServer.getOutputStream());
 					outputStream.writeByte(NetworkConfig.Client.ID);

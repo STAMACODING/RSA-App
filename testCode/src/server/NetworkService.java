@@ -1,5 +1,7 @@
 package server;
 
+import com.stamacoding.rsaApp.log.logger.Logger;
+
 import server.config.NetworkConfig;
 import server.config.Type;
 import server.services.Service;
@@ -62,14 +64,18 @@ public class NetworkService extends Service{
 		
 		while(!requestedShutDown()) {}
 		
+		Logger.debug(this.getClass().getSimpleName(), "Shutting down " + getName());
+		
 		SendService.getInstance().requestShutdown();
 		ReceiveService.getInstance().requestShutdown();
 		if(NetworkConfig.TYPE == Type.CLIENT) StoreService.getInstance().requestShutdown();
 		if(NetworkConfig.TYPE == Type.CLIENT) ChatHistoryService.getInstance().requestShutdown();
+		
+		Logger.debug(this.getClass().getSimpleName(), "Shut down " + getName());
 	}
 	
 	public static void main(String[] args) {
-		NetworkConfig.setup(Type.CLIENT, (byte) 12, "127.0.0.1", 1001, 1002);
+		NetworkConfig.setup(Type.SERVER, (byte) 12, "127.0.0.1", 1001, 1002);
 		NetworkService.getInstance().start();
 	}
 

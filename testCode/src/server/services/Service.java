@@ -72,6 +72,7 @@ public abstract class Service extends Thread{
 	 * Requests the service to get shutdown.
 	 */
 	public final void requestShutdown() {
+		Logger.debug(this.getClass().getSimpleName(), getName() + " received shutdown request");
 		this.requestedShutdown = true;
 	}
 	
