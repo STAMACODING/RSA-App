@@ -4,7 +4,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 
 /**
  * <p>A service is basically a thread running some code until someone requests it to shutdown. 
- * To request a service to get shutdown use {@link #requestShutDown()}.
+ * To request a service to get shutdown use {@link requestShutdown()}.
  * To check if a service is still running use {@link #isRunning()}.</p>
  * <p>
  * To create your own service do the following:
@@ -17,7 +17,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
  * 		Remember to replace <code>CustomService</code> with your service's class name and <code>"custom-name"</code> with any
  * 		desired name of your service.
  * 	<br>
- * 	<code><pre>
+ * 	<pre><code>
  * 	private static volatile CustomService singleton = new SendService();
  *
  *	private CustomService() {
@@ -27,14 +27,14 @@ import com.stamacoding.rsaApp.log.logger.Logger;
  *	public static CustomService getInstance() {
  *		return singleton;
  *	}
- *  </pre></code>
+ *  </code></pre>
  *	</li>
  * 	<li>Override {@link #run()} to change what the service should do. Remember to call <code>super.run()</code> before doing your own stuff.</li>
- *  <ul>
- *  	<li>Remember also to implement the <bold>shutdown-feature</bold>. If {@link #requestedShutDown()} returns <code>true</code> there service should get shutdown. E.g. you
+ *  <li><ul>
+ *  	<li>Remember also to implement the <b>shutdown-feature</b>. If {@link #requestedShutDown()} returns <code>true</code> there service should get shutdown. E.g. you
  * 		can implement this feature by using <code>while(!requestedShutDown()){ ... }</code> instead of <code>while(true){ ... }</code>. This would automatically
  *		end the ongoing while loop if a shutdown gets requested. </li>
- *  </ul>
+ *  </ul></li>
  *  <li>Now you can start your own service by calling <code>CustomService.getInstance().start()</code>. Easy, isn't it?</li>
  * </ol>
  */

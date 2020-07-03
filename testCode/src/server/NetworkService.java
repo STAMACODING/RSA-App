@@ -20,12 +20,22 @@ import server.services.transferServices.sendService.SendService;
  * </ul>
  */
 public class NetworkService extends Service{
+	/**
+	 * the object's only instance (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>).
+	 */
 	private static volatile NetworkService singleton = new NetworkService();
 
+	/**
+	 * the object's private constructor (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>)
+	 */
 	private NetworkService() {
 		super("network");
 	}
 	
+	/**
+	 * Gets the object's only instance (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>).
+	 * @return the object's only instance
+	 */
 	public static NetworkService getInstance() {
 		return singleton;
 	}

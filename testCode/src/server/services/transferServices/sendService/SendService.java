@@ -15,15 +15,25 @@ import server.services.Service;
 import server.services.transferServices.TransferMessage;
 
 /**
- * Service sending all messages, that are in the {@link SendQueue}.
+ * {@link Service} sending all messages, that are in the {@link SendQueue}.
  */
 public class SendService extends Service{
+	/**
+	 * the object's only instance (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>).
+	 */
 	private static volatile SendService singleton = new SendService();
 
+	/**
+	 * the object's private constructor (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>)
+	 */
 	private SendService() {
 		super("send");
 	}
 	
+	/**
+	 * Gets the object's only instance (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>).
+	 * @return the object's only instance
+	 */
 	public static SendService getInstance() {
 		return singleton;
 	}

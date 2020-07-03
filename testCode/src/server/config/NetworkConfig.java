@@ -1,6 +1,8 @@
 package server.config;
 
 import server.NetworkService;
+import server.services.databaseServices.chatHistoryService.ChatHistoryService;
+import server.services.transferServices.receiveService.ReceiveService;
 
 /**
  * Class containing all configurations needed to start
@@ -24,12 +26,12 @@ public class NetworkConfig {
 		public static byte ID = -1;
 		
 		/**
-		 * 
+		 * the time the {@link ReceiveService} waits before querying new messages from the server
 		 */
 		public static long QUERY_MESSAGES_INTERVAL = 10000;
 		
 		/**
-		 * 
+		 * the time the {@link ChatHistoryService} waits before updating the messages
 		 */
 		public static long UPDATE_CHAT_HISTORY_INTERVAL = 2000;
 	}

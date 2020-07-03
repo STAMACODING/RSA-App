@@ -1,6 +1,5 @@
 package server.services.databaseServices;
 
-import java.io.Serializable;
 import java.sql.Date;
 
 import server.Utils;
@@ -9,11 +8,7 @@ import server.services.transferServices.TransferMessage;
 /**
  * An instance of this class represents a decoded message, that is already stored or gets stored in the chat database.
  */
-public class DatabaseMessage implements Serializable{
-	/**
-	 * Necessary for serializing this object (needed to send and receive messages as byte arrays).
-	 */
-	private static final long serialVersionUID = -1165829653712536630L;
+public class DatabaseMessage{
 	
 	/**
 	 * the id of the client that sent or is sending this message
@@ -45,6 +40,11 @@ public class DatabaseMessage implements Serializable{
 	 */
 	private byte status;
 	
+	/**
+	 * Creates an new instance of the {@link DatabaseMessage} using a {@link TransferMessage}. The message's status
+	 * is set to 0.
+	 * @param m the TransferMessage
+	 */
 	public DatabaseMessage(TransferMessage m) {
 		this.textMessage = Utils.Convert.byteArrayToString(m.getByteMessage());
 		this.date = m.getDate();
@@ -52,7 +52,16 @@ public class DatabaseMessage implements Serializable{
 		this.sendingId = m.getSendingId();
 		setStatus((byte) 0);
 	}
-	
+
+	/**
+	 * Creates an new instance of the {@link DatabaseMessage}.
+	 * @param id the message's id
+	 * @param textMessage the message's textual representation
+	 * @param sendingId the id of the client that sent or is sending this message
+	 * @param receivingId the id of the client that received this message
+	 * @param date the time the message was originally created
+	 * @param status the message's status
+	 */
 	public DatabaseMessage(int id, String textMessage, byte sendingId, byte receivingId, Date date, byte status) {
 		this.textMessage = textMessage;
 		this.date = date;

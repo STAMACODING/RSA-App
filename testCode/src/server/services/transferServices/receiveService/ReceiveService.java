@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import com.stamacoding.rsaApp.log.logger.Logger;
 
 import server.config.NetworkConfig;
-import server.config.Type;
 import server.config.NetworkConfig.Client;
 import server.config.NetworkConfig.Server;
+import server.config.Type;
 import server.services.Service;
 import server.services.databaseServices.DatabaseMessage;
 import server.services.databaseServices.storeService.StoreQueue;
@@ -21,15 +21,25 @@ import server.services.transferServices.sendService.SendQueue;
 import server.services.transferServices.sendService.SendService;
 
 /**
- * Service receiving messages from the server or the clients.
+ * {@link Service} receiving messages from the server or the clients.
  */
 public class ReceiveService extends Service{
+	/**
+	 * the object's only instance (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>).
+	 */
 	private static volatile ReceiveService singleton = new ReceiveService();
 
+	/**
+	 * the object's private constructor (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>)
+	 */
 	private ReceiveService() {
 		super("receive");
 	}
 	
+	/**
+	 * Gets the object's only instance (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>).
+	 * @return the object's only instance
+	 */
 	public static ReceiveService getInstance() {
 		return singleton;
 	}

@@ -6,6 +6,12 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 
 import server.services.databaseServices.DatabaseMessage;
 
+/**
+ * Queue for storing messages in the chat database. Only works if the {@link StoreService} is running.
+ * <ul>
+ * 	<li>Use {@link #add(DatabaseMessage)} to add messages that should be sent. </li>
+ * </ul>
+ */
 public class StoreQueue {
 	private static volatile LinkedList<DatabaseMessage> queue = new LinkedList<DatabaseMessage>();
 	

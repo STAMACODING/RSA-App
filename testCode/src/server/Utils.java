@@ -8,7 +8,7 @@ public class Utils {
 	public static class Ip{
 		/**
 		 * Gets the current device's local ip address.
-		 * @return
+		 * @return the current device's local ip address
 		 */
 		public static String getIpAdress() {
 			try {

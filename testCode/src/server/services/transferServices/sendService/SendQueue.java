@@ -13,7 +13,8 @@ import server.services.transferServices.TransferMessage;
 /**
  * Queue for sending messages. Only works if the {@link SendService} is running.
  * <ul>
- * 	<li>Use {@code #add(TransferMessage)}
+ * 	<li>Use {@link #add(TransferMessage)} to add messages that should be sent. </li>
+ * </ul>
  */
 public class SendQueue{
 	private static volatile LinkedList<TransferMessage> queue = new LinkedList<TransferMessage>();
