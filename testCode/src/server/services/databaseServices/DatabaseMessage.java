@@ -6,6 +6,9 @@ import java.sql.Date;
 import server.Utils;
 import server.services.transferServices.TransferMessage;
 
+/**
+ * An instance of this class represents a decoded message, that is already stored or gets stored in the chat database.
+ */
 public class DatabaseMessage implements Serializable{
 	/**
 	 * Necessary for serializing this object (needed to send and receive messages as byte arrays).

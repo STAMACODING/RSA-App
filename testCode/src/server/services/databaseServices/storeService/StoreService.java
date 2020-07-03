@@ -8,7 +8,7 @@ public class StoreService extends Service{
 	private static volatile StoreService singleton = new StoreService();
 
 	private StoreService() {
-		super("store-service");
+		super("store");
 	}
 	
 	public static StoreService getInstance() {

@@ -14,17 +14,25 @@ import server.config.Type;
 import server.services.Service;
 import server.services.transferServices.TransferMessage;
 
+/**
+ * Service sending all messages, that are in the {@link SendQueue}.
+ */
 public class SendService extends Service{
 	private static volatile SendService singleton = new SendService();
 
 	private SendService() {
-		super("send-service");
+		super("send");
 	}
 	
 	public static SendService getInstance() {
 		return singleton;
 	}
 	
+	/**
+	 * Runs the {@link SendService}.
+	 * @see #runServer()
+	 * @see #runClient()
+	 */
 	@Override
 	public void run() {
 		super.run();
@@ -35,6 +43,14 @@ public class SendService extends Service{
 		}
 	}
 
+	/**
+	 * Creates a {@link ServerSocket} waiting for clients requesting their messages from the server. 
+	 * <ol>
+	 * 	<li>If a client connects to the sever using a {@link Socket} and queries his messages, he tells the server his unique id.</li>
+	 * 	<li>After that using this id the server searches for messages in the {@link SendQueue} that concern the client.</li>
+	 * 	<li>If there are any messages the server sends them to the client using the {@link Socket}.</li>
+	 * </ol>
+	 */
 	private void runServer() {
 		ServerSocket sendServer = null;
 		try {
@@ -79,6 +95,14 @@ public class SendService extends Service{
 		}
 	}
 
+	/**
+	 * Sends a message from a client to the server if the {@link SendQueue} contains any entry.
+	 *  <ol>
+	 * 	<li>If the {@link SendQueue} is not empty, the oldest message gets polled.</li>
+	 * 	<li>After that the client connect to the server using a {@link Socket}.</li>
+	 * 	<li>Then the message gets sent.</li>
+	 * </ol>
+	 */
 	private void runClient() {
 		while(!requestedShutDown()) {
 			// If there is a message to be sent

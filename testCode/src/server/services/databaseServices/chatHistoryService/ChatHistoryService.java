@@ -12,7 +12,7 @@ public class ChatHistoryService extends Service{
 	private static volatile ChatHistoryService singleton = new ChatHistoryService();
 
 	private ChatHistoryService() {
-		super("chat-history-service");
+		super("chat-history");
 	}
 	
 	public static ChatHistoryService getInstance() {

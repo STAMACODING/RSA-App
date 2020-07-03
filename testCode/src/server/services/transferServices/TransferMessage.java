@@ -10,6 +10,9 @@ import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 
+/**
+ * An instance of this class represents a encrypted message, that gets transferred from client to server or from server to client.
+ */
 public class TransferMessage implements Serializable{
 	/**
 	 * Necessary for serializing this object (needed to send and receive messages as byte arrays).
@@ -75,6 +78,11 @@ public class TransferMessage implements Serializable{
 		return byteMessage;
 	}
 	
+	/**
+	 * Converts a {@link TransferMessage} to a byte array.
+	 * @param m the message to serialize
+	 * @return the message as byte array
+	 */
 	public static byte[] messageToByteArray(TransferMessage m) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream os;
@@ -88,6 +96,11 @@ public class TransferMessage implements Serializable{
 		return out.toByteArray();
 	}
 	
+	/**
+	 * Converts an {@link ArrayList} of {@link TransferMessage}s to a byte array.
+	 * @param l the list to serialize
+	 * @return the list as byte array
+	 */
 	public static byte[] messageListToByteArray(ArrayList<TransferMessage> l) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream os;
@@ -101,6 +114,11 @@ public class TransferMessage implements Serializable{
 		return out.toByteArray();
 	}
 	
+	/**
+	 * Converts a serialized {@link TransferMessage} back to a {@link TransferMessage} object. 
+	 * @param message the serialized message
+	 * @return the message as object
+	 */
 	public static TransferMessage byteArrayToMessage(byte[] message) {
 		ByteArrayInputStream in = new ByteArrayInputStream(message);
 		ObjectInputStream is = null;
@@ -113,6 +131,11 @@ public class TransferMessage implements Serializable{
 		}
 	}
 	
+	/**
+	 * Converts a serialized {@link ArrayList} of {@link TransferMessage}s back to an {@link ArrayList} object. 
+	 * @param messageList the serialized list
+	 * @return the list as object
+	 */
 	public static ArrayList<TransferMessage> byteArrayToMessageList(byte[] messageList) {
 		ByteArrayInputStream in = new ByteArrayInputStream(messageList);
 		ObjectInputStream is = null;

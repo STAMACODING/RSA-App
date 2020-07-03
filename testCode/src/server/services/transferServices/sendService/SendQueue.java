@@ -1,7 +1,6 @@
 package server.services.transferServices.sendService;
 
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -12,10 +11,9 @@ import server.config.Type;
 import server.services.transferServices.TransferMessage;
 
 /**
- * Queue for sending messages.
+ * Queue for sending messages. Only works if the {@link SendService} is running.
  * <ul>
- * 	<li>Use {@link #newSendRequest(byte[], Date, byte, byte)} to add message that should be send if you are a client.</li>
- * <li>Use {@link #newSendRequest(EncryptedMessage)} to add message that should be send if you are the server.</li>
+ * 	<li>Use {@code #add(TransferMessage)}
  */
 public class SendQueue{
 	private static volatile LinkedList<TransferMessage> queue = new LinkedList<TransferMessage>();
@@ -61,7 +59,7 @@ public class SendQueue{
 		getQueue().removeAll(messages);
 		return messages;
 	}
-
+	
 	private static LinkedList<TransferMessage> getQueue() {
 		return queue;
 	}
