@@ -1,4 +1,4 @@
-package src;
+package com.stamacoding.rsaApp.rsa.endecrypt;
 
 public class RSA {
 	
@@ -28,7 +28,7 @@ public class RSA {
 		for (int i = 0; i < bloecke.length; i++) {					//Text.length() = bloecke.length
 
 			bloecke[i] = schnellesPotenzieren(bloecke[i], e);			//schnelles Potenzieren
-			String string = hashtagInBinaerZahlUmwandeln(bloecke[i]), string_1 = "", string_2 = "";	//in Binärzahl umwandeln
+			String string = hashtagInBinaerZahlUmwandeln(bloecke[i]), string_1 = "", string_2 = "";	//in Binï¿½rzahl umwandeln
 			for (int z = 0; z < 16; z++) {							//bloecke[i] halbieren in zwei gleich lange (8 Zeichen lang) Zeichenketten
 				
 				if (z < 8) {										//die ersten 8 Zeichen von Bloecke[i]
@@ -38,10 +38,10 @@ public class RSA {
 					
 				}							
 			}
-			binaerzahl_1 = hashtagUmwandelnInDezimalzahl(string_1) - 128;	//Binärzahl in long-Format speichern
-			binaerzahl_2 = hashtagUmwandelnInDezimalzahl(string_2) - 128;	//Binärzahl in long-Format speichern
-			encryptedData[i*2] = (byte) (binaerzahl_1);				//Binärzahl in Byte-Array füllen
-			encryptedData[i*2+1] = (byte) (binaerzahl_2);			//Binärzahl in Byte-Array füllen
+			binaerzahl_1 = hashtagUmwandelnInDezimalzahl(string_1) - 128;	//Binï¿½rzahl in long-Format speichern
+			binaerzahl_2 = hashtagUmwandelnInDezimalzahl(string_2) - 128;	//Binï¿½rzahl in long-Format speichern
+			encryptedData[i*2] = (byte) (binaerzahl_1);				//Binï¿½rzahl in Byte-Array fï¿½llen
+			encryptedData[i*2+1] = (byte) (binaerzahl_2);			//Binï¿½rzahl in Byte-Array fï¿½llen
 			System.out.println("Bytes: " + encryptedData[i*2] + ", " + encryptedData[i*2+1]);
 		}
 	}
@@ -74,17 +74,17 @@ public class RSA {
 		String binaerzahl = "";
 				
 		dezimalzahl *= 2;
-		do {																	//damit die nächste Zeile nicht schon für den nächsten Schleifendurchlauf arbeitet
-			dezimalzahl = (dezimalzahl - (dezimalzahl % 2) ) / 2;				//man rechnet nicht den Rest sondern jeweils immer die übrig bleibende Zahl aus, z.B.: 12 / 6 = 2
+		do {																	//damit die nï¿½chste Zeile nicht schon fï¿½r den nï¿½chsten Schleifendurchlauf arbeitet
+			dezimalzahl = (dezimalzahl - (dezimalzahl % 2) ) / 2;				//man rechnet nicht den Rest sondern jeweils immer die ï¿½brig bleibende Zahl aus, z.B.: 12 / 6 = 2
 			binaerzahl = Long.toString(dezimalzahl % 2) + binaerzahl;
-		} while ((dezimalzahl - (dezimalzahl % 2) ) / 2 != 0);					//Schleife solange durchführen, bis übrig bleibende Zahl durch 2 gleich 0 ist
+		} while ((dezimalzahl - (dezimalzahl % 2) ) / 2 != 0);					//Schleife solange durchfï¿½hren, bis ï¿½brig bleibende Zahl durch 2 gleich 0 ist
 		
 		String string  = binaerzahl;
-		while (string.length() < 16) {							//Bedingung: Länge von Bloecke[i] <= 16
-			string = 0 + string;								//Länge mit Nullen auf 16 Stellen füllen
+		while (string.length() < 16) {							//Bedingung: Lï¿½nge von Bloecke[i] <= 16
+			string = 0 + string;								//Lï¿½nge mit Nullen auf 16 Stellen fï¿½llen
 		}
 		
-		return string;											//Rückgabe von Block[i] in Binärzahl
+		return string;											//Rï¿½ckgabe von Block[i] in Binï¿½rzahl
 	}
 	
 	public static long hashtagUmwandelnInDezimalzahl(String x) {
@@ -94,7 +94,7 @@ public class RSA {
 		
 		for (int la = 0; la < x.length(); la++) {
 			long zwischenE = 0;													//zwischenE ist Ziffer von x potenziert mit number
-			if (Long.parseLong("" + x.charAt(la)) == 1){						//gucken, ob Ziffer von x = 1 ist, ansonsten ist bei Umrechnung in Binärsystem sowieso an der Stelle nur 2^number * 0, weil x ja nur 0 oder 1 ist
+			if (Long.parseLong("" + x.charAt(la)) == 1){						//gucken, ob Ziffer von x = 1 ist, ansonsten ist bei Umrechnung in Binï¿½rsystem sowieso an der Stelle nur 2^number * 0, weil x ja nur 0 oder 1 ist
 				zwischenE = 1;
 				for (int li = 0; li < number; li++) {
 					zwischenE *= 2;												//zwischenE = eine Ziffer von x mit number potenzieren
