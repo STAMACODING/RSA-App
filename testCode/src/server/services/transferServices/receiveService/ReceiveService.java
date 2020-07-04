@@ -95,7 +95,8 @@ public class ReceiveService extends Service{
 					    inputStream.readFully(messageAsByteArray, 0, messageAsByteArray.length);
 					    Logger.debug(this.getClass().getSimpleName(), "Successfully received new message from a client");
 					}
-						
+					connectionFromClient.close();
+					Logger.debug(this.getClass().getSimpleName(), "Closed connection to client");
 					// Forward message
 					Logger.debug(this.getClass().getSimpleName(), "Forwarding message");
 					SendQueue.add(TransferMessage.byteArrayToMessage(messageAsByteArray));
@@ -104,6 +105,7 @@ public class ReceiveService extends Service{
 					Logger.error(this.getClass().getSimpleName(), "Failed to receive message from a client");
 				}
 			}
+			receiveServer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			Logger.error(this.getClass().getSimpleName(), "Failed to start receive server");
@@ -149,6 +151,7 @@ public class ReceiveService extends Service{
 						Logger.debug(this.getClass().getSimpleName(), "No new messages available");
 					}
 					connectionToServer.close();
+					Logger.debug(this.getClass().getSimpleName(), "Closed connection to the send server");
 				} catch (IOException e) {
 					e.printStackTrace();
 					Logger.error(this.getClass().getSimpleName(), "Failed to connect to the send server");
