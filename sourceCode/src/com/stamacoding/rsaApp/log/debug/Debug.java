@@ -3,7 +3,6 @@ package com.stamacoding.rsaApp.log.debug;
 import java.text.DecimalFormat;
 import java.time.OffsetDateTime;
 
-//import com.stamacoding.rsaApp.log.filesystem.Filesystem;
 import com.stamacoding.rsaApp.log.logger.Logger;
 
 public class Debug
