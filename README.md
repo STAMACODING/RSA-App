@@ -22,6 +22,8 @@
 Zurzeit ist unser Repository in mehrere Ordner unterteilt: **bin**, **organization**, **sourceCode** und **testCode**.
 - **bin**
   - Hier liegen kompilierte Programmdateien (.exe / .jar).
+- **lib**
+  - Hier liegen verwendete Bibliothek- und Frameworkdateien.
 - **organization**
   - In diesem Ordner liegen alle Dateien zur Planung und Organisation des Projektes. Der Ordner ist noch einmal in fünf Ordner unterteilt. Je ein Ordner für jedes Team und ein einziger Ordner für alle. Im Ordner für alle sind beispielsweise Tutorials für alle und Meeting Protokolle von größeren Meetings, auf denen grundlegende Sachen besprochen wurden, festgehalten. Auch die festgelegten Konvetionen sind im _organization_-Verzeichnis zu finden.
 - **sourceCode**
