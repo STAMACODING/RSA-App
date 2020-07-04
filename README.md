@@ -19,7 +19,7 @@
 - Android Chat-App mit obigen Funktionalitäten  
 
 ## Repository Struktur
-Zurzeit ist unser Repository in mehrere Ordner unterteilt: **bin**, **organization**, **sourceCode** und **testCode**.
+Zurzeit ist unser Repository in mehrere Ordner unterteilt: **bin**, **lib**, **organization**, **sourceCode** und **testCode**.
 - **bin**
   - Hier liegen kompilierte Programmdateien (.exe / .jar).
 - **lib**
