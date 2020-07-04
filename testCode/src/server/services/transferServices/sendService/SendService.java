@@ -97,6 +97,8 @@ public class SendService extends Service{
 							Logger.debug(this.getClass().getSimpleName(), "Found no messages belongig to (" + clientId + ")");
 						}
 
+					}else {
+						Logger.debug(this.getClass().getSimpleName(), "No messages available to send");
 					}
 					connectionFromClient.close();
 					Logger.debug(this.getClass().getSimpleName(), "Closed connection to client");
