@@ -49,12 +49,18 @@ public class Logger {
 		log(className, message, logType.ERROR);
 	}
 	
+	/**
+	 * 
+	 * @param className Cannot be longer than 20 Characters
+	 * @param message
+	 * @param Type
+	 */
 	static void log(String className, String message, logType Type)
 	{
 		if (OutputType != outputType.NONE)
 		{
-			//Struktur für zukünftiges Arbeiten: "[" + Debug.Time() + "]" + /*"[" + status + "]" +*/ /*"[" + client/server + "]" +*/ "[" + className + "]" + "[" + Type.toString() + "]" + ": "+ "[" + message + "]";
-			String logMessage = String.format("[%s][%-25s][%-7s]:[%s]", Debug.TimeFormat(), className, Type.toString(), message);
+			//Struktur fï¿½r zukï¿½nftiges Arbeiten: "[" + Debug.GetTime() + "]" + /*"[" + status + "]" +*/ /*"[" + client/server + "]" +*/ "[" + className + "]" + "[" + Type.toString() + "]" + ": "+ " " + message;
+			String logMessage = String.format("[%s][%-20s][%-7s]: %s", Debug.GetTime(), className, Type.toString(), message);
 			
 			if (OutputType == outputType.onlyConsole || OutputType == outputType.ALL) {
 				printToConsole(logMessage);
