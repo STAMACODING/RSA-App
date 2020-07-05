@@ -8,10 +8,13 @@ import java.util.ArrayList;
 
 public class KeyUtils {
 	
-	private static boolean isPrime(int i) {
-	    for(int j = 2; j<i; j++) {
-	    	if(i%j == 0)
-	    		return false;
+	private static boolean isPrime(int n) {
+	    if(n < 2) return false;
+	    if(n == 2 || n == 3) return true;
+	    if(n%2 == 0 || n%3 == 0) return false;
+	    long sqrtN = (long)Math.sqrt(n)+1;
+	    for(long i = 6L; i <= sqrtN; i += 6) {
+	        if(n%(i-1) == 0 || n%(i+1) == 0) return false;
 	    }
 	    return true;
 	}
@@ -19,12 +22,12 @@ public class KeyUtils {
 	/**
 	 * creates a prime number in a certain area
 	 * @param max maximum value of the area
-	 * @param excludedNumber all numbers that will not be accepted as possible prime numbers
+	 * @param excludedNumber any desired number that will not be accepted as possible prime number
 	 * @return
 	 */
-	public static int primeNumb(int max, int excludedNumber) {
+	public static int primeNumb(int min, int max, int excludedNumber) {
 		ArrayList<Integer> primes = new ArrayList<>();
-		for(int j = 2; j <= max; j++) {
+		for(int j = min; j <= max; j++) {
 		    if(isPrime(j) && j!=excludedNumber) primes.add(j);
 		}
 		int randomIndex = (int) (Math.random()*primes.size());
@@ -58,7 +61,7 @@ public class KeyUtils {
 	 * @param max maximum value of the area
 	 * @return
 	 */
-	public static int primeNumb(int max) {
-		return primeNumb(max, -1);
+	public static int primeNumb(int min, int max) {
+		return primeNumb(min, max, -1);
 	}
 }

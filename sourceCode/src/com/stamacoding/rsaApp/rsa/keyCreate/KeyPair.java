@@ -6,6 +6,14 @@ import com.stamacoding.rsaApp.log.logger.Logger;
  * Represents a RSA key pair consisting of a public and a fitting private key. Invoking the constructor {@link #KeyPair()} automatically generates the both keys.
  */
 public class KeyPair {
+	public static final boolean DEBUG = false;
+	
+	public static final int N_MAXIMUM = 65536;
+	public static final int N_MINIMUM = 1000;
+	
+	public static final int PQ_MAXIMUM = (int) Math.sqrt(N_MAXIMUM);
+	public static final int PQ_MINIMUM = (int) Math.sqrt(N_MINIMUM);
+	
 	/**
 	 * The private key (d, n).
 	 */
@@ -20,48 +28,64 @@ public class KeyPair {
 	 * @see KeyPair
 	 */
 	public KeyPair() {
-		// Variables
-		int p, q, n, phi, e, d;
-		
-		// 1
-		p = KeyUtils.primeNumb(256);
-		q = KeyUtils.primeNumb(256, p);
-		
-		// 2
-		n = p * q;
-		phi = (p-1)*(q-1);
-		
-		// 3
-		e = KeyUtils.primeNumb(phi);
-		
-		// 4
-		d = KeyUtils.modularInverse(e, phi);
-		
-		
-		Logger.debug(this.getClass().getSimpleName(), "p: " + p);
-		Logger.debug(this.getClass().getSimpleName(), "q: " + q);
-		Logger.debug(this.getClass().getSimpleName(), "n: " + n);
-		Logger.debug(this.getClass().getSimpleName(), "phi(n): " + phi);
-		Logger.debug(this.getClass().getSimpleName(), "e: " + e);
-		Logger.debug(this.getClass().getSimpleName(), "d: " + d);
-		
-		Key privateKey = new Key(d, n);
-		Key publicKey = new Key(e, n);
-		setPrivateKey(privateKey);
-		setPublicKey(publicKey);
+		generate();
+	}
+	
+	public KeyPair(Key privateKey, Key publicKey) {
+		this.privateKey = privateKey;
+		this.publicKey = publicKey;
 	}
 
 	public Key getPrivateKey() {
 		return privateKey;
 	}
-	public void setPrivateKey(Key privateKey) {
+	
+	private void setPrivateKey(Key privateKey) {
 		this.privateKey = privateKey;
 	}
+	
 	public Key getPublicKey() {
 		return publicKey;
 	}
-	public void setPublicKey(Key publicKey) {
+	
+	private void setPublicKey(Key publicKey) {
 		this.publicKey = publicKey;
+	}
+	
+	private void generate() {
+		int p, q, n, phi, e, d;
+		// Generate p and q
+
+		p = KeyUtils.primeNumb(PQ_MINIMUM, PQ_MAXIMUM);
+		q = KeyUtils.primeNumb(PQ_MINIMUM, PQ_MAXIMUM, p);
+		// Calculate n and phi(n)
+		n = p * q;
+		phi = (p-1)*(q-1);
+		
+		d = -1;
+		do {
+			// Calculate e
+			e = KeyUtils.primeNumb(2, phi);
+			
+			// Calculate d
+			d = KeyUtils.modularInverse(e, phi);
+		}while(d == -1 || d == e);
+		
+		if(DEBUG) {
+			Logger.debug(this.getClass().getSimpleName(), "p\t=>\t" + p);
+			Logger.debug(this.getClass().getSimpleName(), "q\t=>\t" + q);
+			Logger.debug(this.getClass().getSimpleName(), "n\t=>\t" + n + " = " + p + " * " + q);
+			Logger.debug(this.getClass().getSimpleName(), "phi\t=>\t" + phi + " = (" + p + " - 1) * (" + q + " - 1) = " + (p-1) + " * " + (q-1));
+			Logger.debug(this.getClass().getSimpleName(), "e\t=>\t" + e);
+			Logger.debug(this.getClass().getSimpleName(), "d\t=>\t" + d);
+		}
+		
+		Key privateKey = new Key(d, n);
+		Key publicKey = new Key(e, n);
+		setPrivateKey(privateKey);
+		setPublicKey(publicKey);
+		
+		if(DEBUG) Logger.debug(this.getClass().getSimpleName(), this.toString());
 	}
 	
 	
