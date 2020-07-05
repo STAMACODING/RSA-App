@@ -20,7 +20,7 @@ public class Debug
         for (int i = 0; i < 10; i++) {
             //Logger.debug(Debug.class.getSimpleName(), "Wer das liest hat Probleme");
             Logger.debug(Debug.class.getSimpleName(), GetTime());
-            Thread.sleep(1000);
+            Thread.sleep(42);
         }
 
         //Filesystem.createFile();
@@ -32,9 +32,13 @@ public class Debug
      */
     public static String GetTime()
     {
-        DateFormat dfmt = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss','SSZ");
+        DateFormat dfmt_1 = new SimpleDateFormat("yyyy'-'MM'-'dd'|'HH':'mm':'ss','SS");
 
-        return dfmt.format(new Date());
+        DateFormat dfmt_2 = new SimpleDateFormat("Z");
+
+        String Time = String.format("%-23s|%.3s", dfmt_1.format(new Date()), dfmt_2.format(new Date()));
+
+        return Time;
     }
 }
 
