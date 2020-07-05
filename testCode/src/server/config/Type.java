@@ -1,9 +1,9 @@
 package server.config;
 
-import server.NetworkService;
+import server.MessageService;
 
 /**
- * Used to declare the type of the device the {@link NetworkService} is running on.
+ * Used to declare the type of the device the {@link MessageService} is running on.
  *
  */
 public enum Type {

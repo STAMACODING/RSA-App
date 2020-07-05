@@ -2,7 +2,7 @@ package server.test;
 
 import java.util.Scanner;
 
-import server.NetworkService;
+import server.MessageService;
 import server.Utils;
 import server.config.NetworkConfig;
 import server.config.Type;
@@ -26,6 +26,6 @@ public class TestServer {
 		NetworkConfig.Server.IP = Utils.Ip.getIpAdress();
 		NetworkConfig.TYPE = Type.SERVER;
 		
-		NetworkService.getInstance().start();
+		MessageService.getInstance().start();
 	}
 }

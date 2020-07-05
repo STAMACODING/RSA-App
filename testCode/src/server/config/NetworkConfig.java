@@ -1,18 +1,18 @@
 package server.config;
 
-import server.NetworkService;
-import server.services.databaseServices.chatHistoryService.ChatHistoryService;
+import server.MessageService;
+import server.services.databaseServices.readService.ReadService;
 import server.services.transferServices.receiveService.ReceiveService;
 
 /**
  * Class containing all configurations needed to start
- * the {@link NetworkService}. By changing the static variables you change the configurations.
- * It's not recommended do this while the {@link NetworkService} is already running because
+ * the {@link MessageService}. By changing the static variables you change the configurations.
+ * It's not recommended do this while the {@link MessageService} is already running because
  * this could lead to unexpected behavior.
  */
 public class NetworkConfig {
 	/**
-	 * the type of the device the {@link NetworkService} is running on
+	 * the type of the device the {@link MessageService} is running on
 	 */
 	public static Type TYPE = null;
 	
@@ -31,7 +31,7 @@ public class NetworkConfig {
 		public static long QUERY_MESSAGES_INTERVAL = 10000;
 		
 		/**
-		 * the time the {@link ChatHistoryService} waits before updating the messages
+		 * the time the {@link ReadService} waits before updating the messages
 		 */
 		public static long UPDATE_CHAT_HISTORY_INTERVAL = 2000;
 	}
@@ -56,7 +56,7 @@ public class NetworkConfig {
 	
 	/**
 	 * You can use this method to change all network configurations at once.
-	 * @param type the type of the device the {@link NetworkService} is running on
+	 * @param type the type of the device the {@link MessageService} is running on
 	 * @param clientID the client's unique id
 	 * @param serverIP the server's unique public ip
 	 * @param serverSendPort On this port the server sends messages. The clients receive messages using this port.
@@ -72,7 +72,7 @@ public class NetworkConfig {
 
 	/**
 	 * Checks if the configurations are valid. Attention! This function cannot verify
-	 * if the configurations will lead to a correctly working {@link NetworkService}.
+	 * if the configurations will lead to a correctly working {@link MessageService}.
 	 * @return if the configurations are valid
 	 */
 	public static boolean isValid() {

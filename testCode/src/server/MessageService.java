@@ -5,7 +5,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 import server.config.NetworkConfig;
 import server.config.Type;
 import server.services.Service;
-import server.services.databaseServices.chatHistoryService.ChatHistoryService;
+import server.services.databaseServices.readService.ReadService;
 import server.services.databaseServices.storeService.StoreService;
 import server.services.transferServices.receiveService.ReceiveService;
 import server.services.transferServices.sendService.SendService;
@@ -15,22 +15,22 @@ import server.services.transferServices.sendService.SendService;
  * running on a client.</p>
  * Unites the work of these services: 
  * <ul>
- * 	<li>{@link ChatHistoryService} (client)</li>
+ * 	<li>{@link ReadService} (client)</li>
  *  <li>{@link StoreService} (client)</li>
  *  <li>{@link ReceiveService} (server, client)</li>
  *  <li>{@link SendService} (server, client)</li>
  * </ul>
  */
-public class NetworkService extends Service{
+public class MessageService extends Service{
 	/**
 	 * the object's only instance (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>).
 	 */
-	private static volatile NetworkService singleton = new NetworkService();
+	private static volatile MessageService singleton = new MessageService();
 
 	/**
 	 * the object's private constructor (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>)
 	 */
-	private NetworkService() {
+	private MessageService() {
 		super("network");
 	}
 	
@@ -38,21 +38,21 @@ public class NetworkService extends Service{
 	 * Gets the object's only instance (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>).
 	 * @return the object's only instance
 	 */
-	public static NetworkService getInstance() {
+	public static MessageService getInstance() {
 		return singleton;
 	}
 	
 	public static void restart() {
-		Logger.debug(NetworkService.class.getSimpleName(), "Restarting " + singleton.getName());
+		Logger.debug(MessageService.class.getSimpleName(), "Restarting " + singleton.getName());
 		singleton.requestShutdown();
 		while(singleton.isRunning()) {}
-		singleton = new NetworkService();
-		Logger.debug(NetworkService.class.getSimpleName(), "Restarted " + singleton.getName());
+		singleton = new MessageService();
+		Logger.debug(MessageService.class.getSimpleName(), "Restarted " + singleton.getName());
 		singleton.start();
 	}
 	
 	/**
-	 * Starts the {@link NetworkService}. The service will only stay alive if your {@link NetworkConfig} is valid.
+	 * Starts the {@link MessageService}. The service will only stay alive if your {@link NetworkConfig} is valid.
 	 */
 	@Override
 	public synchronized void start() {
@@ -60,14 +60,14 @@ public class NetworkService extends Service{
 	}
 	
 	/**
-	 * Runs the {@link NetworkService}. The service will only stay alive if your {@link NetworkConfig} is valid.
+	 * Runs the {@link MessageService}. The service will only stay alive if your {@link NetworkConfig} is valid.
 	 */
 	@Override
 	public void run() {
 		if(!NetworkConfig.isValid()) throw new RuntimeException("Invalid network configuration! Use NetworkConfig.setup() to fix");
 		
 		if(NetworkConfig.TYPE == Type.CLIENT) {
-			ChatHistoryService.getInstance().start();
+			ReadService.getInstance().start();
 			StoreService.getInstance().start();
 		}
 		ReceiveService.getInstance().start();
@@ -75,7 +75,7 @@ public class NetworkService extends Service{
 		
 		while(!isShutDownRequested()) {
 			if(NetworkConfig.TYPE == Type.CLIENT) {
-				if(ChatHistoryService.getInstance().isCrashed()) ChatHistoryService.restart();
+				if(ReadService.getInstance().isCrashed()) ReadService.restart();
 				if(StoreService.getInstance().isCrashed()) StoreService.restart();
 			}
 			if(ReceiveService.getInstance().isCrashed()) ReceiveService.restart();
@@ -87,14 +87,14 @@ public class NetworkService extends Service{
 		SendService.getInstance().requestShutdown();
 		ReceiveService.getInstance().requestShutdown();
 		if(NetworkConfig.TYPE == Type.CLIENT) StoreService.getInstance().requestShutdown();
-		if(NetworkConfig.TYPE == Type.CLIENT) ChatHistoryService.getInstance().requestShutdown();
+		if(NetworkConfig.TYPE == Type.CLIENT) ReadService.getInstance().requestShutdown();
 		
 		Logger.debug(this.getClass().getSimpleName(), "Shut down " + getName());
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
 		NetworkConfig.setup(Type.CLIENT, (byte) 12, "127.0.0.1", 1001, 1002);
-		NetworkService.getInstance().start();
+		MessageService.getInstance().start();
 		
 	}
 

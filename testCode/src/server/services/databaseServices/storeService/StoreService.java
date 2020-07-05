@@ -2,11 +2,11 @@ package server.services.databaseServices.storeService;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 
-import server.NetworkService;
+import server.MessageService;
 import server.services.Service;
 import server.services.databaseServices.DBManager;
 import server.services.databaseServices.DatabaseMessage;
-import server.services.databaseServices.chatHistoryService.ChatHistoryService;
+import server.services.databaseServices.readService.ReadService;
 
 /**
  * {@link Service} storing new messages in the chat database. Use {@link StoreQueue} to store new messages.

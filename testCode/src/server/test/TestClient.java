@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.sql.Date;
 import java.util.Scanner;
 
-import server.NetworkService;
+import server.MessageService;
 import server.config.NetworkConfig;
 import server.config.Type;
 import server.services.transferServices.TransferMessage;
@@ -55,7 +55,7 @@ public class TestClient {
 		System.out.println("------------------------------------------------------------");
 		
 		NetworkConfig.TYPE = Type.CLIENT;
-		NetworkService.getInstance().start();
+		MessageService.getInstance().start();
 		if(input.equals("y")) {
 			TransferMessage t = new TransferMessage(message.getBytes(), NetworkConfig.Client.ID, idReceiving, new Date(System.currentTimeMillis()));
 			SendQueue.add(t);
