@@ -57,10 +57,8 @@ public class TestClient {
 		NetworkConfig.TYPE = Type.CLIENT;
 		NetworkService.getInstance().start();
 		if(input.equals("y")) {
-			for(int i=0; i<200; i++) {
-				TransferMessage t = new TransferMessage(message.getBytes(), NetworkConfig.Client.ID, idReceiving, new Date(System.currentTimeMillis()));
-				SendQueue.add(t);
-			}
+			TransferMessage t = new TransferMessage(message.getBytes(), NetworkConfig.Client.ID, idReceiving, new Date(System.currentTimeMillis()));
+			SendQueue.add(t);
 		}
 	}
 }
