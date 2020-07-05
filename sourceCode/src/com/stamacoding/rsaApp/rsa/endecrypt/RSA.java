@@ -118,10 +118,6 @@ public class RSA {
 	}
 
 	public static void main(String[] args) {
-		
-		byte[] encryptData = new byte [2];
-		encryptData[0] = 30;
-		encryptData[1] = -107;
 		hashtagverschluesseln();
 		hashtagEntschluesseln();
 	}
