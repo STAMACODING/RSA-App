@@ -113,7 +113,47 @@ Dieses Git-Addon ermöglicht es, dass Eclipse die Eclipse-Projekte, die innerhal
 6. Akzeptiere die Lizenzvereinbarung.
 7. Klicke "Finish" und starte nach der Installation des Addons (unten rechts zu sehen) Eclipse neu.
 
-## 8. Repository in Eclipse übertragen
+## 8. Eclipse Metadateien ergänzen
+
+Im Repository fehlen im sourceCode- und testCode-Ordner Metadateien, die leider jeder Nutzer lokal bei sich erstellen muss:
+
+0. Schließe die Eclipse IDE.
+1. Navigiere mit dem Datei-Explorer in den Ordner "C:\Dein\Link\Zum\Repository\RSA-App\sourceCode".
+2. Erstelle eine neue Datei mit dem Namen ".classpath".
+3. Öffne die Datei mit einem Texteditor.
+4. Füge folgenden Text ein:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
+```
+5. Speichere und schließe die Datei.
+
+6. Navigiere mit dem Datei-Explorer in den Ordner "C:\Dein\Link\Zum\Repository\RSA-App\testCode".
+7. Erstelle eine neue Datei mit dem Namen ".classpath".
+8. Öffne die Datei mit einem Texteditor.
+9. Füge folgenden Text ein:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/RsaAppEclipse"/>
+	<classpathentry kind="lib" path="F:/harry/Documents/Informatik/RSA-App/lib/sqlite-jdbc-3.30.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
+```
+10. **Achtung!**: Den Text "F:/harry/Documents/Informatik/RSA-App/lib/sqlite-jdbc-3.30.1.jar" musst du mit "C:/Dein/Link/Zum/Repository/RSA-App/lib/sqlite-jdbc-3.30.1.jar" ersetzen.
+11. Speichere und schließe die Datei.
+
+## 9. Repository in Eclipse übertragen
 
 1. Öffne die Eclipse IDE.
 2. Klicke "Window" => "Show View" => "Other..."

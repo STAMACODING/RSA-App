@@ -25,7 +25,7 @@ Zurzeit ist unser Repository in mehrere Ordner unterteilt: **bin**, **lib**, **o
 - **lib**
   - Hier liegen verwendete Bibliothek- und Frameworkdateien.
 - **organization**
-  - In diesem Ordner liegen alle Dateien zur Planung und Organisation des Projektes. Der Ordner ist noch einmal in fünf Ordner unterteilt. Je ein Ordner für jedes Team und ein einziger Ordner für alle. Im Ordner für alle sind beispielsweise Tutorials für alle und Meeting Protokolle von größeren Meetings, auf denen grundlegende Sachen besprochen wurden, festgehalten. Auch die festgelegten Konvetionen sind im _organization_-Verzeichnis zu finden.
+  - In diesem Ordner liegen alle Dateien zur Planung und Organisation des Projektes. Der Ordner ist noch einmal in fünf Ordner unterteilt. Je ein Ordner für jedes Team und ein einziger Ordner für alle. Im Ordner für alle sind beispielsweise Tutorials für alle und Meeting Protokolle von größeren Meetings, auf denen grundlegende Sachen besprochen wurden, festgehalten. Auch die festgelegten Konventionen sind im _organization_-Verzeichnis zu finden.
 - **sourceCode**
   - Hier liegt schlicht und einfach der Source-Code unserer RSA-App. Der Source-Code enthält wenige Metadateien eines Eclipse-Projekts, sodass man diesen einfach als Eclipse-Projekt importieren kann.
 - **testCode**
