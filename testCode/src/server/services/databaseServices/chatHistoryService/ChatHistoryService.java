@@ -35,6 +35,15 @@ public class ChatHistoryService extends Service{
 		return singleton;
 	}
 	
+	public static void restart() {
+		Logger.debug(ChatHistoryService.class.getSimpleName(), "Restarting " + singleton.getName());
+		singleton.requestShutdown();
+		while(singleton.isRunning()) {}
+		singleton = new ChatHistoryService();
+		Logger.debug(ChatHistoryService.class.getSimpleName(), "Restarted " + singleton.getName());
+		singleton.start();
+	}
+	
 	/**
 	 * array containing all messages stored in the chat database
 	 */
@@ -51,16 +60,16 @@ public class ChatHistoryService extends Service{
 	@Override
 	public void run() {
 		super.run();
-		while(!requestedShutDown()) {
+		while(!isShutDownRequested()) {
 			setMessages(DBManager.getInstance().getMessagesFromDB());
 			setRecentUpdate(new Date(System.currentTimeMillis()));
-			
 			Logger.debug(this.getClass().getSimpleName(), "Successfully synchronized message array with database");
 			try {
 				Thread.sleep(NetworkConfig.Client.UPDATE_CHAT_HISTORY_INTERVAL);
 			} catch (InterruptedException e) {
 				Logger.error(this.getClass().getSimpleName(), "chat-history-service interrupted");
 			}
+			throw new RuntimeException();
 		}
 		Logger.debug(this.getClass().getSimpleName(), "Shut down " + getName());
 	}

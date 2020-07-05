@@ -38,6 +38,15 @@ public class SendService extends Service{
 		return singleton;
 	}
 	
+	public static void restart() {
+		Logger.debug(SendService.class.getSimpleName(), "Restarting " + singleton.getName());
+		singleton.requestShutdown();
+		while(singleton.isRunning()) {}
+		singleton = new SendService();
+		Logger.debug(SendService.class.getSimpleName(), "Restarted " + singleton.getName());
+		singleton.start();
+	}
+	
 	/**
 	 * Runs the {@link SendService}.
 	 * @see #runServer()
@@ -69,9 +78,10 @@ public class SendService extends Service{
 		try {
 			sendServer = new ServerSocket(NetworkConfig.Server.SEND_PORT);
 			Logger.debug(this.getClass().getSimpleName(), "Successfully created send server socket");
-			while(!requestedShutDown()) {
+			while(!isShutDownRequested()) {
 				try {
 					Socket connectionFromClient = sendServer.accept();
+					connectionFromClient.setSoTimeout(5000);
 					Logger.debug(this.getClass().getSimpleName(), "Received new client request");
 					if(!SendQueue.isEmpty()) {
 						DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
@@ -123,7 +133,7 @@ public class SendService extends Service{
 	 * </ol>
 	 */
 	private void runClient() {
-		while(!requestedShutDown()) {
+		while(!isShutDownRequested()) {
 			// If there is a message to be sent
 			if(!SendQueue.isEmpty()) {
 				TransferMessage message = SendQueue.poll();
@@ -133,6 +143,7 @@ public class SendService extends Service{
 				Socket connectionToServer = null;
 				try {
 					connectionToServer = new Socket(NetworkConfig.Server.IP, NetworkConfig.Server.RECEIVE_PORT);
+					connectionToServer.setSoTimeout(5000);
 					Logger.debug(this.getClass().getSimpleName(), "Successfully connected to the receive server");
 					try {
 						DataOutputStream outputStream = new DataOutputStream(connectionToServer.getOutputStream());

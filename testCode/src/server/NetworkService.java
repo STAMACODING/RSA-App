@@ -42,6 +42,15 @@ public class NetworkService extends Service{
 		return singleton;
 	}
 	
+	public static void restart() {
+		Logger.debug(NetworkService.class.getSimpleName(), "Restarting " + singleton.getName());
+		singleton.requestShutdown();
+		while(singleton.isRunning()) {}
+		singleton = new NetworkService();
+		Logger.debug(NetworkService.class.getSimpleName(), "Restarted " + singleton.getName());
+		singleton.start();
+	}
+	
 	/**
 	 * Starts the {@link NetworkService}. The service will only stay alive if your {@link NetworkConfig} is valid.
 	 */
@@ -57,12 +66,21 @@ public class NetworkService extends Service{
 	public void run() {
 		if(!NetworkConfig.isValid()) throw new RuntimeException("Invalid network configuration! Use NetworkConfig.setup() to fix");
 		
-		if(NetworkConfig.TYPE == Type.CLIENT) ChatHistoryService.getInstance().start();
-		if(NetworkConfig.TYPE == Type.CLIENT) StoreService.getInstance().start();
+		if(NetworkConfig.TYPE == Type.CLIENT) {
+			ChatHistoryService.getInstance().start();
+			StoreService.getInstance().start();
+		}
 		ReceiveService.getInstance().start();
 		SendService.getInstance().start();
 		
-		while(!requestedShutDown()) {}
+		while(!isShutDownRequested()) {
+			if(NetworkConfig.TYPE == Type.CLIENT) {
+				if(ChatHistoryService.getInstance().isCrashed()) ChatHistoryService.restart();
+				if(StoreService.getInstance().isCrashed()) StoreService.restart();
+			}
+			if(ReceiveService.getInstance().isCrashed()) ReceiveService.restart();
+			if(SendService.getInstance().isCrashed()) SendService.restart();
+		}
 		
 		Logger.debug(this.getClass().getSimpleName(), "Shutting down " + getName());
 		
@@ -74,9 +92,10 @@ public class NetworkService extends Service{
 		Logger.debug(this.getClass().getSimpleName(), "Shut down " + getName());
 	}
 	
-	public static void main(String[] args) {
-		NetworkConfig.setup(Type.SERVER, (byte) 12, "127.0.0.1", 1001, 1002);
+	public static void main(String[] args) throws InterruptedException {
+		NetworkConfig.setup(Type.CLIENT, (byte) 12, "127.0.0.1", 1001, 1002);
 		NetworkService.getInstance().start();
+		
 	}
 
 }

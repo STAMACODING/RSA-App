@@ -44,6 +44,15 @@ public class ReceiveService extends Service{
 		return singleton;
 	}
 	
+	public static void restart() {
+		Logger.debug(ReceiveService.class.getSimpleName(), "Restarting " + singleton.getName());
+		singleton.requestShutdown();
+		while(singleton.isRunning()) {}
+		singleton = new ReceiveService();
+		Logger.debug(ReceiveService.class.getSimpleName(), "Restarted " + singleton.getName());
+		singleton.start();
+	}
+	
 	/**
 	 * Runs the {@link ReceiveService}.
 	 * @see #runServer()
@@ -77,10 +86,11 @@ public class ReceiveService extends Service{
 			receiveServer = new ServerSocket(NetworkConfig.Server.RECEIVE_PORT);
 			Logger.debug(this.getClass().getSimpleName(), "Successfully started the receive server");
 			
-			while(!requestedShutDown()) {
+			while(!isShutDownRequested()) {
 				// Accept message from client and if this is a server forward it to another client
 				try {
 					Socket connectionFromClient = receiveServer.accept();
+					connectionFromClient.setSoTimeout(5000);
 					Logger.debug(this.getClass().getSimpleName(), "Receiving a new message from a client");
 					DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
 					
@@ -123,9 +133,10 @@ public class ReceiveService extends Service{
 	 */
 	private void runClient() {
 		try {
-			while(!requestedShutDown()) {
+			while(!isShutDownRequested()) {
 				try {
 					Socket connectionToServer = new Socket(NetworkConfig.Server.IP, NetworkConfig.Server.SEND_PORT);
+					connectionToServer.setSoTimeout(5000);
 					Logger.debug(this.getClass().getSimpleName(), "Successfully connected to the send server");
 					
 					Logger.debug(this.getClass().getSimpleName(), "Querying messages from the send server using the client id (" + NetworkConfig.Client.ID + ")");

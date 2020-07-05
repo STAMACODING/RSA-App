@@ -31,7 +31,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
  *	</li>
  * 	<li>Override {@link #run()} to change what the service should do. Remember to call <code>super.run()</code> before doing your own stuff.</li>
  *  <li><ul>
- *  	<li>Remember also to implement the <b>shutdown-feature</b>. If {@link #requestedShutDown()} returns <code>true</code> there service should get shutdown. E.g. you
+ *  	<li>Remember also to implement the <b>shutdown-feature</b>. If {@link #isShutDownRequested()} returns <code>true</code> there service should get shutdown. E.g. you
  * 		can implement this feature by using <code>while(!requestedShutDown()){ ... }</code> instead of <code>while(true){ ... }</code>. This would automatically
  *		end the ongoing while loop if a shutdown gets requested. </li>
  *  </ul></li>
@@ -40,6 +40,8 @@ import com.stamacoding.rsaApp.log.logger.Logger;
  */
 public abstract class Service extends Thread{
 	private volatile boolean requestedShutdown = false;
+	private volatile boolean started = false;
+	private volatile boolean manipulatedCrash = false;
 	
 	/**
 	 * Creates an instance of a new service.
@@ -64,6 +66,7 @@ public abstract class Service extends Thread{
 	@Override
 	public void run() {
 		super.run();
+		this.started = true;
 		this.requestedShutdown = false;
 		Logger.debug(this.getClass().getSimpleName(), this.getName() + " is running");
 	}
@@ -80,7 +83,7 @@ public abstract class Service extends Thread{
 	 * Checks if the server should get shutdown.
 	 * @return whether the server should get shutdown
 	 */
-	public final boolean requestedShutDown() {
+	public final boolean isShutDownRequested() {
 		return requestedShutdown;
 	}
 	
@@ -90,6 +93,18 @@ public abstract class Service extends Thread{
 	 */
 	public boolean isRunning() {
 		return this.isAlive();
+	}
+	
+	public boolean isStarted() {
+		return started;
+	}
+	
+	public boolean isCrashed() {
+		return (isStarted() && !isRunning() && !isShutDownRequested()) || manipulatedCrash;
+	}
+	
+	public void setCrashed() {
+		manipulatedCrash = true;
 	}
 }
 

@@ -43,7 +43,7 @@ public class DBManager{
 		try {
 			Class.forName("org.sqlite.JDBC");
 			con = DriverManager.getConnection(url, userName, password);
-			Logger.debug(this.getClass().getSimpleName(), "Connectin to Connection to DB/UserDatabse.db succesful");
+			Logger.debug(this.getClass().getSimpleName(), "Connecting to Connection to DB/UserDatabse.db succesfull");
 			
 			return con;
 			
@@ -98,7 +98,7 @@ public class DBManager{
 			
 		}catch(Exception e) {
 			e.printStackTrace();
-			Logger.debug(this.getClass().getSimpleName(),"Failed to get Messages from DB due to failed execution of Query");
+			Logger.debug(this.getClass().getSimpleName(),"Failed to get messages from DB due to failed execution of query");
 		}
 		
 		return null;
@@ -153,7 +153,7 @@ public class DBManager{
 	
 	public static void main(String [] args) {
 		try {
-			DatabaseMessage[] messges = DBManager.getInstance().getMessagesFromDB();
+			DatabaseMessage[] messages = DBManager.getInstance().getMessagesFromDB();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
