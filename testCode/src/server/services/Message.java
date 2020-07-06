@@ -59,7 +59,7 @@ public class Message implements Serializable{
 	 * the message's send state
 	 * @see SendState
 	 */
-	private SendState sendState;
+	private SendState sendState = SendState.PENDING;
 	
 	/**
 	 * whether the message needs to be updated in the chat database
@@ -87,6 +87,8 @@ public class Message implements Serializable{
 		this.date = date;
 		this.receivingId = receivingId;
 		this.sendingId = sendingId;
+		
+
 		setId(-1);
 		setByteMessage(byteMessage);
 		setTextMessage(Utils.RSA.decode(byteMessage));
@@ -114,7 +116,7 @@ public class Message implements Serializable{
 	 * @return whether this message should be send using the {@link SendService}
 	 */
 	public boolean isToSend() {
-		return getSendState() == SendState.PENDING;
+		return getSendState().equals(SendState.PENDING);
 	}
 
 	/**
@@ -171,7 +173,7 @@ public class Message implements Serializable{
 	 */
 	public void setByteMessage(byte[] byteMessage) {
 		this.byteMessage = byteMessage;
-		setRsaState(getRsaState());
+		if(getRsaState() != null) setRsaState(getRsaState());
 	}
 
 	/**
@@ -188,7 +190,7 @@ public class Message implements Serializable{
 	 */
 	public void setTextMessage(String textMessage) {
 		this.textMessage = textMessage;
-		setRsaState(getRsaState());
+		if(getRsaState() != null) setRsaState(getRsaState());
 	}
 
 	/**
@@ -209,10 +211,12 @@ public class Message implements Serializable{
 		this.rsaState = rsaState;
 		switch(rsaState) {
 		case DECODED:
-			setTextMessage(Utils.RSA.decode(getByteMessage()));
+			if(getByteMessage() != null)
+				this.textMessage = Utils.RSA.decode(getByteMessage());
 			break;
 		case ENCODED:
-			setTextMessage(Message.encodeTextMessage);
+			if(getTextMessage() != null)
+				this.textMessage = Message.encodeTextMessage;
 			break;
 		}
 	}

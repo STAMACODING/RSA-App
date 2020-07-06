@@ -73,8 +73,8 @@ public class MessageService extends Service{
 		
 		while(!isShutDownRequested()) {
 			if(NetworkConfig.TYPE == NetworkType.CLIENT) if(DatabaseService.getInstance().isCrashed()) DatabaseService.restart();
-			if(ReceiveService.getInstance().isCrashed()) ReceiveService.restart();
-			if(SendService.getInstance().isCrashed()) SendService.restart();
+			//if(ReceiveService.getInstance().isCrashed()) ReceiveService.restart();
+			//if(SendService.getInstance().isCrashed()) SendService.restart();
 		}
 		
 		Logger.debug(this.getClass().getSimpleName(), "Shutting down " + getName());

@@ -16,7 +16,9 @@ public class MessageManager {
 	private static volatile ArrayList<Message> messages = new ArrayList<Message>();
 	
 	static{
-		MessageManager.manage(DBManager.getInstance().getMessagesFromDB());
+		Logger.debug(MessageManager.class.getSimpleName(), "Querying stored messages from chat database");
+		Message[] storedMessages = DBManager.getInstance().getMessagesFromDB();
+		if(storedMessages != null)MessageManager.manage(storedMessages);
 	}
 	
 	
