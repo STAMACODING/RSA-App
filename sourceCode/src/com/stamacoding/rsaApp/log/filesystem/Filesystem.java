@@ -63,9 +63,14 @@ public class Filesystem
 		}
     }
         
-    static void deleteFile()
+    public static void deleteFile(String filePath, String fileName, FileEnding fileEnding)
     {
+        String fileFull = getFullFileName(filePath, fileName, fileEnding);
 
+        if (checkFile(fileFull) == true)
+        {
+            new File(fileFull).delete();
+        }
     }
 
     static void deleteLines()
