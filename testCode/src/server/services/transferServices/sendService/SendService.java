@@ -147,7 +147,7 @@ public class SendService extends Service{
 			// If there is a message to be sent
 			Message messageToSend = MessageManager.Client.getMessageToSend();
 			if(messageToSend != null) {
-				Logger.debug(this.getClass().getSimpleName(), "Got new message to send from LocaleMessageList");
+				Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
 				
 				// Encode message before sending to server
 				messageToSend.setRsaState(RsaState.ENCODED);
