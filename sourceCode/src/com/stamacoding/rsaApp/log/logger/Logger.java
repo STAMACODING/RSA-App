@@ -1,9 +1,17 @@
 package com.stamacoding.rsaApp.log.logger;
 
+import java.io.File;
+
 import com.stamacoding.rsaApp.log.debug.Debug;
 import com.stamacoding.rsaApp.log.filesystem.Filesystem;
 
 public class Logger {
+	
+	static{
+		// Create "logs" directory automatically
+		File f = new File("logs");
+		f.mkdirs();
+	}
 
 	public static outputType OutputType = outputType.ALL;
 
@@ -11,7 +19,7 @@ public class Logger {
 
 	static String startingMessage = "Hello";
 
-	static String logPath = "sourceCode/logs";
+	static String logPath = "logs";
 
 	static String fileName = "Main";
 
