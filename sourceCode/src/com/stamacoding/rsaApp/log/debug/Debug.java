@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.stamacoding.rsaApp.log.filesystem.Filesystem;
 import com.stamacoding.rsaApp.log.logger.Logger;
 
 public class Debug
