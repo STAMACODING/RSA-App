@@ -1,16 +1,19 @@
 package com.stamacoding.rsaApp.log.logger;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import com.stamacoding.rsaApp.log.debug.Debug;
+import com.stamacoding.rsaApp.log.filesystem.Filesystem;
 
 public class Logger {
 
 	public static outputType OutputType = outputType.ALL;
 
 	public static fileType FileType = fileType.ALL;
+
+	static String startingMessage = "Hello";
+
+	static String logPath = "sourceCode/logs";
+
+	static String fileName = "Main";
 
 	/** only for test runs and unimportant information 
 	 * 
@@ -59,7 +62,6 @@ public class Logger {
 	{
 		if (OutputType != outputType.NONE)
 		{
-			//Struktur f�r zuk�nftiges Arbeiten: "[" + Debug.GetTime() + "]" + /*"[" + status + "]" +*/ /*"[" + client/server + "]" +*/ "[" + className + "]" + "[" + Type.toString() + "]" + ": "+ " " + message;
 			String logMessage = String.format("[%s][%-20s][%-7s]: %s", Debug.GetTime(), className, Type.toString(), message);
 			
 			if (OutputType == outputType.onlyConsole || OutputType == outputType.ALL) {
@@ -76,7 +78,7 @@ public class Logger {
 	 * does all the console- (and maybe log-) entries, gets parameters from the four methods
 	 * @param logMessage final message that gets printed in the console
 	 */
-	static void printToConsole(String logMessage) { // <-- sorry for that, lol
+	static void printToConsole(String logMessage) {
 		System.out.println(logMessage);
 	}
 
@@ -84,32 +86,9 @@ public class Logger {
 	 * does all the file entries, gets parameters from the four methods
 	 * @param logMessage final message that gets written to file(s)
 	 */
-	static void printToFile(String logMessage) { // <-- again, looool
-		//defines the FILE
-		String fileName = "logFile.log"; //at the moment, the file is here: \StamaCoding\RSA-App\sourceCode\file.log
-		File logFile = new File(fileName);
-		if (!logFile.exists()) {
-			// try-catch just to make sure, all is in place
-			try {
-				logFile.createNewFile(); //creates a log-file in case it is not already there
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		//defines the FILEWRITER
-		/* object with the log-file in it, can do thing like .exists(), .write() or .close()*/
-		FileWriter logFileWriter = null;
-		// try-catch just to make sure, all is in place
-		try {
-			logFileWriter = new FileWriter(fileName, true); //true sets property of appending text to file and not overwriting it
-			logFileWriter.write("\n" + logMessage); //writes the log-message
-			logFileWriter.close(); //saves the file
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	static void printToFile(String logMessage)
+	{
+		Filesystem.appendToFile(logPath, fileName, Filesystem.FileEnding.log, logMessage);
 	}
 }
 
