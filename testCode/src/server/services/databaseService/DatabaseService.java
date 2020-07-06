@@ -1,10 +1,10 @@
-package server.services.databaseServices;
+package server.services.databaseService;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 
 import server.services.Message;
 import server.services.Service;
-import server.services.databaseServices.MessageManager.Client;
+import server.services.databaseService.MessageManager.Client;
 import server.services.transferServices.receiveService.ReceiveService;
 
 /**

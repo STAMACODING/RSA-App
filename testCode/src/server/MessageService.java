@@ -5,7 +5,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 import server.config.NetworkConfig;
 import server.config.NetworkType;
 import server.services.Service;
-import server.services.databaseServices.DatabaseService;
+import server.services.databaseService.DatabaseService;
 import server.services.transferServices.receiveService.ReceiveService;
 import server.services.transferServices.sendService.SendService;
 

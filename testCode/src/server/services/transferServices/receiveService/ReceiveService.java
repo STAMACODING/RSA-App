@@ -16,7 +16,7 @@ import server.config.NetworkType;
 import server.services.Message;
 import server.services.SendState;
 import server.services.Service;
-import server.services.databaseServices.MessageManager;
+import server.services.databaseService.MessageManager;
 import server.services.transferServices.sendService.SendService;
 
 /**

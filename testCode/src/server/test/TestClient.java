@@ -11,7 +11,7 @@ import server.config.NetworkType;
 import server.services.Message;
 import server.services.RsaState;
 import server.services.SendState;
-import server.services.databaseServices.MessageManager;
+import server.services.databaseService.MessageManager;
 
 public class TestClient {
 	public static void main(String[] args) {

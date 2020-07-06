@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import com.stamacoding.rsaApp.log.logger.Logger;
 
 import server.Utils;
-import server.services.databaseServices.DatabaseService;
+import server.services.databaseService.DatabaseService;
 import server.services.transferServices.sendService.SendService;
 
 /**

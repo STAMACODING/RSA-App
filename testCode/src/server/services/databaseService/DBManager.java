@@ -1,4 +1,4 @@
-package server.services.databaseServices;
+package server.services.databaseService;
 
 import java.sql.Connection;
 import java.sql.Date;

@@ -15,8 +15,8 @@ import server.services.Message;
 import server.services.RsaState;
 import server.services.SendState;
 import server.services.Service;
-import server.services.databaseServices.MessageManager;
-import server.services.databaseServices.MessageManager.Client;
+import server.services.databaseService.MessageManager;
+import server.services.databaseService.MessageManager.Client;
 import server.services.transferServices.receiveService.ReceiveService;
 
 /**

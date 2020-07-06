@@ -1,4 +1,4 @@
-package server.services.databaseServices;
+package server.services.databaseService;
 
 import java.util.ArrayList;
 
@@ -15,7 +15,7 @@ public class MessageManager {
 	 */
 	private static volatile ArrayList<Message> messages = new ArrayList<Message>();
 	
-	{
+	static{
 		MessageManager.manage(DBManager.getInstance().getMessagesFromDB());
 	}
 	
