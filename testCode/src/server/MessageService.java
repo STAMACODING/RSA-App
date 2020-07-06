@@ -3,10 +3,9 @@ package server;
 import com.stamacoding.rsaApp.log.logger.Logger;
 
 import server.config.NetworkConfig;
-import server.config.Type;
+import server.config.NetworkType;
 import server.services.Service;
-import server.services.databaseServices.readService.ReadService;
-import server.services.databaseServices.storeService.StoreService;
+import server.services.databaseServices.DatabaseService;
 import server.services.transferServices.receiveService.ReceiveService;
 import server.services.transferServices.sendService.SendService;
 
@@ -15,8 +14,7 @@ import server.services.transferServices.sendService.SendService;
  * running on a client.</p>
  * Unites the work of these services: 
  * <ul>
- * 	<li>{@link ReadService} (client)</li>
- *  <li>{@link StoreService} (client)</li>
+ *  <li>{@link DatabaseService} (client)</li>
  *  <li>{@link ReceiveService} (server, client)</li>
  *  <li>{@link SendService} (server, client)</li>
  * </ul>
@@ -42,6 +40,9 @@ public class MessageService extends Service{
 		return singleton;
 	}
 	
+	/**
+	 * Restarts the {@link MessageService} safely.
+	 */
 	public static void restart() {
 		Logger.debug(MessageService.class.getSimpleName(), "Restarting " + singleton.getName());
 		singleton.requestShutdown();
@@ -66,18 +67,12 @@ public class MessageService extends Service{
 	public void run() {
 		if(!NetworkConfig.isValid()) throw new RuntimeException("Invalid network configuration! Use NetworkConfig.setup() to fix");
 		
-		if(NetworkConfig.TYPE == Type.CLIENT) {
-			ReadService.getInstance().start();
-			StoreService.getInstance().start();
-		}
+		if(NetworkConfig.TYPE == NetworkType.CLIENT) DatabaseService.getInstance().start();
 		ReceiveService.getInstance().start();
 		SendService.getInstance().start();
 		
 		while(!isShutDownRequested()) {
-			if(NetworkConfig.TYPE == Type.CLIENT) {
-				if(ReadService.getInstance().isCrashed()) ReadService.restart();
-				if(StoreService.getInstance().isCrashed()) StoreService.restart();
-			}
+			if(NetworkConfig.TYPE == NetworkType.CLIENT) if(DatabaseService.getInstance().isCrashed()) DatabaseService.restart();
 			if(ReceiveService.getInstance().isCrashed()) ReceiveService.restart();
 			if(SendService.getInstance().isCrashed()) SendService.restart();
 		}
@@ -86,16 +81,14 @@ public class MessageService extends Service{
 		
 		SendService.getInstance().requestShutdown();
 		ReceiveService.getInstance().requestShutdown();
-		if(NetworkConfig.TYPE == Type.CLIENT) StoreService.getInstance().requestShutdown();
-		if(NetworkConfig.TYPE == Type.CLIENT) ReadService.getInstance().requestShutdown();
+		if(NetworkConfig.TYPE == NetworkType.CLIENT) DatabaseService.getInstance().requestShutdown();
 		
 		Logger.debug(this.getClass().getSimpleName(), "Shut down " + getName());
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
-		NetworkConfig.setup(Type.CLIENT, (byte) 12, "127.0.0.1", 1001, 1002);
+		NetworkConfig.setup(NetworkType.CLIENT, (byte) 12, "127.0.0.1", 1001, 1002);
 		MessageService.getInstance().start();
-		
 	}
 
 }

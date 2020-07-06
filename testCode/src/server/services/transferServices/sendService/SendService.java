@@ -10,12 +10,17 @@ import java.util.ArrayList;
 import com.stamacoding.rsaApp.log.logger.Logger;
 
 import server.config.NetworkConfig;
-import server.config.Type;
+import server.config.NetworkType;
+import server.services.Message;
+import server.services.RsaState;
+import server.services.SendState;
 import server.services.Service;
-import server.services.transferServices.TransferMessage;
+import server.services.databaseServices.MessageManager;
+import server.services.databaseServices.MessageManager.Client;
+import server.services.transferServices.receiveService.ReceiveService;
 
 /**
- * {@link Service} sending all messages, that are in the {@link SendQueue}.
+ * {@link Service} sending messages.
  */
 public class SendService extends Service{
 	/**
@@ -38,6 +43,9 @@ public class SendService extends Service{
 		return singleton;
 	}
 	
+	/**
+	 * Restarts the {@link SendService} safely.
+	 */
 	public static void restart() {
 		Logger.debug(SendService.class.getSimpleName(), "Restarting " + singleton.getName());
 		singleton.requestShutdown();
@@ -55,10 +63,10 @@ public class SendService extends Service{
 	@Override
 	public void run() {
 		super.run();
-		if(NetworkConfig.TYPE == Type.CLIENT) {
+		if(NetworkConfig.TYPE == NetworkType.CLIENT) {
 			Logger.debug(this.getClass().getSimpleName(), "Running on client");
 			runClient();
-		}else if(NetworkConfig.TYPE == Type.SERVER) {
+		}else if(NetworkConfig.TYPE == NetworkType.SERVER) {
 			Logger.debug(this.getClass().getSimpleName(), "Running on server");
 			runServer();
 		}
@@ -69,7 +77,7 @@ public class SendService extends Service{
 	 * Creates a {@link ServerSocket} waiting for clients requesting their messages from the server. 
 	 * <ol>
 	 * 	<li>If a client connects to the sever using a {@link Socket} and queries his messages, he tells the server his unique id.</li>
-	 * 	<li>After that using this id the server searches for messages in the {@link SendQueue} that concern the client.</li>
+	 * 	<li>After that using this id the server searches for messages using the {@link MessageManager} that concern the client.</li>
 	 * 	<li>If there are any messages the server sends them to the client using the {@link Socket}.</li>
 	 * </ol>
 	 */
@@ -83,19 +91,20 @@ public class SendService extends Service{
 					Socket connectionFromClient = sendServer.accept();
 					connectionFromClient.setSoTimeout(5000);
 					Logger.debug(this.getClass().getSimpleName(), "Received new client request");
-					if(!SendQueue.isEmpty()) {
+
+					if(MessageManager.getAllMessages().size() != 0) {
 						DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
-						
+
 						byte clientId = inputStream.readByte();
 						Logger.debug(this.getClass().getSimpleName(), "Client logged in as (" + clientId + ")");
-						ArrayList<TransferMessage> messagesToSendAsList = SendQueue.pollMessages(clientId);
+
+						Logger.debug(this.getClass().getSimpleName(), "Searching for messages that belong to (" + clientId + ")");
+						ArrayList<Message> messagesToSendAsList = MessageManager.Server.poll(clientId);
 						
 						int messageCount = messagesToSendAsList.size();
-						byte[] messagesToSend = TransferMessage.messageListToByteArray(messagesToSendAsList);
-						Logger.debug(this.getClass().getSimpleName(), "Searching for messages that belong to (" + clientId + ")");
+						byte[] messagesToSend = Message.messageListToByteArray(messagesToSendAsList);
 						DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
 						
-						// Send one message to the receiver TODO send multiple messages to the receiver
 						if(messageCount > 0) {
 							Logger.debug(this.getClass().getSimpleName(), "Found " + messageCount + " messages belonging to (" + clientId + ")");
 							
@@ -125,20 +134,24 @@ public class SendService extends Service{
 	}
 
 	/**
-	 * Sends a message from a client to the server if the {@link SendQueue} contains any entry.
+	 * Sends a message from a client to the server if there is any message to send.
 	 *  <ol>
-	 * 	<li>If the {@link SendQueue} is not empty, the oldest message gets polled.</li>
+	 * 	<li>If {@link Client#getMessageToSend()} does not return null, there is a message to send.</li>
 	 * 	<li>After that the client connect to the server using a {@link Socket}.</li>
-	 * 	<li>Then the message gets sent.</li>
+	 * 	<li>Then the message gets encoded and sent.</li>
+	 * 	<li>If the server successfully receives the message, the message's {@link SendState} will get updated to {@link SendState#SENT}.</li>
 	 * </ol>
 	 */
 	private void runClient() {
 		while(!isShutDownRequested()) {
 			// If there is a message to be sent
-			if(!SendQueue.isEmpty()) {
-				TransferMessage message = SendQueue.poll();
-				Logger.debug(this.getClass().getSimpleName(), "Polled new message from the SendQueue");
-				byte[] messageAsByteArray = TransferMessage.messageToByteArray(message);
+			Message messageToSend = MessageManager.Client.getMessageToSend();
+			if(messageToSend != null) {
+				Logger.debug(this.getClass().getSimpleName(), "Got new message to send from LocaleMessageList");
+				
+				// Encode message before sending to server
+				messageToSend.setRsaState(RsaState.ENCODED);
+				byte[] messageAsByteArray = Message.messageToByteArray(messageToSend);
 					
 				Socket connectionToServer = null;
 				try {
@@ -153,6 +166,11 @@ public class SendService extends Service{
 						outputStream.write(messageAsByteArray);
 							
 						Logger.debug(this.getClass().getSimpleName(), "Successfully sent message to the receive server");
+						Logger.debug(this.getClass().getSimpleName(), "Updating message status");
+						
+						messageToSend.setSendState(SendState.SENT);
+						messageToSend.setUpdateRequested(true);
+						
 						// Close connection to the receiver
 						connectionToServer.close();
 						Logger.debug(this.getClass().getSimpleName(), "Closed connection to the receive server");

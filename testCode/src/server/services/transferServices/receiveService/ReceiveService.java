@@ -12,16 +12,15 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 import server.config.NetworkConfig;
 import server.config.NetworkConfig.Client;
 import server.config.NetworkConfig.Server;
-import server.config.Type;
+import server.config.NetworkType;
+import server.services.Message;
+import server.services.SendState;
 import server.services.Service;
-import server.services.databaseServices.DatabaseMessage;
-import server.services.databaseServices.storeService.StoreQueue;
-import server.services.transferServices.TransferMessage;
-import server.services.transferServices.sendService.SendQueue;
+import server.services.databaseServices.MessageManager;
 import server.services.transferServices.sendService.SendService;
 
 /**
- * {@link Service} receiving messages from the server or the clients.
+ * {@link Service} receiving messages.
  */
 public class ReceiveService extends Service{
 	/**
@@ -44,6 +43,9 @@ public class ReceiveService extends Service{
 		return singleton;
 	}
 	
+	/**
+	 * Restarts the {@link ReceiveService} safely.
+	 */
 	public static void restart() {
 		Logger.debug(ReceiveService.class.getSimpleName(), "Restarting " + singleton.getName());
 		singleton.requestShutdown();
@@ -61,10 +63,10 @@ public class ReceiveService extends Service{
 	@Override
 	public void run() {
 		super.run();
-		if(NetworkConfig.TYPE == Type.CLIENT) {
+		if(NetworkConfig.TYPE == NetworkType.CLIENT) {
 			Logger.debug(this.getClass().getSimpleName(), "Running on client");
 			runClient();
-		}else if(NetworkConfig.TYPE == Type.SERVER) {
+		}else if(NetworkConfig.TYPE == NetworkType.SERVER) {
 			Logger.debug(this.getClass().getSimpleName(), "Running on server");
 			runServer();
 		}
@@ -76,7 +78,7 @@ public class ReceiveService extends Service{
 	 * <ol>
 	 * 	<li>If a clients wants to connect to the server using a {@link Socket}, the server will accept the connection.</li>
 	 * 	<li>After that the server reads the message from the socket's {@link DataInputStream}.</li>
-	 * 	<li>Then the message gets forwarded using the {@link SendService} and the {@link SendQueue}.</li>
+	 * 	<li>Then the message gets forwarded using the {@link SendService} and the {@link MessageManager}.</li>
 	 * </ol>
 	 */
 	private void runServer() {
@@ -109,7 +111,12 @@ public class ReceiveService extends Service{
 					Logger.debug(this.getClass().getSimpleName(), "Closed connection to client");
 					// Forward message
 					Logger.debug(this.getClass().getSimpleName(), "Forwarding message");
-					SendQueue.add(TransferMessage.byteArrayToMessage(messageAsByteArray));
+					
+					Message receivedMessage = Message.byteArrayToMessage(messageAsByteArray);
+					receivedMessage.removeLocalDependencies();
+					receivedMessage.setSendState(SendState.PENDING);
+					
+					MessageManager.manage(receivedMessage);
 				} catch (IOException e) {
 					e.printStackTrace();
 					Logger.error(this.getClass().getSimpleName(), "Failed to receive message from a client");
@@ -152,10 +159,12 @@ public class ReceiveService extends Service{
 							messagesIncludingMeta = new byte[length];
 						    inputStream.readFully(messagesIncludingMeta, 0, messagesIncludingMeta.length);
 						    
-						    ArrayList<TransferMessage> messages = TransferMessage.byteArrayToMessageList(messagesIncludingMeta);
+						    ArrayList<Message> messages = Message.byteArrayToMessageList(messagesIncludingMeta);
 						    Logger.debug(this.getClass().getSimpleName(), "Successfully received " + messages.size() + " new message(s) from the send server");
-							for(TransferMessage m : messages) {
-						    	StoreQueue.add(new DatabaseMessage(m));
+							for(Message m : messages) {
+						    	m.removeLocalDependencies();
+						    	m.setSendState(SendState.SENT);
+						    	MessageManager.manage(m);
 						    }
 						}
 					}catch(Exception e) {

@@ -3,6 +3,8 @@ package server;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 
+import server.services.Message;
+
 public class Utils {
 	
 	public static class Ip{
@@ -20,10 +22,14 @@ public class Utils {
 		}
 	}
 	
-	public static class Convert{
+	public static class RSA{
 		
-		public static String byteArrayToString(byte[] byteMessage) {
-			return "Placeholder-Text";
+		public static byte[] encode(String textMessage) {
+			return new byte[] {23, 12, 111, 2, 11};
+		}
+
+		public static String decode(byte[] byteMessage) {
+			return "Hallo Welt";
 		}
 		
 	}

@@ -5,7 +5,7 @@ import java.util.Scanner;
 import server.MessageService;
 import server.Utils;
 import server.config.NetworkConfig;
-import server.config.Type;
+import server.config.NetworkType;
 
 public class TestServer {
 	public static void main(String[] args) {
@@ -24,7 +24,7 @@ public class TestServer {
 		System.out.println("------------------------------------------------------------");
 		
 		NetworkConfig.Server.IP = Utils.Ip.getIpAdress();
-		NetworkConfig.TYPE = Type.SERVER;
+		NetworkConfig.TYPE = NetworkType.SERVER;
 		
 		MessageService.getInstance().start();
 	}

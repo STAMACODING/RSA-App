@@ -3,14 +3,15 @@ package server.test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Date;
 import java.util.Scanner;
 
 import server.MessageService;
 import server.config.NetworkConfig;
-import server.config.Type;
-import server.services.transferServices.TransferMessage;
-import server.services.transferServices.sendService.SendQueue;
+import server.config.NetworkType;
+import server.services.Message;
+import server.services.RsaState;
+import server.services.SendState;
+import server.services.databaseServices.MessageManager;
 
 public class TestClient {
 	public static void main(String[] args) {
@@ -54,11 +55,11 @@ public class TestClient {
 		s.close();
 		System.out.println("------------------------------------------------------------");
 		
-		NetworkConfig.TYPE = Type.CLIENT;
+		NetworkConfig.TYPE = NetworkType.CLIENT;
 		MessageService.getInstance().start();
 		if(input.equals("y")) {
-			TransferMessage t = new TransferMessage(message.getBytes(), NetworkConfig.Client.ID, idReceiving, new Date(System.currentTimeMillis()));
-			SendQueue.add(t);
+			Message m = new Message(-1, message, NetworkConfig.Client.ID, idReceiving, System.currentTimeMillis(), SendState.PENDING, RsaState.DECODED);
+			MessageManager.manage(m);
 		}
 	}
 }

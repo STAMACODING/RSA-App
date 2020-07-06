@@ -1,7 +1,6 @@
 package server.config;
 
 import server.MessageService;
-import server.services.databaseServices.readService.ReadService;
 import server.services.transferServices.receiveService.ReceiveService;
 
 /**
@@ -14,7 +13,7 @@ public class NetworkConfig {
 	/**
 	 * the type of the device the {@link MessageService} is running on
 	 */
-	public static Type TYPE = null;
+	public static NetworkType TYPE = null;
 	
 	/**
 	 * configurations concerning the client
@@ -29,11 +28,6 @@ public class NetworkConfig {
 		 * the time the {@link ReceiveService} waits before querying new messages from the server
 		 */
 		public static long QUERY_MESSAGES_INTERVAL = 10000;
-		
-		/**
-		 * the time the {@link ReadService} waits before updating the messages
-		 */
-		public static long UPDATE_CHAT_HISTORY_INTERVAL = 2000;
 	}
 	
 	/**
@@ -62,7 +56,7 @@ public class NetworkConfig {
 	 * @param serverSendPort On this port the server sends messages. The clients receive messages using this port.
 	 * @param serverReceivePort On this port the server listens to receive messages from clients. The clients send messages using this port.
 	 */
-	public static void setup(Type type, byte clientID, String serverIP, int serverSendPort, int serverReceivePort) {
+	public static void setup(NetworkType type, byte clientID, String serverIP, int serverSendPort, int serverReceivePort) {
 		TYPE = type;
 		Client.ID = clientID;
 		Server.IP = serverIP;
@@ -77,7 +71,7 @@ public class NetworkConfig {
 	 */
 	public static boolean isValid() {
 		if(TYPE == null) return false;
-		if(Client.ID < 0 && TYPE == Type.CLIENT) return false;
+		if(Client.ID < 0 && TYPE == NetworkType.CLIENT) return false;
 		if(Server.SEND_PORT < 0) return false;
 		if(Server.RECEIVE_PORT < 0) return false;
 		if(Server.RECEIVE_PORT == Server.SEND_PORT) return false;
