@@ -9,6 +9,8 @@ import java.sql.Statement;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 
+import server.services.Message;
+
 /**
  * Interface to the client's chat database.
  *  <ul>
@@ -43,7 +45,7 @@ public class DBManager{
 		try {
 			Class.forName("org.sqlite.JDBC");
 			con = DriverManager.getConnection(url, userName, password);
-			Logger.debug(this.getClass().getSimpleName(), "Connecting to Connection to DB/UserDatabse.db succesfull");
+			Logger.debug(this.getClass().getSimpleName(), "Connecting to DB/UserDatabse.db succesfull");
 			
 			return con;
 			
@@ -59,15 +61,15 @@ public class DBManager{
 	 * Stores a message in the chat database.
 	 * @param m the message to store
 	 */
-	public void addMessageToDB(DatabaseMessage m) {
+	public void addMessageToDB(Message m) {
+		m.setId(23);
+	}
+	
+	public void updateMessage(Message updatedMessage) {
 		
 	}
 	
-	public void updateMessage(DatabaseMessage updatedMessage) {
-		
-	}
-	
-	public DatabaseMessage[] getMessagesFromDB() {
+	public Message[] getMessagesFromDB() {
 		
 		try {
 			Connection con = DBManager.getInstance().connect();
@@ -153,7 +155,7 @@ public class DBManager{
 	
 	public static void main(String [] args) {
 		try {
-			DatabaseMessage[] messages = DBManager.getInstance().getMessagesFromDB();
+			Message[] messages = DBManager.getInstance().getMessagesFromDB();
 		}catch(Exception e){
 			e.printStackTrace();
 		}

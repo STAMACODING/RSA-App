@@ -6,7 +6,7 @@ import server.MessageService;
  * Used to declare the type of the device the {@link MessageService} is running on.
  *
  */
-public enum Type {
+public enum NetworkType {
 	SERVER, 
 	CLIENT
 }
