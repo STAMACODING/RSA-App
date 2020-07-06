@@ -16,9 +16,11 @@ public class MessageManager {
 	private static volatile ArrayList<Message> messages = new ArrayList<Message>();
 	
 	static{
-		Logger.debug(MessageManager.class.getSimpleName(), "Querying stored messages from chat database");
-		Message[] storedMessages = DBManager.getInstance().getMessagesFromDB();
-		if(storedMessages != null)MessageManager.manage(storedMessages);
+		if(NetworkConfig.TYPE == NetworkType.CLIENT) {
+			Logger.debug(MessageManager.class.getSimpleName(), "Querying stored messages from chat database");
+			Message[] storedMessages = DBManager.getInstance().getMessagesFromDB();
+			if(storedMessages != null)MessageManager.manage(storedMessages);
+		}
 	}
 	
 	
