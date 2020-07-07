@@ -109,6 +109,8 @@ public class ReceiveService extends Service{
 							messageMeta = new byte[messageMetaLength];
 						    inputStream.readFully(messageMeta, 0, messageMetaLength);
 						    
+						    
+						    
 						    // Read message data
 						    int messageDataLength = inputStream.readInt();
 						    

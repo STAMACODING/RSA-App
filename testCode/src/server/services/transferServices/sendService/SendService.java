@@ -169,6 +169,8 @@ public class SendService extends Service{
 						// Send message data
 						outputStream.writeInt(messageData.length);
 						outputStream.write(messageData);
+						
+						outputStream.flush();
 							
 						Logger.debug(this.getClass().getSimpleName(), "Successfully sent message to the receive server");
 						Logger.debug(this.getClass().getSimpleName(), "Updating message status");
