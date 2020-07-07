@@ -1,6 +1,6 @@
 package server.message;
 
-import com.stamacoding.rsaApp.rsa.keyCreate.Key;
+import java.io.Serializable;
 
 import server.services.databaseService.DatabaseService;
 import server.services.transferServices.sendService.SendService;
@@ -9,8 +9,13 @@ import server.services.transferServices.sendService.SendService;
  * An instance of this class represents a message with all its different attributes.
  *
  */
-public class Message{
+public class Message implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7382792471329161848L;
+
 	/**
 	 * the message's unique id in the chat database
 	 */
@@ -172,8 +177,8 @@ public class Message{
 	}
 	
 	public void decodeMessageMeta() {
-		setEncodedMessageMeta(null);
 		setMessageMeta(MessageMeta.decode(getEncodedMessageMeta()));
+		setEncodedMessageMeta(null);
 	}
 	
 	public void encodeMessageData() {
@@ -182,7 +187,7 @@ public class Message{
 	}
 	
 	public void decodeMessageData() {
-		setEncodedMessageData(null);
 		setMessageData(MessageData.decode(getEncodedMessageData()));
+		setEncodedMessageData(null);
 	}
 }

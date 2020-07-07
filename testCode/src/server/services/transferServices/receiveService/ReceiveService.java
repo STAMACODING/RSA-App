@@ -120,6 +120,8 @@ public class ReceiveService extends Service{
 						    }else {
 						    	throw new InvalidDataException("Received invalid data");
 						    }
+						    
+						    Logger.debug(this.getClass().getSimpleName(), "Successfully received message's meta and data");
 							
 							Message receivedMessage = new Message(-1, SendState.PENDING, messageData, messageMeta);
 							receivedMessage.decodeMessageMeta();
