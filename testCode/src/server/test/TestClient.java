@@ -8,7 +8,8 @@ import java.util.Scanner;
 import server.config.NetworkConfig;
 import server.config.NetworkType;
 import server.message.Message;
-import server.message.RsaState;
+import server.message.MessageData;
+import server.message.MessageMeta;
 import server.message.SendState;
 import server.services.databaseService.MessageManager;
 import server.services.mainService.MessageService;
@@ -58,7 +59,7 @@ public class TestClient {
 		NetworkConfig.TYPE = NetworkType.CLIENT;
 		MessageService.getInstance().start();
 		if(input.equals("y")) {
-			Message m = new Message(-1, message, NetworkConfig.Client.ID, idReceiving, System.currentTimeMillis(), SendState.PENDING, RsaState.DECODED);
+			Message m = new Message(-1, SendState.PENDING, new MessageData(message, System.currentTimeMillis()), new MessageMeta(NetworkConfig.Client.ID, idReceiving));
 			MessageManager.manage(m);
 		}
 	}

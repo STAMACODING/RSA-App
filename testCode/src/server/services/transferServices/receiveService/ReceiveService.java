@@ -8,11 +8,14 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
+import com.sun.media.sound.InvalidDataException;
 
+import server.Utils;
 import server.config.NetworkConfig;
 import server.config.NetworkConfig.Client;
 import server.config.NetworkConfig.Server;
 import server.message.Message;
+import server.message.MessageData;
 import server.message.SendState;
 import server.config.NetworkType;
 import server.services.Service;
@@ -96,27 +99,40 @@ public class ReceiveService extends Service{
 					Logger.debug(this.getClass().getSimpleName(), "Receiving a new message from a client");
 					DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
 					
-					// Check if message is not empty
-					int length = inputStream.readInt();
-					
-				    // Read message from client
-					byte[] messageAsByteArray = null;
-					if(length>0) {
-						messageAsByteArray = new byte[length];
-						
-					    inputStream.readFully(messageAsByteArray, 0, messageAsByteArray.length);
-					    Logger.debug(this.getClass().getSimpleName(), "Successfully received new message from a client");
+
+					try {
+					    // Read message from client
+						int messageMetaLength = inputStream.readInt();
+						byte[] messageMeta = null, messageData = null;
+						if(messageMetaLength>0) {
+							// Read message meta
+							messageMeta = new byte[messageMetaLength];
+						    inputStream.readFully(messageMeta, 0, messageMetaLength);
+						    
+						    // Read message data
+						    int messageDataLength = inputStream.readInt();
+						    
+						    if(messageDataLength > 0) {
+						    	messageData = new byte[messageDataLength];
+						    	inputStream.readFully(messageData, 0, messageDataLength);
+						    }else {
+						    	throw new InvalidDataException("Received invalid data");
+						    }
+							
+							Message receivedMessage = new Message(-1, SendState.PENDING, messageData, messageMeta);
+							receivedMessage.decodeMessageMeta();
+						    
+						    Logger.debug(this.getClass().getSimpleName(), "Successfully received new message from a client");
+							MessageManager.manage(receivedMessage);
+						}else {
+							throw new InvalidDataException("Received invalid data");
+						}
+					}catch(InvalidDataException e) {
+						Logger.error(this.getClass().getSimpleName(), "Received invalid data");
 					}
+
 					connectionFromClient.close();
 					Logger.debug(this.getClass().getSimpleName(), "Closed connection to client");
-					// Forward message
-					Logger.debug(this.getClass().getSimpleName(), "Forwarding message");
-					
-					Message receivedMessage = Message.deserializeMessage(messageAsByteArray);
-					receivedMessage.removeLocalDependencies();
-					receivedMessage.setSendState(SendState.PENDING);
-					
-					MessageManager.manage(receivedMessage);
 				} catch (IOException e) {
 					e.printStackTrace();
 					Logger.error(this.getClass().getSimpleName(), "Failed to receive message from a client");
@@ -152,18 +168,18 @@ public class ReceiveService extends Service{
 					outputStream.writeByte(NetworkConfig.Client.ID);
 					
 					DataInputStream inputStream = new DataInputStream(connectionToServer.getInputStream());
-					byte[] messagesIncludingMeta = null;
+					byte[] messages = null;
 					try {
 						int length = inputStream.readInt();
 						if(length!=0) {
-							messagesIncludingMeta = new byte[length];
-						    inputStream.readFully(messagesIncludingMeta, 0, messagesIncludingMeta.length);
+							messages = new byte[length];
+						    inputStream.readFully(messages, 0, length);
 						    
-						    ArrayList<Message> messages = Message.deserializeMessageList(messagesIncludingMeta);
-						    Logger.debug(this.getClass().getSimpleName(), "Successfully received " + messages.size() + " new message(s) from the send server");
-							for(Message m : messages) {
-						    	m.removeLocalDependencies();
-						    	m.setSendState(SendState.SENT);
+						    ArrayList<Message> messagesAsList = (ArrayList<Message>) Utils.Serialization.deserialize(messages);
+						    Logger.debug(this.getClass().getSimpleName(), "Successfully received " + messagesAsList.size() + " new message(s) from the send server");
+							for(Message m : messagesAsList) {
+						    	m.decodeMessageMeta();
+						    	m.decodeMessageData();
 						    	MessageManager.manage(m);
 						    }
 						}

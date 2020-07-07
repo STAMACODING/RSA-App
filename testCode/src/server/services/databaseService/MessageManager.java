@@ -7,7 +7,6 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 import server.config.NetworkConfig;
 import server.config.NetworkType;
 import server.message.Message;
-import server.message.RsaState;
 
 public class MessageManager {
 	/**
@@ -56,8 +55,9 @@ public class MessageManager {
 		public static ArrayList<Message> poll(byte clientId) {
 			ArrayList<Message> messagesToSend = new ArrayList<Message>();
 			for(int i=0; i<getAllMessages().size(); i++) {
-				if(getAllMessages().get(i).getReceivingId() == clientId) {
+				if(getAllMessages().get(i).getMessageMeta().getReceivingId() == clientId) {
 					messagesToSend.add(getAllMessages().get(i));
+					getAllMessages().get(i).encodeMessageMeta();
 				}
 			}
 			for(Message m : messagesToSend) {
@@ -71,9 +71,6 @@ public class MessageManager {
 		for(Message m : messages) {
 			if(getAllMessages().indexOf(m) == -1) {
 				getAllMessages().add(m);
-				
-				// Decode messages when running on client
-				if(NetworkConfig.TYPE == NetworkType.CLIENT) m.setRsaState(RsaState.DECODED);
 				
 				Logger.debug(MessageManager.class.getSimpleName(), "Added new message to MessageManager");
 			}

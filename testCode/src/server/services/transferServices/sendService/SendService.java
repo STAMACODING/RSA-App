@@ -9,15 +9,16 @@ import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 
+import server.Utils;
 import server.config.NetworkConfig;
 import server.config.NetworkType;
 import server.message.Message;
-import server.message.RsaState;
+import server.message.MessageData;
+import server.message.MessageMeta;
 import server.message.SendState;
 import server.services.Service;
 import server.services.databaseService.MessageManager;
 import server.services.databaseService.MessageManager.Client;
-import server.services.transferServices.receiveService.ReceiveService;
 
 /**
  * {@link Service} sending messages.
@@ -102,7 +103,7 @@ public class SendService extends Service{
 						ArrayList<Message> messagesToSendAsList = MessageManager.Server.poll(clientId);
 						
 						int messageCount = messagesToSendAsList.size();
-						byte[] messagesToSend = Message.serialize(messagesToSendAsList);
+						byte[] messagesToSend = Utils.Serialization.serialize(messagesToSendAsList);
 						DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
 						
 						if(messageCount > 0) {
@@ -150,8 +151,8 @@ public class SendService extends Service{
 				Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
 				
 				// Encode message before sending to server
-				messageToSend.setRsaState(RsaState.ENCODED);
-				byte[] messageAsByteArray = Message.serialize(messageToSend);
+				byte[] messageMeta = MessageMeta.encode(messageToSend.getMessageMeta());
+				byte[] messageData = MessageData.encode(messageToSend.getMessageData());
 					
 				Socket connectionToServer = null;
 				try {
@@ -161,9 +162,13 @@ public class SendService extends Service{
 					try {
 						DataOutputStream outputStream = new DataOutputStream(connectionToServer.getOutputStream());
 						
-						// Send message to the receiver
-						outputStream.writeInt(messageAsByteArray.length);
-						outputStream.write(messageAsByteArray);
+						// Send message meta
+						outputStream.writeInt(messageMeta.length);
+						outputStream.write(messageMeta);
+						
+						// Send message data
+						outputStream.writeInt(messageData.length);
+						outputStream.write(messageData);
 							
 						Logger.debug(this.getClass().getSimpleName(), "Successfully sent message to the receive server");
 						Logger.debug(this.getClass().getSimpleName(), "Updating message status");
