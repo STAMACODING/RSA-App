@@ -11,9 +11,9 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 
 import server.config.NetworkConfig;
 import server.config.NetworkType;
-import server.services.Message;
-import server.services.RsaState;
-import server.services.SendState;
+import server.message.Message;
+import server.message.RsaState;
+import server.message.SendState;
 import server.services.Service;
 import server.services.databaseService.MessageManager;
 import server.services.databaseService.MessageManager.Client;
@@ -102,7 +102,7 @@ public class SendService extends Service{
 						ArrayList<Message> messagesToSendAsList = MessageManager.Server.poll(clientId);
 						
 						int messageCount = messagesToSendAsList.size();
-						byte[] messagesToSend = Message.messageListToByteArray(messagesToSendAsList);
+						byte[] messagesToSend = Message.serialize(messagesToSendAsList);
 						DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
 						
 						if(messageCount > 0) {
@@ -151,7 +151,7 @@ public class SendService extends Service{
 				
 				// Encode message before sending to server
 				messageToSend.setRsaState(RsaState.ENCODED);
-				byte[] messageAsByteArray = Message.messageToByteArray(messageToSend);
+				byte[] messageAsByteArray = Message.serialize(messageToSend);
 					
 				Socket connectionToServer = null;
 				try {

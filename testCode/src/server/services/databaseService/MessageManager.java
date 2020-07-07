@@ -6,8 +6,8 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 
 import server.config.NetworkConfig;
 import server.config.NetworkType;
-import server.services.Message;
-import server.services.RsaState;
+import server.message.Message;
+import server.message.RsaState;
 
 public class MessageManager {
 	/**

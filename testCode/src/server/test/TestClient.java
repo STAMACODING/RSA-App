@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
-import server.MessageService;
 import server.config.NetworkConfig;
 import server.config.NetworkType;
-import server.services.Message;
-import server.services.RsaState;
-import server.services.SendState;
+import server.message.Message;
+import server.message.RsaState;
+import server.message.SendState;
 import server.services.databaseService.MessageManager;
+import server.services.mainService.MessageService;
 
 public class TestClient {
 	public static void main(String[] args) {

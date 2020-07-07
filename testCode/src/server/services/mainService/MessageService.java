@@ -1,4 +1,4 @@
-package server;
+package server.services.mainService;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 

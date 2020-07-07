@@ -12,9 +12,9 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 import server.config.NetworkConfig;
 import server.config.NetworkConfig.Client;
 import server.config.NetworkConfig.Server;
+import server.message.Message;
+import server.message.SendState;
 import server.config.NetworkType;
-import server.services.Message;
-import server.services.SendState;
 import server.services.Service;
 import server.services.databaseService.MessageManager;
 import server.services.transferServices.sendService.SendService;
@@ -112,7 +112,7 @@ public class ReceiveService extends Service{
 					// Forward message
 					Logger.debug(this.getClass().getSimpleName(), "Forwarding message");
 					
-					Message receivedMessage = Message.byteArrayToMessage(messageAsByteArray);
+					Message receivedMessage = Message.deserializeMessage(messageAsByteArray);
 					receivedMessage.removeLocalDependencies();
 					receivedMessage.setSendState(SendState.PENDING);
 					
@@ -159,7 +159,7 @@ public class ReceiveService extends Service{
 							messagesIncludingMeta = new byte[length];
 						    inputStream.readFully(messagesIncludingMeta, 0, messagesIncludingMeta.length);
 						    
-						    ArrayList<Message> messages = Message.byteArrayToMessageList(messagesIncludingMeta);
+						    ArrayList<Message> messages = Message.deserializeMessageList(messagesIncludingMeta);
 						    Logger.debug(this.getClass().getSimpleName(), "Successfully received " + messages.size() + " new message(s) from the send server");
 							for(Message m : messages) {
 						    	m.removeLocalDependencies();

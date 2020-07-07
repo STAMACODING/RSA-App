@@ -3,7 +3,7 @@ package server;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 
-import server.services.Message;
+import server.message.Message;
 
 public class Utils {
 	

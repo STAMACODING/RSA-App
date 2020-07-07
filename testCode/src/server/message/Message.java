@@ -1,4 +1,4 @@
-package server.services;
+package server.message;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -267,7 +267,7 @@ public class Message implements Serializable{
 	 * @param m the message to serialize
 	 * @return the message as byte array
 	 */
-	public static byte[] messageToByteArray(Message m) {
+	public static byte[] serialize(Message m) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream os;
 		try {
@@ -285,7 +285,7 @@ public class Message implements Serializable{
 	 * @param l the list to serialize
 	 * @return the list as byte array
 	 */
-	public static byte[] messageListToByteArray(ArrayList<Message> l) {
+	public static byte[] serialize(ArrayList<Message> l) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream os;
 		try {
@@ -303,7 +303,7 @@ public class Message implements Serializable{
 	 * @param message the serialized message
 	 * @return the message as object
 	 */
-	public static Message byteArrayToMessage(byte[] message) {
+	public static Message deserializeMessage(byte[] message) {
 		ByteArrayInputStream in = new ByteArrayInputStream(message);
 		ObjectInputStream is = null;
 		try {
@@ -320,7 +320,7 @@ public class Message implements Serializable{
 	 * @param messageList the serialized list
 	 * @return the list as object
 	 */
-	public static ArrayList<Message> byteArrayToMessageList(byte[] messageList) {
+	public static ArrayList<Message> deserializeMessageList(byte[] messageList) {
 		ByteArrayInputStream in = new ByteArrayInputStream(messageList);
 		ObjectInputStream is = null;
 		try {
