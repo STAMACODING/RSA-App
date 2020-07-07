@@ -1,6 +1,8 @@
 package server.message;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import server.services.databaseService.DatabaseService;
 import server.services.transferServices.sendService.SendService;
@@ -46,6 +48,7 @@ public class Message implements Serializable{
 	
 	
 	public Message(int id, SendState state, MessageData messageData, MessageMeta messageMeta) {
+		if(messageData == null || messageMeta == null) throw new IllegalArgumentException("MessageMeta/MessageData is not allowed to be null!");
 		setId(id);
 		setMessageData(messageData);
 		setMessageMeta(messageMeta);
@@ -53,6 +56,7 @@ public class Message implements Serializable{
 	}
 	
 	public Message(int id, SendState state, byte[] encodedMessageData, byte[] encodedMessageMeta) {
+		if(encodedMessageData == null || encodedMessageMeta == null) throw new IllegalArgumentException("MessageMeta/MessageData is not allowed to be null!");
 		setId(id);
 		setEncodedMessageData(encodedMessageData);
 		setEncodedMessageMeta(encodedMessageMeta);
@@ -60,6 +64,7 @@ public class Message implements Serializable{
 	}
 	
 	public Message(int id, SendState state, byte[] encodedMessageData, MessageMeta messageMeta) {
+		if(encodedMessageData == null || messageMeta == null) throw new IllegalArgumentException("MessageMeta/MessageData is not allowed to be null!");
 		setId(id);
 		setEncodedMessageData(encodedMessageData);
 		setMessageMeta(messageMeta);
@@ -189,5 +194,33 @@ public class Message implements Serializable{
 	public void decodeMessageData() {
 		setMessageData(MessageData.decode(getEncodedMessageData()));
 		setEncodedMessageData(null);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		sb.append(getId());
+		sb.append("] (");
+		if(getMessageMeta() != null) {
+			sb.append(getMessageMeta().getSendingId());
+			sb.append(") => (");
+			sb.append(getMessageMeta().getReceivingId());
+			sb.append("): \"");
+		}else{
+			sb.append("?) => (?): \"");
+		}
+		if(getMessageData() != null) {
+			sb.append(getMessageData().getTextMessage());
+			sb.append("\" (created at ");
+			sb.append(new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(getMessageData().getDate()));
+			sb.append(")");
+		}else {
+			sb.append("????????\" (created at ????)");
+		}
+		sb.append(" [");
+		sb.append(getSendState().toString());
+		sb.append("]");
+		return sb.toString();
 	}
 }

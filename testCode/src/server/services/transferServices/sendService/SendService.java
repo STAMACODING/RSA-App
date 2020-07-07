@@ -149,10 +149,13 @@ public class SendService extends Service{
 			Message messageToSend = MessageManager.Client.getMessageToSend();
 			if(messageToSend != null) {
 				Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
+				Logger.debug(this.getClass().getSimpleName(), "Message to send: " + messageToSend.toString());
 				
 				// Encode message before sending to server
 				byte[] messageMeta = MessageMeta.encode(messageToSend.getMessageMeta());
 				byte[] messageData = MessageData.encode(messageToSend.getMessageData());
+				
+				Logger.debug(this.getClass().getSimpleName(), "Encoded message");
 					
 				Socket connectionToServer = null;
 				try {

@@ -125,8 +125,8 @@ public class ReceiveService extends Service{
 							
 							Message receivedMessage = new Message(-1, SendState.PENDING, messageData, messageMeta);
 							receivedMessage.decodeMessageMeta();
-						    
-						    Logger.debug(this.getClass().getSimpleName(), "Successfully received new message from a client");
+							
+							Logger.debug("MessageManager." + Server.class.getSimpleName(), "Received message: " + receivedMessage.toString());
 							MessageManager.manage(receivedMessage);
 						}else {
 							throw new InvalidDataException("Received invalid data");
@@ -185,6 +185,7 @@ public class ReceiveService extends Service{
 								m.setSendState(SendState.SENT);
 						    	m.decodeMessageMeta();
 						    	m.decodeMessageData();
+						    	Logger.debug(this.getClass().getSimpleName(), "Received message: " + m.toString());
 						    	MessageManager.manage(m);
 						    }
 						}
