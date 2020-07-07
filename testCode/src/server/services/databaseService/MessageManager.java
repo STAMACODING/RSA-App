@@ -57,7 +57,7 @@ public class MessageManager {
 			for(int i=0; i<getAllMessages().size(); i++) {
 				if(getAllMessages().get(i).getMessageMeta().getReceivingId() == clientId) {
 					messagesToSend.add(getAllMessages().get(i));
-					Logger.debug("MessageManager." + Server.class.getSimpleName(), "Polling message: " + messagesToSend.get(i).toString());
+					Logger.debug(MessageManager.class.getSimpleName(), "Polling message: " + messagesToSend.get(i).toString());
 					getAllMessages().get(i).encodeMessageMeta();
 				}
 			}
