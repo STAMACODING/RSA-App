@@ -182,6 +182,7 @@ public class ReceiveService extends Service{
 						    ArrayList<Message> messagesAsList = (ArrayList<Message>) Utils.Serialization.deserialize(messages);
 						    Logger.debug(this.getClass().getSimpleName(), "Successfully received " + messagesAsList.size() + " new message(s) from the send server");
 							for(Message m : messagesAsList) {
+								m.setSendState(SendState.SENT);
 						    	m.decodeMessageMeta();
 						    	m.decodeMessageData();
 						    	MessageManager.manage(m);
