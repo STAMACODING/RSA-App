@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 
-import server.services.Message;
+import server.message.Message;
 
 /**
  * Interface to the client's chat database.

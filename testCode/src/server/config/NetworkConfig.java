@@ -1,6 +1,6 @@
 package server.config;
 
-import server.MessageService;
+import server.services.mainService.MessageService;
 import server.services.transferServices.receiveService.ReceiveService;
 
 /**

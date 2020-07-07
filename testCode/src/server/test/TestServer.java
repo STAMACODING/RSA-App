@@ -2,10 +2,10 @@ package server.test;
 
 import java.util.Scanner;
 
-import server.MessageService;
 import server.Utils;
 import server.config.NetworkConfig;
 import server.config.NetworkType;
+import server.services.mainService.MessageService;
 
 public class TestServer {
 	public static void main(String[] args) {
