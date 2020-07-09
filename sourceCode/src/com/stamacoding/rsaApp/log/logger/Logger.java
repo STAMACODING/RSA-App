@@ -23,6 +23,8 @@ public class Logger {
 
 	static String fileName = "Main";
 
+	static int maxLinesCount = 50;
+
 	/** only for test runs and unimportant information 
 	 * 
 	 * @param className input for class, that called the method
@@ -96,7 +98,7 @@ public class Logger {
 	 */
 	static void printToFile(String logMessage)
 	{
-		Filesystem.appendToFile(logPath, fileName, Filesystem.FileEnding.log, logMessage, true, 0, 20);
+		Filesystem.appendToFile(logPath, fileName, Filesystem.FileEnding.log, logMessage, true, 0, maxLinesCount);
 	}
 }
 
