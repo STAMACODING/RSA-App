@@ -11,9 +11,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.stamacoding.rsaApp.log.debug.Debug;
-import com.stamacoding.rsaApp.log.logger.Logger;
-
 public class Filesystem
 {
     public static void createFile(String filePath, String fileName, FileEnding fileEnding)
@@ -50,7 +47,7 @@ public class Filesystem
         appendToFile(filePath, fileName, fileEnding, Message, false, 0, 0);
     }
 
-    public static void appendToFile(String filePath, String fileName, FileEnding fileEnding, String Message, boolean checkOverflow, int maxLines, int offset)
+    public static void appendToFile(String filePath, String fileName, FileEnding fileEnding, String Message, boolean checkOverflow, int startLine, int endLine)
     {
         String fileFull = getFullFileName(filePath, fileName, fileEnding);
 
@@ -64,8 +61,8 @@ public class Filesystem
 
         if (checkOverflow) 
         {
-            if (getFileLength(fileFull) > maxLines * 100) {
-                deleteLines(filePath, fileName, fileEnding, maxLines, offset);
+            if (getFileLength(fileFull) > endLine * 100) {
+                deleteLines(filePath, fileName, fileEnding, startLine, endLine);
             }
         }
         
@@ -96,23 +93,21 @@ public class Filesystem
 
     public static void deleteLines(String filePath, String fileName, FileEnding fileEnding, int startLine, int endLine)
     {
-        String fileFull = getFullFileName(filePath, fileName, fileEnding);
-
-        long Length = new File (fileFull).length();
-
-        //Logger.debug(Debug.class.getSimpleName(), Length+"");
-        System.out.println(Length+"");
-
         List<String> allLines = readLines(filePath, fileName, fileEnding);
-
-        clearFile(filePath, fileName, fileEnding);
 
         int counter = 0;
 
         for (String Line : allLines)
         {
-            if (counter <= startLine && counter >= endLine) {
-                appendToFile(filePath, fileName, fileEnding, Line);
+            if (Line != null)
+            {
+                if (counter == 0)
+                {
+                    clearFile(filePath, fileName, fileEnding, Line);
+                }
+
+                if (counter + 1 <= startLine || counter >= endLine)
+                    appendToFile(filePath, fileName, fileEnding, Line);
             }
 
             counter += 1;
@@ -121,9 +116,14 @@ public class Filesystem
 
     public static void clearFile(String filePath, String fileName, FileEnding fileEnding)
     {
+        clearFile(filePath, fileName, fileEnding, null);
+    }
+
+    public static void clearFile(String filePath, String fileName, FileEnding fileEnding, String firstMessage)
+    {
         deleteFile(filePath, fileName, fileEnding);
 
-        createFile(filePath, fileName, fileEnding);
+        createFile(filePath, fileName, fileEnding, firstMessage);
     }
 
     public static List<String> readLines(String filePath, String fileName, FileEnding fileEnding)

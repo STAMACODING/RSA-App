@@ -77,7 +77,7 @@ public class Logger {
 			}
 	
 			if (OutputType == outputType.onlyFiles || OutputType == outputType.ALL) {
-				//printToFile(logMessage);
+				printToFile(logMessage);
 			}
 		}
 	}
@@ -96,7 +96,7 @@ public class Logger {
 	 */
 	static void printToFile(String logMessage)
 	{
-		Filesystem.appendToFile(logPath, fileName, Filesystem.FileEnding.log, logMessage, true, 20, 1);
+		Filesystem.appendToFile(logPath, fileName, Filesystem.FileEnding.log, logMessage, true, 0, 20);
 	}
 }
 
