@@ -4,7 +4,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.stamacoding.rsaApp.log.filesystem.Filesystem;
 import com.stamacoding.rsaApp.log.logger.Logger;
 
 public class Debug
@@ -18,13 +17,12 @@ public class Debug
      * @param args
      */
     public static void main(String[] args) throws Exception {
-        for (int i = 0; i < 10; i++) {
-            //Logger.debug(Debug.class.getSimpleName(), "Wer das liest hat Probleme");
-            Logger.debug(Debug.class.getSimpleName(), GetTime());
+        for (int i = 0; i < 42; i++) 
+        {
+            Logger.debug(Debug.class.getSimpleName(), "{" + i + "}" + GetTime());
+
             Thread.sleep(42);
         }
-
-        //Filesystem.createFile();
     }
 
     /**
