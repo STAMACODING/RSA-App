@@ -15,8 +15,9 @@ import server.config.NetworkConfig;
 import server.config.NetworkConfig.Client;
 import server.config.NetworkConfig.Server;
 import server.message.Message;
-import server.message.MessageData;
-import server.message.SendState;
+import server.message.data.LocalData;
+import server.message.data.ProtectedData;
+import server.message.data.SendState;
 import server.config.NetworkType;
 import server.services.Service;
 import server.services.databaseService.MessageManager;
@@ -123,7 +124,7 @@ public class ReceiveService extends Service{
 						    
 						    Logger.debug(this.getClass().getSimpleName(), "Successfully received message's meta and data");
 							
-							Message receivedMessage = new Message(-1, SendState.PENDING, messageData, messageMeta);
+							Message receivedMessage = new Message(new LocalData(-1, SendState.PENDING), messageData, messageMeta);
 							receivedMessage.decodeMessageMeta();
 							
 							Logger.debug("MessageManager." + Server.class.getSimpleName(), "Received message: " + receivedMessage.toString());
@@ -182,7 +183,7 @@ public class ReceiveService extends Service{
 						    ArrayList<Message> messagesAsList = (ArrayList<Message>) Utils.Serialization.deserialize(messages);
 						    Logger.debug(this.getClass().getSimpleName(), "Successfully received " + messagesAsList.size() + " new message(s) from the send server");
 							for(Message m : messagesAsList) {
-								m.setSendState(SendState.SENT);
+								m.getLocalData().setSendState(SendState.SENT);
 						    	m.decodeMessageMeta();
 						    	m.decodeMessageData();
 						    	Logger.debug(this.getClass().getSimpleName(), "Received message: " + m.toString());

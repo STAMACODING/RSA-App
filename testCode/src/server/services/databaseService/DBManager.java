@@ -62,7 +62,7 @@ public class DBManager{
 	 * @param m the message to store
 	 */
 	public void addMessageToDB(Message m) {
-		m.setId(23);
+		m.getLocalData().setId(23);
 	}
 	
 	public void updateMessage(Message updatedMessage) {

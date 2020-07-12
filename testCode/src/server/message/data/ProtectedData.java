@@ -1,10 +1,10 @@
-package server.message;
+package server.message.data;
 
 import java.io.Serializable;
 
 import server.Utils;
 
-public class MessageData implements Serializable{
+public class ProtectedData implements Serializable{
 	/**
 	 * 
 	 */
@@ -21,7 +21,7 @@ public class MessageData implements Serializable{
 	private final long date;
 	
 	
-	public MessageData(String textMessage, long date) {
+	public ProtectedData(String textMessage, long date) {
 		this.date = date;
 		setTextMessage(textMessage);
 	}
@@ -51,16 +51,16 @@ public class MessageData implements Serializable{
 		this.textMessage = textMessage;
 	}
 	
-	public static byte[] encode(MessageData messageData) {
+	public static byte[] encode(ProtectedData messageData) {
 		byte[] decodedData = Utils.Serialization.serialize(messageData);
 		// TODO encode decoded data
 		byte[] encodedData = decodedData;
 		return encodedData;
 	}
 	
-	public static MessageData decode(byte[] encodedData) {
+	public static ProtectedData decode(byte[] encodedData) {
 		// TODO decode encoded data
 		byte[] decodedData = encodedData;
-		return (MessageData) Utils.Serialization.deserialize(decodedData);
+		return (ProtectedData) Utils.Serialization.deserialize(decodedData);
 	}
 }

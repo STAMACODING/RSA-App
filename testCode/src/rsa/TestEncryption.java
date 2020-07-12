@@ -1,8 +1,8 @@
-package com.stamacoding.rsaApp.rsa.endecrypt;
+package rsa;
 
 import com.stamacoding.rsaApp.rsa.keyCreate.Key;
 
-public class EnDecrypt {
+public class TestEncryption {
 	public static long[] encrypt(long[] message, Key publicKey) {
 		long[] encryptedMessage = new long[message.length];
 		for(int i = 0; i < message.length; i++) {

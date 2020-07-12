@@ -1,6 +1,16 @@
 package com.stamacoding.rsaApp.rsa.endecrypt;
 
-public class RSA {
+import com.stamacoding.rsaApp.rsa.keyCreate.Key;
+
+public class EnDeCrypt {
+	
+	public static long[] encode(long[] decodedData, Key publicKey) {
+		return null;
+	}
+	
+	public static long[] decode(long[] encodedData, Key privateKey) {
+		return null;
+	}
 	
 	static String Text = "Sex Penis";
 	static int e = 17, d = 145, n = 391;

@@ -3,6 +3,7 @@ package server.services.transferServices.sendService;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -13,9 +14,9 @@ import server.Utils;
 import server.config.NetworkConfig;
 import server.config.NetworkType;
 import server.message.Message;
-import server.message.MessageData;
-import server.message.MessageMeta;
-import server.message.SendState;
+import server.message.data.ProtectedData;
+import server.message.data.SendState;
+import server.message.data.ServerData;
 import server.services.Service;
 import server.services.databaseService.MessageManager;
 import server.services.databaseService.MessageManager.Client;
@@ -152,8 +153,8 @@ public class SendService extends Service{
 				Logger.debug(this.getClass().getSimpleName(), "Message to send: " + messageToSend.toString());
 				
 				// Encode message before sending to server
-				byte[] messageMeta = MessageMeta.encode(messageToSend.getMessageMeta());
-				byte[] messageData = MessageData.encode(messageToSend.getMessageData());
+				byte[] messageMeta = ServerData.encode(messageToSend.getMessageMeta());
+				byte[] messageData = ProtectedData.encode(messageToSend.getMessageData());
 				
 				Logger.debug(this.getClass().getSimpleName(), "Encoded message");
 					
@@ -178,8 +179,8 @@ public class SendService extends Service{
 						Logger.debug(this.getClass().getSimpleName(), "Successfully sent message to the receive server");
 						Logger.debug(this.getClass().getSimpleName(), "Updating message status");
 						
-						messageToSend.setSendState(SendState.SENT);
-						messageToSend.setUpdateRequested(true);
+						messageToSend.getLocalData().setSendState(SendState.SENT);
+						messageToSend.getLocalData().setUpdateRequested(true);
 						
 						// Close connection to the receiver
 						connectionToServer.close();

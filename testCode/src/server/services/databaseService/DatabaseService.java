@@ -53,13 +53,13 @@ public class DatabaseService extends Service{
 			Message m = MessageManager.Client.getMessageToStoreOrUpdate();
 			if(m != null) {
 				Logger.debug(this.getClass().getSimpleName(), "Got message to store/update");
-				if(m.isToUpdate()) {
+				if(m.getLocalData().isToUpdate()) {
 					DBManager.getInstance().updateMessage(m);
-					m.setUpdateRequested(false);
+					m.getLocalData().setUpdateRequested(false);
 					Logger.debug(this.getClass().getSimpleName(), "Updated message in the chat database");
 				}else {
 					DBManager.getInstance().addMessageToDB(m);
-					m.setUpdateRequested(false);
+					m.getLocalData().setUpdateRequested(false);
 					Logger.debug(this.getClass().getSimpleName(), "Stored new message in the chat database");
 				}
 				

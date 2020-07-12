@@ -34,7 +34,7 @@ public class MessageManager {
 	public static class Client{
 		public static Message getMessageToStoreOrUpdate() {
 			for(int i=0; i<getAllMessages().size(); i++) {
-				if(getAllMessages().get(i).isToStore() || getAllMessages().get(i).isToUpdate()) {
+				if(getAllMessages().get(i).getLocalData().isToStore() || getAllMessages().get(i).getLocalData().isToUpdate()) {
 					return getAllMessages().get(i);
 				}
 			}
@@ -43,7 +43,7 @@ public class MessageManager {
 		
 		public static Message getMessageToSend() {
 			for(int i=0; i<getAllMessages().size(); i++) {
-				if(getAllMessages().get(i).isToSend()) {
+				if(getAllMessages().get(i).getLocalData().isToSend()) {
 					return getAllMessages().get(i);
 				}
 			}

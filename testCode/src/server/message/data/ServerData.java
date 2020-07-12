@@ -1,10 +1,10 @@
-package server.message;
+package server.message.data;
 
 import java.io.Serializable;
 
 import server.Utils;
 
-public class MessageMeta implements Serializable {
+public class ServerData implements Serializable {
 	/**
 	 * 
 	 */
@@ -21,7 +21,7 @@ public class MessageMeta implements Serializable {
 	private final byte receivingId;
 	
 	
-	public MessageMeta(byte sendingId, byte receivingId) {
+	public ServerData(byte sendingId, byte receivingId) {
 		this.sendingId = sendingId;
 		this.receivingId = receivingId;
 	}
@@ -43,16 +43,16 @@ public class MessageMeta implements Serializable {
 		return receivingId;
 	}
 	
-	public static byte[] encode(MessageMeta messageMeta) {
+	public static byte[] encode(ServerData messageMeta) {
 		byte[] decodedData = Utils.Serialization.serialize(messageMeta);
 		// TODO encode decoded data
 		byte[] encodedData = decodedData;
 		return encodedData;
 	}
 	
-	public static MessageMeta decode(byte[] encodedData) {
+	public static ServerData decode(byte[] encodedData) {
 		// TODO decode encoded data
 		byte[] decodedData = encodedData;
-		return (MessageMeta) Utils.Serialization.deserialize(decodedData);
+		return (ServerData) Utils.Serialization.deserialize(decodedData);
 	}
 }

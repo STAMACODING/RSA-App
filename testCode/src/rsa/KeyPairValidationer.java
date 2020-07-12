@@ -1,6 +1,5 @@
 package rsa;
 
-import com.stamacoding.rsaApp.rsa.endecrypt.EnDecrypt;
 import com.stamacoding.rsaApp.rsa.keyCreate.KeyPair;
 
 public class KeyPairValidationer {
@@ -12,7 +11,7 @@ public class KeyPairValidationer {
 		long[] testArray = new long[randomSize];
 		for(int j = 0; j<randomSize; j++) testArray[j] = (long) (Math.random()*1000L);
 		
-		long[] newArray = EnDecrypt.decrypt(EnDecrypt.encrypt(testArray, kp.getPublicKey()), kp.getPrivateKey());
+		long[] newArray = TestEncryption.decrypt(TestEncryption.encrypt(testArray, kp.getPublicKey()), kp.getPrivateKey());
 		for(int j = 0; j<randomSize; j++) {
 			if(newArray[j] != testArray[j]) return false;
 		}

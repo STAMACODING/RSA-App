@@ -1,4 +1,4 @@
-package server.message;
+package server.message.data;
 
 /**
  * The message's send state.

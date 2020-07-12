@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * holds functions like creating a prime number (in a certain area) or returning the modular inverse
  */
 
-public class KeyUtils {
+public class KeyMathUtils {
 	
 	private static boolean isPrime(int n) {
 	    if(n < 2) return false;

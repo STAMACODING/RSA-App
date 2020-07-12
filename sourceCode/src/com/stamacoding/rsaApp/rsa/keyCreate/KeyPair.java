@@ -56,8 +56,8 @@ public class KeyPair {
 		int p, q, n, phi, e, d;
 		// Generate p and q
 
-		p = KeyUtils.primeNumb(PQ_MINIMUM, PQ_MAXIMUM);
-		q = KeyUtils.primeNumb(PQ_MINIMUM, PQ_MAXIMUM, p);
+		p = KeyMathUtils.primeNumb(PQ_MINIMUM, PQ_MAXIMUM);
+		q = KeyMathUtils.primeNumb(PQ_MINIMUM, PQ_MAXIMUM, p);
 		// Calculate n and phi(n)
 		n = p * q;
 		phi = (p-1)*(q-1);
@@ -65,10 +65,10 @@ public class KeyPair {
 		d = -1;
 		do {
 			// Calculate e
-			e = KeyUtils.primeNumb(2, phi);
+			e = KeyMathUtils.primeNumb(2, phi);
 			
 			// Calculate d
-			d = KeyUtils.modularInverse(e, phi);
+			d = KeyMathUtils.modularInverse(e, phi);
 		}while(d == -1 || d == e);
 		
 		if(DEBUG) {
