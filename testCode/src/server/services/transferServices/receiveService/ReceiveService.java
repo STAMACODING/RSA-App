@@ -8,17 +8,15 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.sun.media.sound.InvalidDataException;
 
 import server.Utils;
 import server.config.NetworkConfig;
 import server.config.NetworkConfig.Client;
 import server.config.NetworkConfig.Server;
+import server.config.NetworkType;
 import server.message.Message;
 import server.message.data.LocalData;
-import server.message.data.ProtectedData;
 import server.message.data.SendState;
-import server.config.NetworkType;
 import server.services.Service;
 import server.services.databaseService.MessageManager;
 import server.services.transferServices.sendService.SendService;
@@ -119,7 +117,7 @@ public class ReceiveService extends Service{
 						    	messageData = new byte[messageDataLength];
 						    	inputStream.readFully(messageData, 0, messageDataLength);
 						    }else {
-						    	throw new InvalidDataException("Received invalid data");
+						    	throw new Exception("Received invalid data");
 						    }
 						    
 						    Logger.debug(this.getClass().getSimpleName(), "Successfully received message's meta and data");
@@ -130,9 +128,9 @@ public class ReceiveService extends Service{
 							Logger.debug("MessageManager." + Server.class.getSimpleName(), "Received message: " + receivedMessage.toString());
 							MessageManager.manage(receivedMessage);
 						}else {
-							throw new InvalidDataException("Received invalid data");
+							throw new Exception("Received invalid data");
 						}
-					}catch(InvalidDataException e) {
+					}catch(Exception e) {
 						Logger.error(this.getClass().getSimpleName(), "Received invalid data");
 					}
 
