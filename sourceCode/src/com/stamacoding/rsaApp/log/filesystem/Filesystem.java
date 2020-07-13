@@ -18,7 +18,7 @@ public class Filesystem
         createFile(filePath, fileName, fileEnding, null);
     }
 
-    public static void createFile(String filePath, String fileName, FileEnding fileEnding, String firstMessage)
+    public static void createFile(String filePath, String fileName, FileEnding fileEnding, String[] firstMessage)
     {
         try {
             String fileFull = getFullFileName(filePath, fileName, fileEnding);
@@ -27,7 +27,13 @@ public class Filesystem
 
             if (firstMessage != null)
             {
-                writer.write(firstMessage);
+                writer.write(firstMessage[0]);
+
+                if (firstMessage.length > 1) {
+                    for (String Line : firstMessage) {
+                        appendToFile(filePath, fileName, fileEnding, Line);
+                    }
+                }
             }
 
             writer.close();
@@ -56,7 +62,7 @@ public class Filesystem
 
         if (checkFile(fileFull) == false)
         {
-            createFile(filePath, fileName, fileEnding, "firstMessage");
+            createFile(filePath, fileName, fileEnding, new String[] {"firstMessage", "yolo"});
         }
 
         if (checkOverflow) 
@@ -103,11 +109,13 @@ public class Filesystem
             {
                 if (counter == 0)
                 {
-                    clearFile(filePath, fileName, fileEnding, Line);
+                    clearFile(filePath, fileName, fileEnding, new String[] {Line});
                 }
-
-                if (counter + 1 <= startLine || counter >= endLine)
+                else
+                {
+                    if (counter + 1 <= startLine || counter >= endLine)
                     appendToFile(filePath, fileName, fileEnding, Line);
+                }
             }
 
             counter += 1;
@@ -119,7 +127,7 @@ public class Filesystem
         clearFile(filePath, fileName, fileEnding, null);
     }
 
-    public static void clearFile(String filePath, String fileName, FileEnding fileEnding, String firstMessage)
+    public static void clearFile(String filePath, String fileName, FileEnding fileEnding, String[] firstMessage)
     {
         deleteFile(filePath, fileName, fileEnding);
 
@@ -153,7 +161,7 @@ public class Filesystem
         return filePath + "/" + fileName + "." + fileEnding.toString();
     }
 
-    static boolean checkFile(String fullFileName)
+    public static boolean checkFile(String fullFileName)
     {
         return new File(fullFileName).exists();
     }

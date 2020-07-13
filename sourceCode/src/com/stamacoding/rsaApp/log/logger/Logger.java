@@ -17,7 +17,7 @@ public class Logger {
 
 	public static fileType FileType = fileType.ALL;
 
-	static String startingMessage = "Hello";
+	static String[] startingMessage = new String[] {"Thiszfghjk", "is", "a", "test"};
 
 	static String logPath = "logs";
 
@@ -92,13 +92,21 @@ public class Logger {
 		System.out.println(logMessage);
 	}
 
+	static int startCounter = 0;
+
 	/**
 	 * does all the file entries, gets parameters from the four methods
 	 * @param logMessage final message that gets written to file(s)
 	 */
 	static void printToFile(String logMessage)
 	{
-		Filesystem.appendToFile(logPath, fileName, Filesystem.FileEnding.log, logMessage, true, 0, maxLinesCount);
+		if (startCounter == 0) {
+			if (!Filesystem.checkFile(Filesystem.getFullFileName(logPath, fileName, Filesystem.FileEnding.log)))
+				Filesystem.createFile(logPath, fileName, Filesystem.FileEnding.log, startingMessage);
+			startCounter += 1;	
+		}
+
+		Filesystem.appendToFile(logPath, fileName, Filesystem.FileEnding.log, logMessage, true, startingMessage.length, maxLinesCount);
 	}
 }
 
