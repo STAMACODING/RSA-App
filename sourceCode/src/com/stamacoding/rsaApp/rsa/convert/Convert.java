@@ -24,7 +24,7 @@ public class Convert {
 	
 	public static Object deserialize(byte[] serializedObject) {
 		try (ByteArrayInputStream bis = new ByteArrayInputStream(serializedObject);
-		         ObjectInput in = new ObjectInputStream(bis)) {
+		        ObjectInput in = new ObjectInputStream(bis)) {
 		        return in.readObject();
 		    } catch (IOException e) {
 				return null;
@@ -34,11 +34,26 @@ public class Convert {
 	}
 	
 	public static long[] byteArrayToLongArray(byte[] array) {
-		return null;
+		long[] longArray = new long[array.length];
+		
+		for(int i=0; i<longArray.length; i++) {
+			longArray[i] = (long) array[i];
+		}
+		
+		return longArray;
 	}
 	
 	public static byte[] longArrayToByteArray(long[] array) {
-		return null;
+		byte[] byteArray = new byte[array.length];
+		
+		for(int i=0; i<byteArray.length; i++) {
+			if(array[i] > Byte.MAX_VALUE) {
+				throw new RuntimeException("Value is too large for byte-array!");
+			}
+			byteArray[i] = (byte) array[i];
+		}
+		
+		return byteArray;
 	}
 
 
