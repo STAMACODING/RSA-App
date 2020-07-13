@@ -43,16 +43,16 @@ public class Convert {
 
 
 	public static void main(String[] args) {
-		Katze günter = new Katze();
-		günter.alter = 100;
-		byte[] günterAlsByteArray = Convert.serialize(günter);
+		Katze gunter = new Katze();
+		gunter.alter = 100;
+		byte[] gunterAlsByteArray = Convert.serialize(gunter);
 		
-		for(byte b : günterAlsByteArray) {
+		for(byte b : gunterAlsByteArray) {
 			System.out.println(b);
 		}
 		
-		günter = (Katze) Convert.deserialize(günterAlsByteArray);
-		System.out.println(günter.alter);
-		System.out.println(günter.name);
+		gunter = (Katze) Convert.deserialize(gunterAlsByteArray);
+		System.out.println(gunter.alter);
+		System.out.println(gunter.name);
 	}
 }
