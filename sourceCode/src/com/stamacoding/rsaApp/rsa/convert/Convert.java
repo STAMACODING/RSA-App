@@ -42,5 +42,17 @@ public class Convert {
 	}
 
 
-	
+	public static void main(String[] args) {
+		Katze günter = new Katze();
+		günter.alter = 100;
+		byte[] günterAlsByteArray = Convert.serialize(günter);
+		
+		for(byte b : günterAlsByteArray) {
+			System.out.println(b);
+		}
+		
+		günter = (Katze) Convert.deserialize(günterAlsByteArray);
+		System.out.println(günter.alter);
+		System.out.println(günter.name);
+	}
 }
