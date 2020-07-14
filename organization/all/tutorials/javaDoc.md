@@ -116,8 +116,8 @@ Aber genug der Features und der Betonung der Einfachheit! Wie funktioniert das g
         ...
         ```
 3. Es gibt coole **Tags**, womit wir unsere Beschreibung der Klasse/Funktion/Variable besser gliedern können. Die wichtigsten Tags hier kurz erklärt:
-    - Mit dem `@author Autor`-Tag können wir beschreiben, wer den Code geschrieben hat
-    - Mit dem `@return Beschreibung`-Tag beschreiben wir bei Funktionen, die etwas zurückgeben (also nicht void), was denn genau zurück gegeben wird
+    - Mit dem `@author Autor`-Tag können wir beschreiben, wer den Code geschrieben hat.
+    - Mit dem `@return Beschreibung`-Tag beschreiben wir bei Funktionen, die etwas zurückgeben (also nicht _void_), was denn genau zurück gegeben wird.
     - Mit dem `@param Parametername Beschreibung`-Tag können wir je einen Parameter genauer beschreiben.
     - Mit `{@code System.out.println("Hallo Welt")}` können wir innerhalb unserer Erklärungen auf Code zurückgreifen.
     - Mit `{@link Klasse#funktion()}` können wir auf andere Funktionen, Variablen oder Klassen verlinken.
@@ -128,7 +128,7 @@ Nun ein paar Beispiele, die zeigen, wie man **Javadoc**-Kommentare in der Praxis
 
 ```java
 /**
-* Adds to numbers.
+* Adds two numbers.
 * @param a the first number
 * @param b the second number
 * @return the sum
