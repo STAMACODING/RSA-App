@@ -58,11 +58,14 @@ public class ClientSendService extends Service {
 			Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
 			Logger.debug(this.getClass().getSimpleName(), "Message to send: " + messageToSend.toString());
 			
-			// Encode message before sending to server
-			byte[] messageMeta = ServerData.encrypt(messageToSend.getServerData());
-			byte[] messageData = ProtectedData.encrypt(messageToSend.getProtectedData());
+			// Encrypt message before sending to server
+			messageToSend.encryptProtectedData();
+			messageToSend.encryptServerData();
 			
-			Logger.debug(this.getClass().getSimpleName(), "Encoded message");
+			byte[] encryptedServerData = messageToSend.getEncryptedServerData();
+			byte[] encryptedProtectedData = messageToSend.getEncryptedProtectedData();
+			
+			Logger.debug(this.getClass().getSimpleName(), "Encrypted message");
 				
 			Socket connectionToServer = null;
 			try {
@@ -73,12 +76,12 @@ public class ClientSendService extends Service {
 					DataOutputStream outputStream = new DataOutputStream(connectionToServer.getOutputStream());
 					
 					// Send message meta
-					outputStream.writeInt(messageMeta.length);
-					outputStream.write(messageMeta);
+					outputStream.writeInt(encryptedServerData.length);
+					outputStream.write(encryptedServerData);
 					
 					// Send message data
-					outputStream.writeInt(messageData.length);
-					outputStream.write(messageData);
+					outputStream.writeInt(encryptedProtectedData.length);
+					outputStream.write(encryptedProtectedData);
 					
 					outputStream.flush();
 						

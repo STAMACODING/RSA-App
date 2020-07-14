@@ -64,28 +64,29 @@ public class ServerReceiveService extends ServerService{
 
 			try {
 			    // Read message from client
-				int messageMetaLength = inputStream.readInt();
-				byte[] messageMeta = null, messageData = null;
-				if(messageMetaLength>0) {
+				int serverDataLength = inputStream.readInt();
+				byte[] encryptedServerData = null, encryptedProtectedData = null;
+				Logger.debug(this.getClass().getSimpleName(), "Server Data Length: " + serverDataLength);
+				if(serverDataLength>0) {
 					// Read message meta
-					messageMeta = new byte[messageMetaLength];
-				    inputStream.readFully(messageMeta, 0, messageMetaLength);
+					encryptedServerData = new byte[serverDataLength];
+				    inputStream.readFully(encryptedServerData, 0, serverDataLength);
 				    
 				    
 				    
 				    // Read message data
-				    int messageDataLength = inputStream.readInt();
-				    
-				    if(messageDataLength > 0) {
-				    	messageData = new byte[messageDataLength];
-				    	inputStream.readFully(messageData, 0, messageDataLength);
+				    int protectedDataLength = inputStream.readInt();
+				    Logger.debug(this.getClass().getSimpleName(), "Protected Data Length: " + protectedDataLength);
+				    if(protectedDataLength > 0) {
+				    	encryptedProtectedData = new byte[protectedDataLength];
+				    	inputStream.readFully(encryptedProtectedData, 0, protectedDataLength);
 				    }else {
 				    	throw new Exception("Received invalid data");
 				    }
 				    
 				    Logger.debug(this.getClass().getSimpleName(), "Successfully received message's meta and data");
 					
-					Message receivedMessage = new Message(new LocalData(-1, SendState.PENDING), messageData, messageMeta);
+					Message receivedMessage = new Message(new LocalData(-1, SendState.PENDING), encryptedProtectedData, encryptedServerData);
 					receivedMessage.decryptServerData();
 					
 					Logger.debug(MessageManager.class.getSimpleName(), "Received message: " + receivedMessage.toString());
