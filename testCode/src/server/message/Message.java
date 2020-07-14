@@ -52,7 +52,7 @@ public class Message implements Serializable{
 	 * @param encryptedServerData the message's server data as encrypted byte array
 	 */
 	public Message(LocalData localData, byte[] encryptedProtectedData, byte[] encryptedServerData) {
-		if(protectedData == null || serverData == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
+		if(encryptedProtectedData == null || encryptedServerData == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
 		this.localData = localData;
 		setEncryptedProtectedData(encryptedProtectedData);
 		setEncryptedServerData(encryptedServerData);
@@ -65,7 +65,7 @@ public class Message implements Serializable{
 	 * @param serverData the message's server data
 	 */
 	public Message(LocalData localData, byte[] encryptedProtectedData, ServerData serverData) {
-		if(protectedData == null || serverData == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
+		if(encryptedProtectedData == null || serverData == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
 		this.localData = localData;
 		setEncryptedProtectedData(encryptedProtectedData);
 		setServerData(serverData);
