@@ -2,12 +2,16 @@ package server.test;
 
 import java.util.Scanner;
 
-import server.Utils;
+import server.NetworkUtils;
 import server.config.NetworkConfig;
 import server.config.NetworkType;
 import server.services.mainService.MessageService;
 
+/**
+ * Tests the {@link MessageService} on the server-side.
+ */
 public class TestServer {
+	
 	public static void main(String[] args) {
 		Scanner s = new Scanner(System.in);
 		System.out.println("------------------------------------------------------------");
@@ -23,9 +27,9 @@ public class TestServer {
 		s.close();
 		System.out.println("------------------------------------------------------------");
 		
-		NetworkConfig.Server.IP = Utils.Ip.getIpAdress();
+		NetworkConfig.Server.IP = NetworkUtils.getIpAdress();
 		NetworkConfig.TYPE = NetworkType.SERVER;
 		
-		MessageService.getInstance().start();
+		MessageService.getInstance().launch();
 	}
 }

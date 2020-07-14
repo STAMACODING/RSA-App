@@ -3,68 +3,51 @@ package server.services.databaseService;
 import com.stamacoding.rsaApp.log.logger.Logger;
 
 import server.message.Message;
+import server.message.MessageManager;
+import server.message.MessageManager.Client;
 import server.services.Service;
-import server.services.databaseService.MessageManager.Client;
-import server.services.transferServices.receiveService.ReceiveService;
 
 /**
- * {@link Service} storing and updating messages in the chat database.
+ * {@link Service} storing and updating messages in the chat database using the {@link MessageManager}.
  */
 public class DatabaseService extends Service{
-	/**
-	 * the object's only instance (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>).
-	 */
+	
+	/** The only instance of this class */
 	private static volatile DatabaseService singleton = new DatabaseService();
 
 	/**
-	 * the object's private constructor (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>)
+	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link DatabaseService#getInstance()} to get the
+	 *  only instance of this class.
 	 */
-	private DatabaseService() {
-		super("store");
-	}
+	private DatabaseService() {}
 	
 	/**
-	 * Gets the object's only instance (<b>see</b><a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton"> singleton pattern</a>).
-	 * @return the object's only instance
+	 * Gets the only instance of this class.
+	 * @return the only instance of this class
 	 */
 	public static DatabaseService getInstance() {
 		return singleton;
 	}
-	
+
 	/**
-	 * Restarts the {@link DatabaseService} safely.
-	 */
-	public static void restart() {
-		Logger.debug(DatabaseService.class.getSimpleName(), "Restarting " + singleton.getName());
-		singleton.requestShutdown();
-		while(singleton.isRunning()) {}
-		singleton = new DatabaseService();
-		Logger.debug(DatabaseService.class.getSimpleName(), "Restarted " + singleton.getName());
-		singleton.start();
-	}
-	
-	/**
-	 * Runs the {@link DatabaseService}. If {@link Client#getMessageToStoreOrUpdate()} returns a message, this message will get updated/stored.
+	 * If {@link Client#getMessageToStoreOrUpdate()} returns a message, this message will get updated/stored.
+	 * @see Service#onRepeat()
 	 */
 	@Override
-	public void run() {
-		super.run();
-		while(!isShutDownRequested()) {
-			Message m = MessageManager.Client.getMessageToStoreOrUpdate();
-			if(m != null) {
-				Logger.debug(this.getClass().getSimpleName(), "Got message to store/update");
-				if(m.getLocalData().isToUpdate()) {
-					DBManager.getInstance().updateMessage(m);
-					m.getLocalData().setUpdateRequested(false);
-					Logger.debug(this.getClass().getSimpleName(), "Updated message in the chat database");
-				}else {
-					DBManager.getInstance().addMessageToDB(m);
-					m.getLocalData().setUpdateRequested(false);
-					Logger.debug(this.getClass().getSimpleName(), "Stored new message in the chat database");
-				}
-				
+	public void onRepeat() {
+		Message m = MessageManager.Client.getMessageToStoreOrUpdate();
+		if(m != null) {
+			Logger.debug(this.getClass().getSimpleName(), "Got message to store/update");
+			if(m.getLocalData().isToUpdate()) {
+				DBManager.getInstance().updateMessage(m);
+				m.getLocalData().setUpdateRequested(false);
+				Logger.debug(this.getClass().getSimpleName(), "Updated message in the chat database");
+			}else {
+				DBManager.getInstance().addMessageToDB(m);
+				m.getLocalData().setUpdateRequested(false);
+				Logger.debug(this.getClass().getSimpleName(), "Stored new message in the chat database");
 			}
+			
 		}
-		Logger.debug(this.getClass().getSimpleName(), "Shut down " + getName());
 	}
 }

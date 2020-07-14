@@ -12,18 +12,20 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 import server.message.Message;
 
 /**
- * Interface to the client's chat database.
+ *  Interface to the client's chat database. In this chat database all messages the client receives and sends get stored.
  *  <ul>
- *  <li> Use <code>DBManager.getInstance()</code> to get an instance of this object.</li>
- * </ul>
- *
+ *  	<li> Use <code>DBManager.getInstance()</code> to get an instance of this object.</li>
+ * 	</ul>
  */
 public class DBManager{
-	/**
-	 * the only instance of this class
-	 */
+	
+	/** The only instance of this class */
 	private volatile static DBManager singleton = new DBManager();
 	
+	/**
+	 *  Creates an instance of this class. Gets automatically called once at the start to define the manager's {@link #singleton}. Use {@link DBManager#getInstance()} to get the
+	 *  only instance of this class.
+	 */
 	private DBManager() {}
 	
 	/**
@@ -35,12 +37,20 @@ public class DBManager{
 	}
 	
 
+	/** The URL to the database file. */
 	private final String url = "jdbc:sqlite:DB/UserDatabase.db";
+	
+	/** The used user name to interact with the database. */
 	private final String userName = "root";
+	
+	/** The used password to interact with the database. */
 	private final String password = "root";
 
-	public Connection connect() throws Exception{
-		
+	/**
+	 * Connects to the chat database using the JDBC driver. Returns {@code null} if the process fails.
+	 * @return the created connection
+	 */
+	public Connection connect(){
 		Connection con = null;
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -48,29 +58,44 @@ public class DBManager{
 			Logger.debug(this.getClass().getSimpleName(), "Connecting to DB/UserDatabse.db succesfull");
 			
 			return con;
-			
 		}catch(ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
-			Logger.debug(this.getClass().getSimpleName(), "Connection to DB/UserDatabse.db failed");
+			
+			Logger.error(this.getClass().getSimpleName(), "Connection to DB/UserDatabse.db failed");
 			return con;
 		}
-		
 	}
 	
 	/**
-	 * Stores a message in the chat database.
+	 * Stores a message in the chat database. By doing that the message's id is set to something not equal to {@code -1}.
+	 * If the message's id stays {@code -1}, the message couldn't get stored. 
+	 * <p>
+	 * Added to that the method will return {@code false} if
+	 * the storing process fails and {@code true} if everything goes fine.
+	 * </p>
 	 * @param m the message to store
+	 * @return whether the storing process succeeded
 	 */
-	public void addMessageToDB(Message m) {
+	public boolean addMessageToDB(Message m) {
 		m.getLocalData().setId(23);
+		return true;
 	}
 	
+	/**
+	 * Updates a message in the chat database. The message has
+	 * to be already stored in the database to get updated successfully.
+	 * @param updatedMessage
+	 */
 	public void updateMessage(Message updatedMessage) {
 		
 	}
 	
+	/**
+	 * Gets all messages stored in the chat database as array. Returns
+	 * {@code null} if the process fails.
+	 * @return all messages stored in the chat database
+	 */
 	public Message[] getMessagesFromDB() {
-		
 		try {
 			Connection con = DBManager.getInstance().connect();
 			
@@ -100,12 +125,15 @@ public class DBManager{
 			
 		}catch(Exception e) {
 			e.printStackTrace();
-			Logger.debug(this.getClass().getSimpleName(),"Failed to get messages from DB due to failed execution of query");
+			Logger.error(this.getClass().getSimpleName(), "Failed to get messages from DB due to failed execution of query");
 		}
-		
 		return null;
 	}
 	
+	/**
+	 * Prints a message contained in a {@link ResultSet}.
+	 * @param rs ResultSet containing the message
+	 */
 	public void printMessageFromDB(ResultSet rs) {
 		int messageId;
 		Date date;

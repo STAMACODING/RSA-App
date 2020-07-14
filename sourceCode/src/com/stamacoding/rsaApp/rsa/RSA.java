@@ -5,7 +5,7 @@ import com.stamacoding.rsaApp.rsa.endecrypt.EnDeCrypt;
 import com.stamacoding.rsaApp.rsa.keyCreate.Key;
 
 public class RSA {
-	public static byte[] encode(Object o, Key publicKey) {
+	public static byte[] encrypt(Object o, Key publicKey) {
 		// Object o => byte[] (Serialisierung)
 		byte[] decodedSerializedObject = Convert.serialize(o);
 		
@@ -21,7 +21,7 @@ public class RSA {
 		return encodedByteArray;
 	}
 	
-	public static Object decode(byte[] encodedByteArray, Key privateKey) {
+	public static Object decrypt(byte[] encodedByteArray, Key privateKey) {
 		// byte[] => long[] (Deserialisierung)
 		long[] encodedLongArray = (long[]) Convert.deserialize(encodedByteArray);
 		
