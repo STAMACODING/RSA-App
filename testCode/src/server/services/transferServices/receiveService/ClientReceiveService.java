@@ -11,6 +11,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 import server.NetworkUtils;
 import server.config.NetworkConfig;
 import server.config.NetworkConfig.Client;
+import server.config.NetworkConfig.Server;
 import server.message.Message;
 import server.message.MessageManager;
 import server.message.data.SendState;
@@ -28,7 +29,9 @@ public class ClientReceiveService extends Service{
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link ClientReceiveService#getInstance()} to get the
 	 *  only instance of this class.
 	 */
-	private ClientReceiveService() {}
+	private ClientReceiveService() {
+		super(ClientReceiveService.class.getSimpleName());
+	}
 	
 	/**
 	 * Gets the only instance of this class.

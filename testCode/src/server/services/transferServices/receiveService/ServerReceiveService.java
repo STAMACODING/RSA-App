@@ -33,7 +33,7 @@ public class ServerReceiveService extends ServerService{
 	 *  The server's port is set to {@link Server#RECEIVE_PORT}.
 	 */
 	private ServerReceiveService() {
-		super(NetworkConfig.Server.RECEIVE_PORT);
+		super(ServerReceiveService.class.getSimpleName(), NetworkConfig.Server.RECEIVE_PORT);
 	}
 	
 	/**

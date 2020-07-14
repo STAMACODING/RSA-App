@@ -21,7 +21,8 @@ public abstract class ServerService extends Service{
 	 * Creates an instance of this class.
 	 * @param port the {@link #serverSocket}'s port 
 	 */
-	protected ServerService(int port) {
+	protected ServerService(String serviceName, int port) {
+		super(serviceName);
 		setPort(port);
 	}
 

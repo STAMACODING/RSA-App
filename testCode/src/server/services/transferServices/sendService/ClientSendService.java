@@ -28,7 +28,9 @@ public class ClientSendService extends Service {
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link ClientSendService#getInstance()} to get the
 	 *  only instance of this class.
 	 */
-	private ClientSendService() {}
+	private ClientSendService() {
+		super(ClientSendService.class.getSimpleName());
+	}
 	
 	/**
 	 * Gets the only instance of this class.
