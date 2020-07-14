@@ -23,7 +23,7 @@ public static int add(int a, int b){
     return z;
 }
 ```
-Stell dir mal vor, du hättest die Funktion `add(int a, int b)` geschrieben. Sie addiert zwei Zahlen und ergibt das Ergebnis zurück. 
+Stell dir mal vor, du hättest die Funktion `add(int a, int b)` geschrieben. Sie addiert zwei Zahlen und gibt das Ergebnis zurück. 
 Jetzt möchtest du sie auf altbekanntem Weg *dokumentieren*. Wir erinnern uns:
 
 - einzeilige Kommentare gingen so:
