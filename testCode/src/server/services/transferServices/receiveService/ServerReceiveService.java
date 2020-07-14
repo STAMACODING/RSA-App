@@ -66,7 +66,6 @@ public class ServerReceiveService extends ServerService{
 			 // Read message from client
 			int serverDataLength = inputStream.readInt();
 			byte[] encryptedServerData = null, encryptedProtectedData = null;
-			Logger.debug(this.getClass().getSimpleName(), "Server Data Length: " + serverDataLength);
 			if(serverDataLength>0) {
 				// Read message meta
 				encryptedServerData = new byte[serverDataLength];
@@ -76,7 +75,6 @@ public class ServerReceiveService extends ServerService{
 			    
 			    // Read message data
 			    int protectedDataLength = inputStream.readInt();
-			    Logger.debug(this.getClass().getSimpleName(), "Protected Data Length: " + protectedDataLength);
 			    if(protectedDataLength > 0) {
 			    	encryptedProtectedData = new byte[protectedDataLength];
 			    	inputStream.readFully(encryptedProtectedData, 0, protectedDataLength);

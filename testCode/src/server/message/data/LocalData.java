@@ -1,5 +1,7 @@
 package server.message.data;
 
+import java.io.Serializable;
+
 import server.services.databaseService.DatabaseService;
 import server.services.transferServices.sendService.ClientSendService;
 import server.services.transferServices.sendService.ServerSendService;
@@ -7,8 +9,11 @@ import server.services.transferServices.sendService.ServerSendService;
 /**
  * Stores information about a message that is relevant to the client only. This information is not sent to the server and is also not encrypted.
  */
-public class LocalData {
+public class LocalData implements Serializable{
 	
+	/** Auto-generated for serialization */
+	private static final long serialVersionUID = -2576893616665222300L;
+
 	/** The message's unique id in the chat database. Is set to {@code -1} if the message has not been saved yet. */
 	private int id;
 	
