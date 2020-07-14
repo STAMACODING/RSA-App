@@ -74,4 +74,9 @@ public class MessageService extends Service{
 			ServerSendService.getInstance().setStopRequested(true);
 		}
 	}
+	
+	public static void main(String[] args) {
+		NetworkConfig.setup(NetworkType.CLIENT, (byte) 32, "192.234.122", 1001, 1002);
+		MessageService.getInstance().launch();
+	}
 }
