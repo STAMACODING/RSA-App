@@ -8,129 +8,203 @@ import server.message.data.ProtectedData;
 import server.message.data.ServerData;
 
 /**
- * An instance of this class represents a message with all its different attributes.
- *
+ *  An instance of this class represents a message with all its different attributes.
  */
 public class Message implements Serializable{
 	
-	/**
-	 * 
-	 */
+	/** Auto-generated for serialization */
 	private static final long serialVersionUID = 7382792471329161848L;
-	/**
-	 * 
-	 */
+	
+	/** The message's {@link LocalData} */
 	private final LocalData localData;
 	
-	/**
-	 * This data cannot be decoded by the server.
-	 */
-	private ProtectedData messageData;
-	private byte[] encodedMessageData;
+	/** The message's {@link ProtectedData} */
+	private ProtectedData protectedData;
+	
+	/** The message's {@link ProtectedData} as encrypted byte array */
+	private byte[] encryptedProtectedData;
+	
+	
+	/** The message's {@link ServerData} */
+	private ServerData serverData;
+	
+	/** The message's {@link ServerData} as encrypted byte array */
+	private byte[] encryptedServerData;
+	
 	
 	/**
-	 * This data can be decoded by the server.
+	 * Creates a fully decoded message. All parameters are not allowed to be {@code null}.
+	 * @param localData the message's local data
+	 * @param protectedData the message's protected data
+	 * @param serverData the message's server data
 	 */
-	private ServerData messageMeta;
-	private byte[] encodedMessageMeta;
-	
-	
-	public Message(LocalData localData, ProtectedData messageData, ServerData messageMeta) {
-		if(messageData == null || messageMeta == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
+	public Message(LocalData localData, ProtectedData protectedData, ServerData serverData) {
+		if(protectedData == null || serverData == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
 		this.localData = localData;
-		setMessageData(messageData);
-		setMessageMeta(messageMeta);
+		setProtectedData(protectedData);
+		setServerData(serverData);
 	}
 	
-	public Message(LocalData localData, byte[] encodedMessageData, byte[] encodedMessageMeta) {
-		if(messageData == null || messageMeta == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
+	/**
+	 * Creates a fully encrypted message. All parameters are not allowed to be {@code null}.
+	 * @param localData the message's local data (cannot be encoded)
+	 * @param encryptedProtectedData the message's protected data as encrypted byte array
+	 * @param encryptedServerData the message's server data as encrypted byte array
+	 */
+	public Message(LocalData localData, byte[] encryptedProtectedData, byte[] encryptedServerData) {
+		if(protectedData == null || serverData == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
 		this.localData = localData;
-		setEncodedMessageData(encodedMessageData);
-		setEncodedMessageMeta(encodedMessageMeta);
+		setEncryptedProtectedData(encryptedProtectedData);
+		setEncryptedServerData(encryptedServerData);
 	}
 	
-	public Message(LocalData localData, byte[] encodedMessageData, ServerData messageMeta) {
-		if(messageData == null || messageMeta == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
+	/**
+	 * Creates a semi-encrypted message. Only the protected data is encrypted. All parameters are not allowed to be {@code null}.
+	 * @param localData the message's local data
+	 * @param encryptedProtectedData the message's protected data as encrypted byte array
+	 * @param serverData the message's server data
+	 */
+	public Message(LocalData localData, byte[] encryptedProtectedData, ServerData serverData) {
+		if(protectedData == null || serverData == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
 		this.localData = localData;
-		setEncodedMessageData(encodedMessageData);
-		setMessageMeta(messageMeta);
+		setEncryptedProtectedData(encryptedProtectedData);
+		setServerData(serverData);
 	}
 
-
-	public ProtectedData getMessageData() {
-		return messageData;
-	}
-
-	public ServerData getMessageMeta() {
-		return messageMeta;
-	}
-
-	public byte[] getEncodedMessageData() {
-		return encodedMessageData;
-	}
-
-	private void setEncodedMessageData(byte[] encodedMessageData) {
-		this.encodedMessageData = encodedMessageData;
-	}
-
-	public byte[] getEncodedMessageMeta() {
-		return encodedMessageMeta;
-	}
-
-	private void setEncodedMessageMeta(byte[] encodedMessageMeta) {
-		this.encodedMessageMeta = encodedMessageMeta;
-	}
-
-	private void setMessageData(ProtectedData messageData) {
-		this.messageData = messageData;
-	}
-
-	private void setMessageMeta(ServerData messageMeta) {
-		this.messageMeta = messageMeta;
+	/**
+	 * Gets the message's {@link ProtectedData}.
+	 *
+	 * @return the message's protected data
+	 */
+	public ProtectedData getProtectedData() {
+		return protectedData;
 	}
 	
+	/**
+	 * Sets the message's {@link ProtectedData}.
+	 * @param serverData the message's {@link ProtectedData}
+	 */
+	public void setProtectedData(ProtectedData protectedData) {
+		this.protectedData = protectedData;
+	}
+
+
+	/**
+	 * Gets the message's {@link ServerData}.
+	 *
+	 * @return the message's server data
+	 */
+	public ServerData getServerData() {
+		return serverData;
+	}
+	
+	/**
+	 * Sets the message's {@link ServerData}.
+	 * @param serverData the message's {@link ServerData}
+	 */
+	public void setServerData(ServerData serverData) {
+		this.serverData = serverData;
+	}
+	
+	/**
+	 * Gets the message's {@link LocalData}.
+	 *
+	 * @return the message's {@link LocalData}
+	 */
 	public LocalData getLocalData() {
 		return localData;
 	}
 
-	public void encodeMessageMeta() {
-		setEncodedMessageMeta(ServerData.encode(getMessageMeta()));
-		setMessageMeta(null);
+	/**
+	 * Gets the message's {@link ProtectedData} as encrypted byte array.
+	 * @return the message's {@link ProtectedData} as encrypted byte array
+	 */
+	public byte[] getEncryptedProtectedData() {
+		return encryptedProtectedData;
+	}
+
+	/**
+	 * Sets the message's encrypted byte array that represents the {@link #protectedData}.
+	 * @param encryptedProtectedData the message's encrypted byte array that represents the {@link #protectedData}
+	 */
+	public void setEncryptedProtectedData(byte[] encryptedProtectedData) {
+		this.encryptedProtectedData = encryptedProtectedData;
+	}
+
+	/**
+	 * Gets the message's {@link ServerData} as encrypted byte array.
+	 * @return the message's {@link ServerData} as encrypted byte array
+	 */
+	public byte[] getEncryptedServerData() {
+		return encryptedServerData;
+	}
+
+	/**
+	 * Sets the message's encrypted byte array that represents the {@link #serverData}.
+	 * @param encryptedServerData the message's encrypted byte array that represents the {@link #serverData}
+	 */
+	public void setEncryptedServerData(byte[] encryptedServerData) {
+		this.encryptedServerData = encryptedServerData;
+	}
+
+	/**
+	 * Encrypts the {@link #serverData}. {@link Message#getServerData()} returns {@link null} now while
+	 * {@link Message#getEncryptedServerData()} returns a byte array.
+	 */
+	public void encryptServerData() {
+		setEncryptedServerData(ServerData.encrypt(getServerData()));
+		setServerData(null);
 	}
 	
-	public void decodeMessageMeta() {
-		setMessageMeta(ServerData.decode(getEncodedMessageMeta()));
-		setEncodedMessageMeta(null);
+	/**
+	 * Decrypts the {@link #serverData}. {@link Message#getEncryptedServerData()} returns {@link null} now while
+	 * {@link Message#getServerData()} returns a reference to an object.
+	 */
+	public void decryptServerData() {
+		setServerData(ServerData.decrypt(getEncryptedServerData()));
+		setEncryptedServerData(null);
 	}
 	
-	public void encodeMessageData() {
-		setEncodedMessageData(ProtectedData.encode(getMessageData()));
-		setMessageData(null);
+	/**
+	 * Encrypts the {@link #protectedData}. {@link Message#getProtectedData()} returns {@link null} now while
+	 * {@link Message#getEncryptedProtectedData()} returns a byte array.
+	 */
+	public void encryptProtectedData() {
+		setEncryptedProtectedData(ProtectedData.encrypt(getProtectedData()));
+		setProtectedData(null);
 	}
 	
-	public void decodeMessageData() {
-		setMessageData(ProtectedData.decode(getEncodedMessageData()));
-		setEncodedMessageData(null);
+	/**
+	 * Decrypts the {@link #protectedData}. {@link Message#getEncryptedProtectedData()} returns {@link null} now while
+	 * {@link Message#getProtectedData()} returns a reference to an object.
+	 */
+	public void decryptProctedData() {
+		setProtectedData(ProtectedData.decrypt(getEncryptedProtectedData()));
+		setEncryptedProtectedData(null);
 	}
 	
+	/**
+	 * Returns the message as string.
+	 * @return the message as string
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
 		sb.append(getLocalData().getId());
 		sb.append("] (");
-		if(getMessageMeta() != null) {
-			sb.append(getMessageMeta().getSendingId());
+		if(getServerData() != null) {
+			sb.append(getServerData().getSendingId());
 			sb.append(") => (");
-			sb.append(getMessageMeta().getReceivingId());
+			sb.append(getServerData().getReceivingId());
 			sb.append("): \"");
 		}else{
 			sb.append("?) => (?): \"");
 		}
-		if(getMessageData() != null) {
-			sb.append(getMessageData().getTextMessage());
+		if(getProtectedData() != null) {
+			sb.append(getProtectedData().getTextMessage());
 			sb.append("\" (created at ");
-			sb.append(new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(getMessageData().getDate()));
+			sb.append(new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(getProtectedData().getDate()));
 			sb.append(")");
 		}else {
 			sb.append("????????\" (created at ????)");

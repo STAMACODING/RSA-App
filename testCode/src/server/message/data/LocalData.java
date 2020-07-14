@@ -1,26 +1,34 @@
 package server.message.data;
 
 import server.services.databaseService.DatabaseService;
-import server.services.transferServices.sendService.SendService;
+import server.services.transferServices.sendService.ClientSendService;
+import server.services.transferServices.sendService.ServerSendService;
 
+/**
+ * Stores information about a message that is relevant to the client only. This information is not sent to the server and is also not encrypted.
+ */
 public class LocalData {
-	/**
-	 * the message's unique id in the chat database
-	 */
+	
+	/** The message's unique id in the chat database. Is set to {@code -1} if the message has not been saved yet. */
 	private int id;
 	
-	/**
-	 * whether the message needs to be updated in the chat database
-	 */
+	/** Stores whether the message needs to be updated in the chat database. */
 	private boolean updateRequested = false;
 	
 	/**
-	 * the message's send state
+	 * The message's send state
+	 *
 	 * @see SendState
 	 */
 	private SendState sendState = SendState.PENDING;
 	
 	
+	/**
+	 * Creates an instance of the {@link LocalData} class. The attribute {@link #updateRequested} is automatically set to {@code false}.
+	 *
+	 * @param id the message's unique id in the chat database (use {@code -1} if the message has not been saved yet)
+	 * @param sendState the message's send state
+	 */
 	public LocalData(int id, SendState sendState) {
 		setId(id);
 		setSendState(sendState);
@@ -76,24 +84,24 @@ public class LocalData {
 	}
 	
 	/**
-	 * Checks whether this message should get stored in the chat database by the {@link DatabaseService}.
-	 * @return whether this message should get stored in the chat database by the {@link DatabaseService}
+	 * Checks whether the message should get stored in the chat database by the {@link DatabaseService}.
+	 * @return whether the message should get stored in the chat database by the {@link DatabaseService}
 	 */
 	public boolean isToStore() {
 		return getId() == -1;
 	}
 
 	/**
-	 * Checks whether this message should get updated by the {@link DatabaseService}.
-	 * @return whether this message should get updated by the {@link DatabaseService}
+	 * Checks whether the message should get updated by the {@link DatabaseService}.
+	 * @return whether the message should get updated by the {@link DatabaseService}
 	 */
 	public boolean isToUpdate() {
 		return this.isUpdateRequested() && !isToStore();
 	}
 
 	/**
-	 * Checks whether this message should be send using the {@link SendService}.
-	 * @return whether this message should be send using the {@link SendService}
+	 * Checks whether the message should be send using the {@link ClientSendService}/{@link ServerSendService}.
+	 * @return whether the message should be send using the {@link ClientSendService}/{@link ServerSendService}
 	 */
 	public boolean isToSend() {
 		return getSendState().equals(SendState.PENDING);

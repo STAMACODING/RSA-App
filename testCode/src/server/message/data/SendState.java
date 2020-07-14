@@ -1,12 +1,11 @@
 package server.message.data;
 
 /**
- * The message's send state.
- *
+ * Describes whether the message has to get sent or has already been sent successfully.
  */
 public enum SendState {
 	/** Message should get sent. **/
 	PENDING, 
-	/** Message is sent successfully. **/
+	/** Message has already been sent successfully. **/
 	SENT
 }

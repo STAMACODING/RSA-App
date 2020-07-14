@@ -1,7 +1,6 @@
 package server.config;
 
 import server.services.mainService.MessageService;
-import server.services.transferServices.receiveService.ReceiveService;
 
 /**
  * Class containing all configurations needed to start
@@ -10,33 +9,31 @@ import server.services.transferServices.receiveService.ReceiveService;
  * this could lead to unexpected behavior.
  */
 public class NetworkConfig {
-	/**
-	 * the type of the device the {@link MessageService} is running on
-	 */
+	
+	/** The type of the device the {@link MessageService} is running on */
 	public static NetworkType TYPE = null;
 	
 	/**
-	 * configurations concerning the client
+	 * Configurations concerning the client
 	 */
 	public static class Client{
-		/**
-		 * the client's unique id
-		 */
+		
+		/** The client's unique id */
 		public static byte ID = -1;
 		
 		/**
-		 * the time the {@link ReceiveService} waits before querying new messages from the server
+		 * The time the {@link ReceiveService} waits before querying new messages from
+		 * the server
 		 */
 		public static long QUERY_MESSAGES_INTERVAL = 10000;
 	}
 	
 	/**
-	 * configurations concerning the server
+	 * Configurations concerning the server
 	 */
 	public static class Server{
-		/**
-		 * the server's unique public ip
-		 */
+		
+		/** The server's unique public ip-address */
 		public static String IP = null;
 		/**
 		 * On this port the server sends messages. The clients receive messages using this port.
@@ -52,7 +49,7 @@ public class NetworkConfig {
 	 * You can use this method to change all network configurations at once.
 	 * @param type the type of the device the {@link MessageService} is running on
 	 * @param clientID the client's unique id
-	 * @param serverIP the server's unique public ip
+	 * @param serverIP the server's unique public ip-address
 	 * @param serverSendPort On this port the server sends messages. The clients receive messages using this port.
 	 * @param serverReceivePort On this port the server listens to receive messages from clients. The clients send messages using this port.
 	 */
@@ -71,7 +68,10 @@ public class NetworkConfig {
 	 */
 	public static boolean isValid() {
 		if(TYPE == null) return false;
+		
 		if(Client.ID < 0 && TYPE == NetworkType.CLIENT) return false;
+		if(Client.QUERY_MESSAGES_INTERVAL < 0 && TYPE == NetworkType.CLIENT) return false;
+		
 		if(Server.SEND_PORT < 0) return false;
 		if(Server.RECEIVE_PORT < 0) return false;
 		if(Server.RECEIVE_PORT == Server.SEND_PORT) return false;

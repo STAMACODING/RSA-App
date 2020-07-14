@@ -3,108 +3,192 @@ package server.services;
 import com.stamacoding.rsaApp.log.logger.Logger;
 
 /**
- * <p>A service is basically a thread running some code until someone requests it to shutdown. 
- * To request a service to get shutdown use {@link requestShutdown()}.
- * To check if a service is still running use {@link #isRunning()}.</p>
- * <p>
- * To create your own service do the following:
- * </p>
- * <ol>
- * 	<li>Create a class extending from the {@link Service} class.</li>
- * 	<li>Implement following code at the top of your class. You should
- * 		do this because basically every service follows the 
- * 		<a href="https://de.wikibooks.org/wiki/Muster:_Java:_Singleton">singleton pattern</a>.
- * 		Remember to replace <code>CustomService</code> with your service's class name and <code>"custom-name"</code> with any
- * 		desired name of your service.
- * 	<br>
- * 	<pre><code>
- * 	private static volatile CustomService singleton = new SendService();
- *
- *	private CustomService() {
- *		super("custom-name");
- *	}
- *	
- *	public static CustomService getInstance() {
- *		return singleton;
- *	}
- *  </code></pre>
- *	</li>
- * 	<li>Override {@link #run()} to change what the service should do. Remember to call <code>super.run()</code> before doing your own stuff.</li>
- *  <li><ul>
- *  	<li>Remember also to implement the <b>shutdown-feature</b>. If {@link #isShutDownRequested()} returns <code>true</code> there service should get shutdown. E.g. you
- * 		can implement this feature by using <code>while(!requestedShutDown()){ ... }</code> instead of <code>while(true){ ... }</code>. This would automatically
- *		end the ongoing while loop if a shutdown gets requested. </li>
- *  </ul></li>
- *  <li>Now you can start your own service by calling <code>CustomService.getInstance().start()</code>. Easy, isn't it?</li>
- * </ol>
+ * <p>A service offers the ability to run some code structured and repeatedly on a different thread.
+ * To specify the code that should be run repeatedly override {@link #onRepeat()}. To run the service use {@link #launch()}.</p>
+ * 
+ * <p>Added to that the service offers the {@link #onStart()} method. 
+ * This method is called once before the code in the {@link #onRepeat()} method is called repeatedly.
+ * Override this method to initialize some stuff.</p>
+ * 
+ * <p>Moreover a service has the ability to get stopped safely. To stop a service use {@link #setStopRequested(boolean)}.
+ * As the method's name tells by using this method you are only able to request the service to stop. 
+ * This is because the service finishes its last run of the {@link #onRepeat()} method before it is really stopped. To do some stuff, when the service gets
+ * stopped override the {@link #onStop()} method.</p>
+ * 
+ * <p>Another feature is that a service can report that it has crashed using the {@link #setServiceCrashed(boolean)} method. 
+ * If the service reports that it has crashed, the service finishes its last run of the {@link #onRepeat()} method and calls the {@link #onCrash()}
+ * method after that. To do some stuff, when the service gets stopped override the {@link #onCrash()} method.</p>
+ * 
+ * <p>One last thing a service can do is restarting itself when it has crashed. By default this feature
+ * is enabled but you can disable it by using {@link #setRestartingOnCrash(boolean)}. To do some stuff,
+ * when the service restarts override {@link #onRestart()}. You also can manually restart the service by calling {@link #restart()}.</p>
  */
-public abstract class Service extends Thread{
-	private volatile boolean requestedShutdown = false;
-	private volatile boolean started = false;
-	private volatile boolean manipulatedCrash = false;
+public abstract class Service{
+	
+	/** The service's thread  */
+	private volatile Thread servicesThread;
+	
+	/** Stores whether service should get stopped */
+	private volatile boolean stopRequested = false;
+	
+	/** Stores whether the service crashed */
+	private volatile boolean serviceCrashed = false;
+	
+	/** Stores whether the service restart feature is enabled */
+	private volatile boolean restartingOnCrash = true;
+	
 	
 	/**
 	 * Creates an instance of a new service.
-	 * @param serviceName the service's name
 	 */
-	protected Service(String serviceName) {
-		super();
-		setName(serviceName + "-service");
+	protected Service() {}
+	
+	/**
+	 * Launches the service.
+	 */
+	public final synchronized void launch() {
+		if(getServicesThread() != null) {
+			Logger.error(getClass().getSimpleName(), "Service is already running. Use restart() to restart the service.");
+			new RuntimeException("Service is already running. Use restart() to restart the service.").printStackTrace();
+			return;
+		}
+		Thread servicesThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Logger.error(getClass().getSimpleName(), "Starting");
+				onStart();
+				Logger.error(getClass().getSimpleName(), "Started");
+				while(!isStopRequested() && !isServiceCrashed()) {
+					Logger.error(getClass().getSimpleName(), "Repeating stuff");
+					onRepeat();
+					Logger.error(getClass().getSimpleName(), "Repeated stuff");
+				}
+				if(isServiceCrashed()) {
+					Logger.error(getClass().getSimpleName(), "Crashing");
+					onCrash();
+					Logger.error(getClass().getSimpleName(), "Crashed");
+					if(isRestartingOnCrash()) {
+						restart();
+					}
+				}else {
+					Logger.error(getClass().getSimpleName(), "Stopping");
+					onStop();
+				}
+			}
+			
+		});
+		servicesThread.start();
 	}
 	
 	/**
-	 * Starts the service.
+	 * Restarts the service.
 	 */
-	@Override
-	public synchronized void start() {
-		super.start();
+	public final synchronized void restart() {
+		Logger.debug(getClass().getSimpleName(), "Restarting");
+		if(getServicesThread() != null) {
+			if(!getServicesThread().isInterrupted()) {
+				getServicesThread().interrupt();
+				Logger.error(getClass().getSimpleName(), "Interrupted service's thread to rerun");
+			}
+			setServicesThread(null);
+		}
+		setStopRequested(false);
+		setServiceCrashed(false);
+		onRestart();
+		Logger.debug(getClass().getSimpleName(), "Launching service now...");
+		launch();
 	}
+	
 	
 	/**
-	 * Runs the service.
+	 * Gets called once when the service starts.
 	 */
-	@Override
-	public void run() {
-		super.run();
-		this.started = true;
-		this.requestedShutdown = false;
-		Logger.debug(this.getClass().getSimpleName(), this.getName() + " is running");
-	}
+	public void onStart() {}
 	
 	/**
-	 * Requests the service to get shutdown.
+	 * Gets called repeatedly after the {@link #onStart()} method was called.
 	 */
-	public final void requestShutdown() {
-		Logger.debug(this.getClass().getSimpleName(), getName() + " received shutdown request");
-		this.requestedShutdown = true;
-	}
+	public void onRepeat() {}
 	
 	/**
-	 * Checks if the server should get shutdown.
-	 * @return whether the server should get shutdown
+	 * Gets called when the {@link #stopRequested} attribute is set to {@code true} and the service finished its last run of the {@link #onRepeat()} method.
 	 */
-	public final boolean isShutDownRequested() {
-		return requestedShutdown;
-	}
+	public void onStop() {}
 	
 	/**
-	 * Checks if the service is running. Equivalent to {@link #isAlive()}.
-	 * @return whether the service is running
+	 * Gets called when the {@link #serviceCrashed} attribute is set to {@code true} and the service finished its last run of the {@link #onRepeat()} method.
 	 */
-	public boolean isRunning() {
-		return this.isAlive();
-	}
+	public void onCrash() {}
 	
-	public boolean isStarted() {
-		return started;
-	}
+	/**
+	 * Gets called when the service restarts (before the {@link #onStart()} method).
+	 */
+	public void onRestart() {}
 	
-	public boolean isCrashed() {
-		return (isStarted() && !isRunning() && !isShutDownRequested()) || manipulatedCrash;
+
+	/**
+	 * Gets the service's thread.
+	 * @return the service's thread
+	 */
+	private Thread getServicesThread() {
+		return servicesThread;
 	}
-	
-	public void setCrashed() {
-		manipulatedCrash = true;
+
+	/**
+	 * Sets the service's thread.
+	 * @param servicesThread the service's thread
+	 */
+	private void setServicesThread(Thread servicesThread) {
+		this.servicesThread = servicesThread;
+	}
+
+	/**
+	 * Gets whether the service has crashed.
+	 * @return whether the service has crashed
+	 */
+	public boolean isServiceCrashed() {
+		return serviceCrashed;
+	}
+
+	/**
+	 * Sets whether the service has crashed.
+	 * @param serviceCrashed whether the service has crashed
+	 */
+	protected void setServiceCrashed(boolean serviceCrashed) {
+		this.serviceCrashed = serviceCrashed;
+	}
+
+	/**
+	 * Gets whether the service should stop.
+	 * @return whether the service should stop
+	 */
+	public boolean isStopRequested() {
+		return stopRequested;
+	}
+
+	/**
+	 * Sets whether service should stop.
+	 * @param stopRequested whether the service should stop
+	 */
+	public void setStopRequested(boolean stopRequested) {
+		this.stopRequested = stopRequested;
+	}
+
+	/**
+	 * Gets whether the service's restart-on-crash feature is enabled.
+	 * @return whether the service's restart-on-crash feature is enabled
+	 */
+	public boolean isRestartingOnCrash() {
+		return restartingOnCrash;
+	}
+
+	/**
+	 * Enables or disables the service's restart-on-crash feature.
+	 * @param restartingOnCrash whether the service's restart-on-crash feature should be enabled
+	 */
+	public void setRestartingOnCrash(boolean restartingOnCrash) {
+		this.restartingOnCrash = restartingOnCrash;
 	}
 }
 

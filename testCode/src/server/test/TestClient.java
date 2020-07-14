@@ -8,14 +8,18 @@ import java.util.Scanner;
 import server.config.NetworkConfig;
 import server.config.NetworkType;
 import server.message.Message;
+import server.message.MessageManager;
 import server.message.data.LocalData;
 import server.message.data.ProtectedData;
 import server.message.data.SendState;
 import server.message.data.ServerData;
-import server.services.databaseService.MessageManager;
 import server.services.mainService.MessageService;
 
+/**
+ * Tests the {@link MessageService} on the client-side.
+ */
 public class TestClient {
+	
 	public static void main(String[] args) {
 		System.out.println("------------------------------------------------------------");
 		System.out.println("RSA-App Test Client BETA");
@@ -58,7 +62,7 @@ public class TestClient {
 		System.out.println("------------------------------------------------------------");
 		
 		NetworkConfig.TYPE = NetworkType.CLIENT;
-		MessageService.getInstance().start();
+		MessageService.getInstance().launch();
 		if(input.equals("y")) {
 			Message m = new Message(new LocalData(-1, SendState.PENDING), new ProtectedData(message, System.currentTimeMillis()), new ServerData(NetworkConfig.Client.ID, idReceiving));
 			MessageManager.manage(m);
