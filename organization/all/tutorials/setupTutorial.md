@@ -66,9 +66,9 @@ Um unsere Projektdateien auf deinen Computer zu ziehen, musst du unser Repositor
    git clone https://github.com/STAMACODING/RSA-App.git
    ```
 
-## 4. Oracle JDK 11 installieren
+## 4. Oracle JDK 8 installieren
 
-Damit wir alle mit dem selben Java arbeiten solltest du das JDK 11 auf deinem Rechner installieren. Die Installationsdatei habe ich [hier](https://mega.nz/file/pCoAhCYS#G5ymoaixoI5s3uC3KHeTLD-XAr09amvPe9JeMHhFCHU) hinterlegt. Downloade einfach die _.exe_-Datei und führe den Installer aus.
+Damit wir alle mit dem selben Java arbeiten solltest du das JDK 8 auf deinem Rechner installieren. Die Installationsdatei habe ich [hier](https://mega.nz/file/pCoAhCYS#G5ymoaixoI5s3uC3KHeTLD-XAr09amvPe9JeMHhFCHU) hinterlegt. Downloade einfach die _.exe_-Datei und führe den Installer aus.
 
 Falls du schon ein anderes JDK installiert hast ist das kein Problem. Man kann problemlos mehrere JDKs gleichzeitig haben.
 
@@ -80,24 +80,24 @@ Eclipse ist die IDE, die wir für unser Projekt benutzen.
 2. Downloade den dir vorgeschlagenen Installer (orangener "Download"-Button).
 3. Öffne den Installer.
 4. Wähle "Eclipse IDE for Java Developers".
-5. Wähle bei der Einstellung "Java 1.8+ VM" das zuvor installiere JDK in der **Version 11** (liegt standardmäßig hier "C:\Program Files\Java\jdk-11.0.7").
+5. Wähle bei der Einstellung "Java 1.8+ VM" das zuvor installiere JDK in der **Version 8** (liegt standardmäßig hier "C:\Program Files\Java\jdk-1.8.0_251").
 6. Klicke "Install".
 
-## 6. Eclipse auf JDK 11 einstellen
+## 6. Eclipse auf JDK 8 einstellen
 
-Obwohl wir soeben bei der Eclipse Installation das JDK 11 ausgewählt haben, kommt es häufiger vor, dass Eclipse das doch nicht so richtig gemacht hat. Daher überprüfen wir die Einstellung lieber noch einmal und passen sie gegenfalls an:
+Obwohl wir soeben bei der Eclipse Installation das JDK 8 ausgewählt haben, kommt es häufiger vor, dass Eclipse das doch nicht so richtig gemacht hat. Daher überprüfen wir die Einstellung lieber noch einmal und passen sie gegenfalls an:
 
 1. Öffne die Eclipse IDE.
 2. Klicke "Window" => "Preferences"
 3. Wähle den Pfeil neben "Java"
 4. Wähle unter "Java" nun "Installed JREs" aus.
-5. Wenn dort kein Paket, das _jdk-11.0.7_ heißt, liegt klicke "Add". 
+5. Wenn dort kein Paket, das _jdk-1.8.0_251_ heißt, liegt klicke "Add". 
    - Wenn dieses Paket in der Liste schon aufgelistet ist, musst du Eclipse nicht weiter einrichten. Wichtig wäre dann nur, das links neben dem Paket ein Häkchen ist.
 6. Wähle "Standard VM" und klicke "Next"
 7. Drücke rechts neben "JRE home" auf "Directory..."
-8. Wähle den Ordner aus, wo du das _JDK 11_ installiert hast (ist standardmäßig "C:\Program Files\Java\jdk-11.0.7").
+8. Wähle den Ordner aus, wo du das _JDK 8_ installiert hast (ist standardmäßig "C:\Program Files\Java\jdk-1.8.0_251").
 9. Klicke "Finish".
-10. Setze ein Häkchen bei _jdk-11.0.7_.
+10. Setze ein Häkchen bei _jdk-1.8.0_251_.
 11. Klicke "Apply and Close".
 
 
@@ -113,58 +113,31 @@ Dieses Git-Addon ermöglicht es, dass Eclipse die Eclipse-Projekte, die innerhal
 6. Akzeptiere die Lizenzvereinbarung.
 7. Klicke "Finish" und starte nach der Installation des Addons (unten rechts zu sehen) Eclipse neu.
 
-## 8. Eclipse Metadateien ergänzen
-
-Im Repository fehlen im sourceCode- und testCode-Ordner Metadateien, die leider jeder Nutzer lokal bei sich erstellen muss:
-
-0. Schließe die Eclipse IDE.
-1. Navigiere mit dem Datei-Explorer in den Ordner "C:\Dein\Link\Zum\Repository\RSA-App\sourceCode".
-2. Erstelle eine neue Datei mit dem Namen ".classpath".
-3. Öffne die Datei mit einem Texteditor.
-4. Füge folgenden Text ein:
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
-```
-5. Speichere und schließe die Datei.
-
-6. Navigiere mit dem Datei-Explorer in den Ordner "C:\Dein\Link\Zum\Repository\RSA-App\testCode".
-7. Erstelle eine neue Datei mit dem Namen ".classpath".
-8. Öffne die Datei mit einem Texteditor.
-9. Füge folgenden Text ein:
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/RsaAppEclipse"/>
-	<classpathentry kind="lib" path="F:/harry/Documents/Informatik/RSA-App/lib/sqlite-jdbc-3.30.1.jar"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
-```
-10. **Achtung!**: Den Text "F:/harry/Documents/Informatik/RSA-App/lib/sqlite-jdbc-3.30.1.jar" musst du mit "C:/Dein/Link/Zum/Repository/RSA-App/lib/sqlite-jdbc-3.30.1.jar" ersetzen.
-11. Speichere und schließe die Datei.
-
-## 9. Repository in Eclipse übertragen
+## 8. Repository in Eclipse übertragen
 
 1. Öffne die Eclipse IDE.
+
 2. Klicke "Window" => "Show View" => "Other..."
+
 3. Suche nach "Git Repositories" und wähle den erscheinenden Eintrag aus.
+
 4. Wähle unten links im erscheinenden "Git Repositories" Fenster "Add an existing local Git repository".
+
 5. Klicke rechts neben "Directory" auf "Browse..."
+
 6. Navigiere jetzt zum geklonten Repository und wähle den Ordner aus, der das Repository ist (müsste "RSA-App" heißen).
+
 7. Setze jetzt Häkchen neben dem Eintrag der auf _RSA-App.git_ endet.
+
 8. Klicke "Add".
+
 9. Nun drücke mit der rechten Maustaste auf den Eintrag _RSA-App_ und wähle "Import Projects".
-10. Wähle in der Liste bitte die Projekte "RSA-App\sourceCode" und "RSA-App\testCode" aus, aber nicht das Projekt "RSA-App". Entferne also das Häkchen bei "RSA-App".
+
+10. Wähle in der Liste bitte das Projekt "RSA-App\mavenProject"  aus, aber nicht das Projekt "RSA-App". Entferne also das Häkchen bei "RSA-App".
+
 11. Drücke "Finish".
-12. Jetzt erscheint die Java-Projekte oben rechts im Workspace und sind mit unserem Github-Repository verbunden.
+
+12. Jetzt erscheint das Maven-Projekt als "RSA-App" als ganz normales Projekt im Package Explorer.
+
+    Den Source Code der App findest du unter _src/main/java_.
 
