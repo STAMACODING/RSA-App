@@ -84,25 +84,30 @@ public class Logger {
 	}
 	
 	/**
-	 * only for issues, that make the program stop 
+	 * only for issues that would stop the program
 	 * 
-	 * @param className input for class, that called the method
-	 * @param message input for message, typed by the calling class
-	 **/
+	 * @param className input for class that called the method
+	 * @param exception thrown exception that gets catched
+	 */
 	public static void error(String className, Exception exception) {
-		log(className, exception.getMessage(), logType.ERROR);
-
-		exception.printStackTrace();
+		error(className, exception, false);
 	}
 
 	/**
-	 * only for issues, that make the program stop 
+	 * only for issues that make the program stop
 	 * 
-	 * @param className input for class, that called the method
-	 * @param message input for message, typed by the calling class
-	 **/
-	public static void error(String className, String message, Exception exception, boolean stopApplication) {
-		log(className, message, logType.ERROR);
+	 * @param className input for class that called the method
+	 * @param exception thrown exception that gets catched
+	 * @param stopApplication Wheter the application should stop. If you want to keep the Application alive, leave the boolean out.
+	 */
+	public static void error(String className, Exception exception, boolean stopApplication) {
+		log(className, exception.getMessage(), logType.ERROR);
+
+		exception.printStackTrace();
+
+		if (stopApplication) {
+			System.exit(-1);
+		}
 	}
 	
 	/**
