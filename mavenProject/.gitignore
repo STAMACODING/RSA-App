@@ -1,0 +1,8 @@
+/target/*
+.project
+.classpath
+/reports
+.settings/
+!*.jar
+
+/target/
