@@ -3,3 +3,6 @@
 # Files
 *.log
 
+#VSCode Meta
+
+*.vscode
