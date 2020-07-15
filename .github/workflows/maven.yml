@@ -5,9 +5,9 @@ name: Maven Auto Build
 
 on:
   push:
-    branches: [ maven-branch ]
+    branches: [ master ]
   pull_request:
-    branches: [ maven-branch ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -22,10 +22,8 @@ jobs:
         java-version: 1.8
     - name: Build with Maven
       run: | 
-        git checkout maven-branch
         cd mavenProject
         mvn install
-        git status
     - name: Update project's binaries
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
