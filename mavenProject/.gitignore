@@ -4,3 +4,5 @@
 /reports
 .settings/
 !*.jar
+
+*.vscode
