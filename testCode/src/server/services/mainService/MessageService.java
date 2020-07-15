@@ -33,7 +33,9 @@ public class MessageService extends Service{
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link MessageService#getInstance()} to get the
 	 *  only instance of this class.
 	 */
-	private MessageService() {}
+	private MessageService() {
+		super(MessageService.class.getSimpleName());
+	}
 	
 	/**
 	 * Gets the only instance of this class.
@@ -73,5 +75,10 @@ public class MessageService extends Service{
 			ServerReceiveService.getInstance().setStopRequested(true);
 			ServerSendService.getInstance().setStopRequested(true);
 		}
+	}
+	
+	public static void main(String[] args) {
+		NetworkConfig.setup(NetworkType.SERVER, (byte) 32, "192.234.122", 1001, 1002);
+		MessageService.getInstance().launch();
 	}
 }

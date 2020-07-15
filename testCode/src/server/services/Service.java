@@ -37,18 +37,22 @@ public abstract class Service{
 	/** Stores whether the service restart feature is enabled */
 	private volatile boolean restartingOnCrash = true;
 	
+	private final String serviceName;
+	
 	
 	/**
 	 * Creates an instance of a new service.
 	 */
-	protected Service() {}
+	protected Service(String serviceName) {
+		this.serviceName = serviceName;
+	}
 	
 	/**
 	 * Launches the service.
 	 */
 	public final synchronized void launch() {
 		if(getServicesThread() != null) {
-			Logger.error(getClass().getSimpleName(), "Service is already running. Use restart() to restart the service.");
+			Logger.error(getServiceName(), "Service is already running. Use restart() to restart the service.");
 			new RuntimeException("Service is already running. Use restart() to restart the service.").printStackTrace();
 			return;
 		}
@@ -56,23 +60,21 @@ public abstract class Service{
 			
 			@Override
 			public void run() {
-				Logger.error(getClass().getSimpleName(), "Starting");
+				Logger.debug(getServiceName(), "Starting");
 				onStart();
-				Logger.error(getClass().getSimpleName(), "Started");
+				Logger.debug(getServiceName(), "Started");
 				while(!isStopRequested() && !isServiceCrashed()) {
-					Logger.error(getClass().getSimpleName(), "Repeating stuff");
 					onRepeat();
-					Logger.error(getClass().getSimpleName(), "Repeated stuff");
 				}
 				if(isServiceCrashed()) {
-					Logger.error(getClass().getSimpleName(), "Crashing");
+					Logger.debug(getServiceName(), "Crashing");
 					onCrash();
-					Logger.error(getClass().getSimpleName(), "Crashed");
+					Logger.debug(getServiceName(), "Crashed");
 					if(isRestartingOnCrash()) {
 						restart();
 					}
 				}else {
-					Logger.error(getClass().getSimpleName(), "Stopping");
+					Logger.debug(getServiceName(), "Stopping");
 					onStop();
 				}
 			}
@@ -85,18 +87,18 @@ public abstract class Service{
 	 * Restarts the service.
 	 */
 	public final synchronized void restart() {
-		Logger.debug(getClass().getSimpleName(), "Restarting");
+		Logger.debug(getServiceName(), "Restarting");
 		if(getServicesThread() != null) {
 			if(!getServicesThread().isInterrupted()) {
 				getServicesThread().interrupt();
-				Logger.error(getClass().getSimpleName(), "Interrupted service's thread to rerun");
+				Logger.debug(getServiceName(), "Interrupted service's thread to restart");
 			}
 			setServicesThread(null);
 		}
 		setStopRequested(false);
 		setServiceCrashed(false);
 		onRestart();
-		Logger.debug(getClass().getSimpleName(), "Launching service now...");
+		Logger.debug(getServiceName(), "Launching service now...");
 		launch();
 	}
 	
@@ -189,6 +191,14 @@ public abstract class Service{
 	 */
 	public void setRestartingOnCrash(boolean restartingOnCrash) {
 		this.restartingOnCrash = restartingOnCrash;
+	}
+
+	/**
+	 * Gets the service's name.
+	 * @return the service's name
+	 */
+	public String getServiceName() {
+		return serviceName;
 	}
 }
 

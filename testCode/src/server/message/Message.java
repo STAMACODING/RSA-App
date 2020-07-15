@@ -52,7 +52,7 @@ public class Message implements Serializable{
 	 * @param encryptedServerData the message's server data as encrypted byte array
 	 */
 	public Message(LocalData localData, byte[] encryptedProtectedData, byte[] encryptedServerData) {
-		if(protectedData == null || serverData == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
+		if(encryptedProtectedData == null || encryptedServerData == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
 		this.localData = localData;
 		setEncryptedProtectedData(encryptedProtectedData);
 		setEncryptedServerData(encryptedServerData);
@@ -65,7 +65,7 @@ public class Message implements Serializable{
 	 * @param serverData the message's server data
 	 */
 	public Message(LocalData localData, byte[] encryptedProtectedData, ServerData serverData) {
-		if(protectedData == null || serverData == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
+		if(encryptedProtectedData == null || serverData == null || localData == null) throw new IllegalArgumentException("LocalData/ProtectedData/ServerData are not allowed to be null!");
 		this.localData = localData;
 		setEncryptedProtectedData(encryptedProtectedData);
 		setServerData(serverData);
@@ -178,8 +178,10 @@ public class Message implements Serializable{
 	 * Decrypts the {@link #protectedData}. {@link Message#getEncryptedProtectedData()} returns {@link null} now while
 	 * {@link Message#getProtectedData()} returns a reference to an object.
 	 */
-	public void decryptProctedData() {
-		setProtectedData(ProtectedData.decrypt(getEncryptedProtectedData()));
+	public void decryptProtectedData() {
+		ProtectedData d = ProtectedData.decrypt(getEncryptedProtectedData());
+		System.err.println(d);
+		setProtectedData(d);
 		setEncryptedProtectedData(null);
 	}
 	

@@ -19,7 +19,9 @@ public class DatabaseService extends Service{
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link DatabaseService#getInstance()} to get the
 	 *  only instance of this class.
 	 */
-	private DatabaseService() {}
+	private DatabaseService() {
+		super(DatabaseService.class.getSimpleName());
+	}
 	
 	/**
 	 * Gets the only instance of this class.

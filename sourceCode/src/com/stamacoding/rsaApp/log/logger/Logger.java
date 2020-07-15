@@ -110,7 +110,7 @@ public class Logger {
 			}
 	
 			if (OutputType == outputType.onlyFiles || OutputType == outputType.ALL) {
-				printToFile(logMessage);
+				//printToFile(logMessage);
 			}
 		}
 	}

@@ -6,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
+import com.sun.media.sound.InvalidDataException;
 
 import server.config.NetworkConfig;
 import server.config.NetworkConfig.Server;
@@ -33,7 +34,7 @@ public class ServerReceiveService extends ServerService{
 	 *  The server's port is set to {@link Server#RECEIVE_PORT}.
 	 */
 	private ServerReceiveService() {
-		super(NetworkConfig.Server.RECEIVE_PORT);
+		super(ServerReceiveService.class.getSimpleName(), NetworkConfig.Server.RECEIVE_PORT);
 	}
 	
 	/**
@@ -62,39 +63,36 @@ public class ServerReceiveService extends ServerService{
 			Logger.debug(this.getClass().getSimpleName(), "Receiving a new message from a client");
 			DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
 
-			try {
-			    // Read message from client
-				int messageMetaLength = inputStream.readInt();
-				byte[] messageMeta = null, messageData = null;
-				if(messageMetaLength>0) {
-					// Read message meta
-					messageMeta = new byte[messageMetaLength];
-				    inputStream.readFully(messageMeta, 0, messageMetaLength);
-				    
-				    
-				    
-				    // Read message data
-				    int messageDataLength = inputStream.readInt();
-				    
-				    if(messageDataLength > 0) {
-				    	messageData = new byte[messageDataLength];
-				    	inputStream.readFully(messageData, 0, messageDataLength);
-				    }else {
-				    	throw new Exception("Received invalid data");
-				    }
-				    
-				    Logger.debug(this.getClass().getSimpleName(), "Successfully received message's meta and data");
-					
-					Message receivedMessage = new Message(new LocalData(-1, SendState.PENDING), messageData, messageMeta);
-					receivedMessage.decryptServerData();
-					
-					Logger.debug(MessageManager.class.getSimpleName(), "Received message: " + receivedMessage.toString());
-					MessageManager.manage(receivedMessage);
-				}else {
-					throw new Exception("Received invalid data");
-				}
-			}catch(Exception e) {
+			 // Read message from client
+			int serverDataLength = inputStream.readInt();
+			byte[] encryptedServerData = null, encryptedProtectedData = null;
+			if(serverDataLength>0) {
+				// Read message meta
+				encryptedServerData = new byte[serverDataLength];
+			    inputStream.readFully(encryptedServerData, 0, serverDataLength);
+			    
+			    
+			    
+			    // Read message data
+			    int protectedDataLength = inputStream.readInt();
+			    if(protectedDataLength > 0) {
+			    	encryptedProtectedData = new byte[protectedDataLength];
+			    	inputStream.readFully(encryptedProtectedData, 0, protectedDataLength);
+			    }else {
+			    	Logger.error(this.getClass().getSimpleName(), "Received invalid data");
+			    	throw new RuntimeException("Received invalid data");
+			    }
+			    
+			    Logger.debug(this.getClass().getSimpleName(), "Successfully received message's meta and data");
+				
+				Message receivedMessage = new Message(new LocalData(-1, SendState.PENDING), encryptedProtectedData, encryptedServerData);
+				receivedMessage.decryptServerData();
+				
+				Logger.debug(MessageManager.class.getSimpleName(), "Received message: " + receivedMessage.toString());
+				MessageManager.manage(receivedMessage);
+			}else {
 				Logger.error(this.getClass().getSimpleName(), "Received invalid data");
+				throw new RuntimeException("Received invalid data");
 			}
 
 			connectionFromClient.close();

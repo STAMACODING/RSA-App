@@ -30,7 +30,7 @@ public class ServerSendService extends ServerService {
 	 *  The server's port is set to {@link Server#SEND_PORT}.
 	 */
 	private ServerSendService() {
-		super(NetworkConfig.Server.SEND_PORT);
+		super(ServerSendService.class.getSimpleName(), NetworkConfig.Server.SEND_PORT);
 	}
 	
 	/**
