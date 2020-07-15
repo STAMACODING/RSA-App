@@ -2,7 +2,7 @@
 
 ## Project Goals
 
-#### Nächstes Ziel
+### Nächstes Ziel
 
 - Desktop Chat-App mit folgenden Funktionalitäten
 
@@ -14,12 +14,14 @@
   - Darstellung des Ganzen durch ein simples **GUI**
   - **Automatisches** Loggen aller Ereignisse zum Debuggen und für Bug-Fixes
 
-#### Hauptziel
+### Hauptziel
 
 - Android Chat-App mit obigen Funktionalitäten  
 
 ## Repository Struktur
+
 Zurzeit ist unser Repository in zwei größere Ordner unterteilt:
+
 - **mavenProject**
   - Dieser Ordner stellt ein [Maven](https://de.wikipedia.org/wiki/Apache_Maven)-Projekt dar. Hier läuft die eigentliche Entwicklung der App ab.
     - Im Ordner **mavenProject\src\main\java** liegt
@@ -30,9 +32,9 @@ Zurzeit ist unser Repository in zwei größere Ordner unterteilt:
   - In diesem Ordner liegen alle Dateien zur Planung und Organisation des Projektes. Der Ordner ist noch einmal in fünf Ordner unterteilt. Je ein Ordner für jedes Team und ein einziger Ordner für alle. Im Ordner für alle sind beispielsweise Tutorials für alle und Meeting Protokolle von größeren Meetings, auf denen grundlegende Sachen besprochen wurden, festgehalten. Auch die festgelegten Konventionen sind im _organization_-Verzeichnis zu finden.
 
 ## Beim Projekt mitmachen
+
 Wenn du zu diesem Repository hinzugefügt wurdest, fehlen nur noch wenige Schritte, um auch selbst den Source-Code aktiv zu entwickeln. Eine detaillierte Schritt-für-Schritt Anleitung findest du [hier](https://github.com/STAMACODING/RSA-App/blob/maven-branch/organization/all/tutorials/setupTutorial.md).
 
 ## Unsere Webseite
 
 Eine Übersicht über unser Repository kannst du auch über unsere [Webseite](https://stamacoding.github.io/RSA-App/) finden.
-
