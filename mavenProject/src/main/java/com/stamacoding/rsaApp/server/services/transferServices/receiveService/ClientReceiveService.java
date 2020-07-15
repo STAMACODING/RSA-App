@@ -88,16 +88,12 @@ public class ClientReceiveService extends Service{
 			connectionToServer.close();
 			Logger.debug(this.getClass().getSimpleName(), "Closed connection to the send server");
 		} catch (IOException e) {
-			e.printStackTrace();
-			//Logger.error(this.getClass().getSimpleName(), "Failed to connect to the send server");
-			Logger.error(this.getClass().getSimpleName(), e);
+			Logger.error(this.getClass().getSimpleName(), "Failed to connect to the send server");
 		}
 		try {
 			Thread.sleep(NetworkConfig.Client.QUERY_MESSAGES_INTERVAL);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-			//Logger.error(this.getClass().getSimpleName(), "Failed to make the thread sleep");
-			Logger.error(this.getClass().getSimpleName(), e);
+			Logger.error(this.getClass().getSimpleName(), "Thread failed to sleep");
 			setServiceCrashed(true);
 		}
 	}

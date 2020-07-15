@@ -52,9 +52,7 @@ public abstract class Service{
 	 */
 	public final synchronized void launch() {
 		if(getServicesThread() != null) {
-			//Logger.error(getServiceName(), "Service is already running. Use restart() to restart the service.");
-			//Logger.error(getServiceName(), e);
-			new RuntimeException("Service is already running. Use restart() to restart the service.").printStackTrace();
+			Logger.error(getServiceName(), new RuntimeException("Service is already running. Use restart() to restart the service."));
 			return;
 		}
 		Thread servicesThread = new Thread(new Runnable() {

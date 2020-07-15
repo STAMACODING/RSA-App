@@ -82,34 +82,20 @@ public class Logger {
 	public static void warning(String className, String message) {
 		log(className, message, logType.WARNING);
 	}
-	
-	/**
-	 * only for issues that would stop the program
-	 * 
-	 * @param className input for class that called the method
-	 * @param exception thrown exception that gets catched
-	 */
-	public static void error(String className, Exception exception) {
-		error(className, exception, false);
-	}
 
 	/**
 	 * only for issues that make the program stop
 	 * 
 	 * @param className input for class that called the method
 	 * @param exception thrown exception that gets catched
-	 * @param stopApplication Wheter the application should stop. If you want to keep the Application alive, leave the boolean out.
 	 */
-	public static void error(String className, Exception exception, boolean stopApplication) {
+	public static <T extends Exception> void error(String className, T exception) throws T{
 		log(className, exception.getMessage(), logType.ERROR);
-
-		exception.printStackTrace();
-
-		if (stopApplication) {
-			//System.exit(-1);
-
-			new RuntimeException();
-		}
+		throw exception;
+	}
+	
+	public static void error(String className, String message) {
+		log(className, message, logType.ERROR);
 	}
 	
 	/**

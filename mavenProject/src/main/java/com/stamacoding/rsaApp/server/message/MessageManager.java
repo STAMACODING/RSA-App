@@ -22,8 +22,13 @@ public class MessageManager {
 	static{
 		if(NetworkConfig.TYPE == NetworkType.CLIENT) {
 			Logger.debug(MessageManager.class.getSimpleName(), "Querying stored messages from chat database");
-			Message[] storedMessages = DBManager.getInstance().getMessagesFromDB();
-			if(storedMessages != null)MessageManager.manage(storedMessages);
+			Message[] storedMessages = null;
+			try {
+				storedMessages = DBManager.getInstance().getMessagesFromDB();
+				MessageManager.manage(storedMessages);
+			} catch (Exception e) {
+				Logger.warning(MessageManager.class.getSimpleName(), "Couldn't get messages from chat database.");
+			}
 		}
 	}
 	

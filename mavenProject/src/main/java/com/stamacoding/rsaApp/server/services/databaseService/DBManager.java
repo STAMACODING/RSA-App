@@ -58,10 +58,7 @@ public class DBManager{
 			
 			return con;
 		}catch(ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-			
-			//Logger.error(this.getClass().getSimpleName(), "Connection to DB/UserDatabse.db failed");
-			Logger.error(this.getClass().getSimpleName(), e);
+			Logger.error(this.getClass().getSimpleName(), "Failed to connect to chat database");
 			return con;
 		}
 	}
@@ -94,8 +91,9 @@ public class DBManager{
 	 * Gets all messages stored in the chat database as array. Returns
 	 * {@code null} if the process fails.
 	 * @return all messages stored in the chat database
+	 * @throws Exception 
 	 */
-	public Message[] getMessagesFromDB() {
+	public Message[] getMessagesFromDB(){
 		try {
 			Connection con = DBManager.getInstance().connect();
 			
@@ -124,9 +122,7 @@ public class DBManager{
 			//printMessageFromDB(rs);
 			
 		}catch(Exception e) {
-			e.printStackTrace();
-			//Logger.error(this.getClass().getSimpleName(), "Failed to get messages from DB due to failed execution of query");
-			Logger.error(this.getClass().getSimpleName(), e);
+			Logger.error(this.getClass().getSimpleName(), "Failed to get messages from database");
 		}
 		return null;
 	}
@@ -182,12 +178,8 @@ public class DBManager{
 	}
 	
 	
-	public static void main(String [] args) {
-		try {
-			Message[] messages = DBManager.getInstance().getMessagesFromDB();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+	public static void main(String [] args) throws Exception {
+		Message[] messages = DBManager.getInstance().getMessagesFromDB();
 	}
 	
 }

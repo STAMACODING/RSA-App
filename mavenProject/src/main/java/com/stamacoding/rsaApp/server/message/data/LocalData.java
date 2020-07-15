@@ -2,6 +2,9 @@ package com.stamacoding.rsaApp.server.message.data;
 
 import java.io.Serializable;
 
+import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.server.exceptions.InvalidValueException;
+import com.stamacoding.rsaApp.server.exceptions.NullPointerException;
 import com.stamacoding.rsaApp.server.services.databaseService.DatabaseService;
 import com.stamacoding.rsaApp.server.services.transferServices.sendService.ClientSendService;
 import com.stamacoding.rsaApp.server.services.transferServices.sendService.ServerSendService;
@@ -48,10 +51,12 @@ public class LocalData implements Serializable{
 	}
 
 	/**
-	 * Sets the message's unique id in the chat database.
+	 * Sets the message's unique id in the chat database. Is not allowed to be smaller than {@code -1}.
 	 * @param id the message's unique id in the chat database
 	 */
 	public void setId(int id) {
+		if(id == -1) Logger.debug(this.getClass().getSimpleName(), "Message is set as unstored (id == -1)");
+		if(id < -1) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(int.class, "id", id));
 		this.id = id;
 	}
 	
@@ -84,7 +89,8 @@ public class LocalData implements Serializable{
 	 * @param sendState the message's send state
 	 */
 	public void setSendState(SendState sendState) {
-		if(sendState == null) throw new IllegalArgumentException("SendState is not allowed to be null!");
+		if(sendState == null) Logger.error(this.getClass().getSimpleName(), new NullPointerException(SendState.class, "sendState"));
+		
 		this.sendState = sendState;
 	}
 	

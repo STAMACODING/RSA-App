@@ -1,7 +1,9 @@
 package com.stamacoding.rsaApp.server.services.mainService;
 
+import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.config.NetworkConfig;
 import com.stamacoding.rsaApp.server.config.NetworkType;
+import com.stamacoding.rsaApp.server.exceptions.InvalidValueException;
 import com.stamacoding.rsaApp.server.services.Service;
 import com.stamacoding.rsaApp.server.services.databaseService.DatabaseService;
 import com.stamacoding.rsaApp.server.services.transferServices.receiveService.ClientReceiveService;
@@ -50,7 +52,7 @@ public class MessageService extends Service{
 	 */
 	@Override
 	public void onStart() {
-		if(!NetworkConfig.isValid()) throw new RuntimeException("Invalid network configuration! Use NetworkConfig.setup() to fix");
+		if(!NetworkConfig.isValid()) Logger.error(this.getClass().getSimpleName(), new InvalidValueException("Invalid network configuration! Use NetworkConfig.setup() to fix"));
 		
 		if(NetworkConfig.TYPE == NetworkType.CLIENT){
 			DatabaseService.getInstance().launch();

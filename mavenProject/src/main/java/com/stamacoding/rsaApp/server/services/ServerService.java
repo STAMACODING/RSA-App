@@ -36,8 +36,7 @@ public abstract class ServerService extends Service{
 			setServerSocket(new ServerSocket(getPort()));
 			Logger.debug(getServiceName(), "Successfully set server socket");
 		} catch (IOException e) {
-			e.printStackTrace();
-			Logger.debug(getServiceName(), "Failed to set server socket");
+			Logger.error(getServiceName(), "Could not set server socket");
 			setServiceCrashed(true);
 		}
 	}
@@ -52,9 +51,7 @@ public abstract class ServerService extends Service{
 			getServerSocket().close();
 			Logger.debug(getServiceName(), "Closed server socket");
 		} catch (IOException e) {
-			e.printStackTrace();
-			//Logger.error(getServiceName(), "Failed to close server socket");
-			Logger.error(getServiceName(), e);
+			Logger.error(getServiceName(), "Could not close server socket");
 		}
 	}
 
@@ -66,10 +63,9 @@ public abstract class ServerService extends Service{
 	public final void onCrash() {
 		try {
 			getServerSocket().close();
+			Logger.debug(getServiceName(), "Closed server socket");
 		} catch (IOException e) {
-			e.printStackTrace();
-			//Logger.error(getServiceName(), "Failed to close server socket");
-			Logger.error(getServiceName(), e);
+			Logger.error(getServiceName(), "Could not close server socket");
 		}
 	}
 

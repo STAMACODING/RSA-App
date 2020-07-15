@@ -2,9 +2,12 @@ package com.stamacoding.rsaApp.server.message.data;
 
 import java.io.Serializable;
 
+import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.rsa.RSA;
 import com.stamacoding.rsaApp.rsa.keyCreate.Key;
 import com.stamacoding.rsaApp.server.NetworkUtils;
+import com.stamacoding.rsaApp.server.exceptions.InvalidValueException;
+import com.stamacoding.rsaApp.server.exceptions.NullPointerException;
 
 /**
  *  Stores server-relevant information about the message. Should get encrypted before sending. The
@@ -28,6 +31,9 @@ public class ServerData implements Serializable {
 	 * @param receivingId the id of the client that received or will receive this message
 	 */
 	public ServerData(byte sendingId, byte receivingId) {
+		if(sendingId < 0) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(byte.class, "sendingId", sendingId));
+		if(receivingId < 0) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(byte.class, "receivingId", receivingId));
+		
 		this.sendingId = sendingId;
 		this.receivingId = receivingId;
 	}
@@ -56,6 +62,8 @@ public class ServerData implements Serializable {
 	 * @return the object as encrypted byte array
 	 */
 	public static byte[] encrypt(ServerData serverData) {
+		if(serverData == null) Logger.error(ServerData.class.getSimpleName(), new NullPointerException(ServerData.class, "serverData"));
+		
 		byte[] decryptedServerData = NetworkUtils.serialize(serverData);
 		// TODO encode decoded data
 		byte[] encryptedServerData = decryptedServerData;
@@ -69,6 +77,8 @@ public class ServerData implements Serializable {
 	 * @return the decrypted object
 	 */
 	public static ServerData decrypt(byte[] encryptedServerData) {
+		if(encryptedServerData == null) Logger.error(ServerData.class.getSimpleName(), new NullPointerException(byte[].class, "encryptedServerData"));
+		
 		// TODO decode encoded data
 		byte[] decryptedServerData = encryptedServerData;
 		return (ServerData) NetworkUtils.deserialize(decryptedServerData);

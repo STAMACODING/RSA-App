@@ -40,8 +40,7 @@ public class NetworkUtils {
 			os = new ObjectOutputStream(out);
 			os.writeObject(o);
 		} catch (Exception e) {
-			//Logger.error(NetworkUtils.class.getSimpleName(), "Failed to serialize object!");
-			Logger.error(NetworkUtils.class.getSimpleName(), e);
+			Logger.error(NetworkUtils.class.getSimpleName(), new RuntimeException("Failed to serialize object!"));
 			return null;
 		}
 		return out.toByteArray();
@@ -58,27 +57,24 @@ public class NetworkUtils {
 		try {
 			is = new ObjectInputStream(in);
 			Object o = is.readObject();
-			if(o == null ) throw new Exception("Failed to deserialized object!");
+			if(o == null ) Logger.error(NetworkUtils.class.getSimpleName(), new NullPointerException("Failed to deserialize object!"));
 			return o;
 		} catch (Exception e) {
-			//Logger.error(NetworkUtils.class.getSimpleName(), "Failed to deserialize object!");
-			Logger.error(NetworkUtils.class.getSimpleName(), e);
+			Logger.error(NetworkUtils.class.getSimpleName(), new RuntimeException("Failed to deserialize object!"));
 			return null;
 		}
 	}
-	
-	/**
-	 * Validates an ip-address.
-	 * @param ip the ip to validate
-	 * @return whether the ip-address is valid
-	 */
 
 	private static final Pattern IPv4_PATTERN = Pattern.compile("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
 			"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
 			"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
 			"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
 	
-	
+	/**
+	 * Validates an ip-address.
+	 * @param ip the ip to validate
+	 * @return whether the ip-address is valid
+	 */
 	public static boolean isValidInet4Address(String ip) {
 		if (ip == null) {
 			return false;
