@@ -78,7 +78,7 @@ public class MessageService extends Service{
 	}
 	
 	public static void main(String[] args) {
-		NetworkConfig.setup(NetworkType.SERVER, (byte) 32, "192.234.122", 1001, 1002);
+		NetworkConfig.setup(NetworkType.SERVER, (byte) 32, "192.234.122", 1001, 1002, 5000);
 		MessageService.getInstance().launch();
 	}
 }

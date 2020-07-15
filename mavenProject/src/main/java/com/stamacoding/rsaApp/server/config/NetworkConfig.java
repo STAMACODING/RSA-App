@@ -1,5 +1,6 @@
 package com.stamacoding.rsaApp.server.config;
 
+import com.stamacoding.rsaApp.server.NetworkUtils;
 import com.stamacoding.rsaApp.server.services.mainService.MessageService;
 
 /**
@@ -53,10 +54,11 @@ public class NetworkConfig {
 	 * @param serverSendPort On this port the server sends messages. The clients receive messages using this port.
 	 * @param serverReceivePort On this port the server listens to receive messages from clients. The clients send messages using this port.
 	 */
-	public static void setup(NetworkType type, byte clientID, String serverIP, int serverSendPort, int serverReceivePort) {
+	public static void setup(NetworkType type, byte clientID, String serverIP, int serverSendPort, int serverReceivePort, long queryMessagesInterval) {
 		TYPE = type;
 		Client.ID = clientID;
 		Server.IP = serverIP;
+		Client.QUERY_MESSAGES_INTERVAL = queryMessagesInterval;
 		Server.SEND_PORT = serverSendPort;
 		Server.RECEIVE_PORT = serverReceivePort;
 	}
@@ -76,6 +78,7 @@ public class NetworkConfig {
 		if(Server.RECEIVE_PORT < 0) return false;
 		if(Server.RECEIVE_PORT == Server.SEND_PORT) return false;
 		if(Server.IP == null) return false;
+		if(!NetworkUtils.isValidInet4Address(Server.IP)) return false;
 		
 		return true;
 	}
