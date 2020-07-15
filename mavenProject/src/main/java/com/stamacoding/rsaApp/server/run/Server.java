@@ -15,7 +15,7 @@ public class Server {
 	public static void main(String[] args) {
 		Scanner s = new Scanner(System.in);
 		System.out.println("------------------------------------------------------------");
-		System.out.println("RSA-App Test Server BETA");
+		System.out.println("RSA-App Test Server 0.0.0-SNAPSHOT");
 		System.out.println("------------------------------------------------------------");
 		
 		System.out.print("Server send port: ");

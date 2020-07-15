@@ -22,7 +22,7 @@ public class Client {
 	
 	public static void main(String[] args) {
 		System.out.println("------------------------------------------------------------");
-		System.out.println("RSA-App Test Client BETA");
+		System.out.println("RSA-App Test Server 0.0.0-SNAPSHOT");
 		System.out.println("------------------------------------------------------------");
 		Scanner s = new Scanner(System.in);
 		
