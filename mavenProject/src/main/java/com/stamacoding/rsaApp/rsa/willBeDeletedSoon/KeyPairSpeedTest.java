@@ -1,4 +1,4 @@
-package com.stamacoding.rsaApp.rsa.Testing;
+package com.stamacoding.rsaApp.rsa.willBeDeletedSoon;
 
 import com.stamacoding.rsaApp.rsa.keyCreate.KeyPair;
 
