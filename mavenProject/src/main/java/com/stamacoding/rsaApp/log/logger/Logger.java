@@ -106,7 +106,9 @@ public class Logger {
 		exception.printStackTrace();
 
 		if (stopApplication) {
-			System.exit(-1);
+			//System.exit(-1);
+
+			new RuntimeException();
 		}
 	}
 	
