@@ -63,7 +63,9 @@ public class NetworkUtils {
 		ObjectInputStream is = null;
 		try {
 			is = new ObjectInputStream(in);
-			return is.readObject();
+			Object o = is.readObject();
+			if(o == null ) throw new Exception("Failed to deserialized object!");
+			return o;
 		} catch (Exception e) {
 			Logger.error(NetworkUtils.class.getSimpleName(), "Failed to deserialize object!");
 			return null;

@@ -178,8 +178,10 @@ public class Message implements Serializable{
 	 * Decrypts the {@link #protectedData}. {@link Message#getEncryptedProtectedData()} returns {@link null} now while
 	 * {@link Message#getProtectedData()} returns a reference to an object.
 	 */
-	public void decryptProctedData() {
-		setProtectedData(ProtectedData.decrypt(getEncryptedProtectedData()));
+	public void decryptProtectedData() {
+		ProtectedData d = ProtectedData.decrypt(getEncryptedProtectedData());
+		System.err.println(d);
+		setProtectedData(d);
 		setEncryptedProtectedData(null);
 	}
 	
