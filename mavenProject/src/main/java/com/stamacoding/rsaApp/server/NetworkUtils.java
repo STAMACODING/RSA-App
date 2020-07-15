@@ -6,8 +6,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
@@ -42,7 +40,8 @@ public class NetworkUtils {
 			os = new ObjectOutputStream(out);
 			os.writeObject(o);
 		} catch (Exception e) {
-			Logger.error(NetworkUtils.class.getSimpleName(), "Failed to serialize object!");
+			//Logger.error(NetworkUtils.class.getSimpleName(), "Failed to serialize object!");
+			Logger.error(NetworkUtils.class.getSimpleName(), e);
 			return null;
 		}
 		return out.toByteArray();
@@ -62,7 +61,8 @@ public class NetworkUtils {
 			if(o == null ) throw new Exception("Failed to deserialized object!");
 			return o;
 		} catch (Exception e) {
-			Logger.error(NetworkUtils.class.getSimpleName(), "Failed to deserialize object!");
+			//Logger.error(NetworkUtils.class.getSimpleName(), "Failed to deserialize object!");
+			Logger.error(NetworkUtils.class.getSimpleName(), e);
 			return null;
 		}
 	}

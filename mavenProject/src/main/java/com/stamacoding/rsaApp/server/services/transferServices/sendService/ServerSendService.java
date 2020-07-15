@@ -86,7 +86,8 @@ public class ServerSendService extends ServerService {
 			Logger.debug(this.getClass().getSimpleName(), "Closed connection to client");
 		} catch (IOException e) {
 			e.printStackTrace();
-			Logger.error(this.getClass().getSimpleName(), "Failed to send message to a client");
+			//Logger.error(this.getClass().getSimpleName(), "Failed to send message to a client");
+			Logger.error(this.getClass().getSimpleName(), e);
 		}
 	}
 

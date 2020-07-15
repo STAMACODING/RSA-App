@@ -93,11 +93,13 @@ public class ClientSendService extends Service {
 					Logger.debug(this.getClass().getSimpleName(), "Closed connection to the receive server");
 				} catch (IOException e) {
 					e.printStackTrace();
-					Logger.error(this.getClass().getSimpleName(), "Failed to send message to the receive server");
+					//Logger.error(this.getClass().getSimpleName(), "Failed to send message to the receive server");
+					Logger.error(this.getClass().getSimpleName(), e);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				Logger.error(this.getClass().getSimpleName(), "Failed to connect to receive server");
+				//Logger.error(this.getClass().getSimpleName(), "Failed to connect to receive server");
+				Logger.error(this.getClass().getSimpleName(), e);
 			}
 			
 		}

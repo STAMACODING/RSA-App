@@ -60,7 +60,8 @@ public class DBManager{
 		}catch(ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			
-			Logger.error(this.getClass().getSimpleName(), "Connection to DB/UserDatabse.db failed");
+			//Logger.error(this.getClass().getSimpleName(), "Connection to DB/UserDatabse.db failed");
+			Logger.error(this.getClass().getSimpleName(), e);
 			return con;
 		}
 	}
@@ -124,7 +125,8 @@ public class DBManager{
 			
 		}catch(Exception e) {
 			e.printStackTrace();
-			Logger.error(this.getClass().getSimpleName(), "Failed to get messages from DB due to failed execution of query");
+			//Logger.error(this.getClass().getSimpleName(), "Failed to get messages from DB due to failed execution of query");
+			Logger.error(this.getClass().getSimpleName(), e);
 		}
 		return null;
 	}

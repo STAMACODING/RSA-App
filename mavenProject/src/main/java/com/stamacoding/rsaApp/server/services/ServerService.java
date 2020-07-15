@@ -53,7 +53,8 @@ public abstract class ServerService extends Service{
 			Logger.debug(getServiceName(), "Closed server socket");
 		} catch (IOException e) {
 			e.printStackTrace();
-			Logger.error(getServiceName(), "Failed to close server socket");
+			//Logger.error(getServiceName(), "Failed to close server socket");
+			Logger.error(getServiceName(), e);
 		}
 	}
 
@@ -67,7 +68,8 @@ public abstract class ServerService extends Service{
 			getServerSocket().close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			Logger.error(getServiceName(), "Failed to close server socket");
+			//Logger.error(getServiceName(), "Failed to close server socket");
+			Logger.error(getServiceName(), e);
 		}
 	}
 

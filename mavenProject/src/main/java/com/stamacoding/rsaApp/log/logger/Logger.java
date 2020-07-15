@@ -89,7 +89,19 @@ public class Logger {
 	 * @param className input for class, that called the method
 	 * @param message input for message, typed by the calling class
 	 **/
-	public static void error(String className, String message) {
+	public static void error(String className, Exception exception) {
+		log(className, exception.getMessage(), logType.ERROR);
+
+		exception.printStackTrace();
+	}
+
+	/**
+	 * only for issues, that make the program stop 
+	 * 
+	 * @param className input for class, that called the method
+	 * @param message input for message, typed by the calling class
+	 **/
+	public static void error(String className, String message, Exception exception, boolean stopApplication) {
 		log(className, message, logType.ERROR);
 	}
 	

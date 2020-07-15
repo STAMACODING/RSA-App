@@ -77,7 +77,8 @@ public class ServerReceiveService extends ServerService{
 			    	encryptedProtectedData = new byte[protectedDataLength];
 			    	inputStream.readFully(encryptedProtectedData, 0, protectedDataLength);
 			    }else {
-			    	Logger.error(this.getClass().getSimpleName(), "Received invalid data");
+					//Logger.error(this.getClass().getSimpleName(), "Received invalid data");
+					//Logger.error(this.getClass().getSimpleName(), e);
 			    	throw new RuntimeException("Received invalid data");
 			    }
 			    
@@ -89,7 +90,8 @@ public class ServerReceiveService extends ServerService{
 				Logger.debug(MessageManager.class.getSimpleName(), "Received message: " + receivedMessage.toString());
 				MessageManager.manage(receivedMessage);
 			}else {
-				Logger.error(this.getClass().getSimpleName(), "Received invalid data");
+				//Logger.error(this.getClass().getSimpleName(), "Received invalid data");
+				//Logger.error(this.getClass().getSimpleName(), e);
 				throw new RuntimeException("Received invalid data");
 			}
 
@@ -97,7 +99,8 @@ public class ServerReceiveService extends ServerService{
 			Logger.debug(this.getClass().getSimpleName(), "Closed connection to client");
 		} catch (IOException e) {
 			e.printStackTrace();
-			Logger.error(this.getClass().getSimpleName(), "Failed to receive message from a client");
+			//Logger.error(this.getClass().getSimpleName(), "Failed to receive message from a client");
+			Logger.error(this.getClass().getSimpleName(), e);
 		}
 	}
 }
