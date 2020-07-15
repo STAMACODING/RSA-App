@@ -22,6 +22,7 @@ jobs:
         java-version: 1.8
     - name: Build with Maven
       run: | 
+        git checkout maven-branch
         cd mavenProject
         mvn install
     - name: Update project's binaries
