@@ -37,7 +37,7 @@ public class Logger {
 	 * First lines that get written to every log file.
 	 * Can be as long as you want to but you should look for the overflow settings to avoid conflicts.
 	 */
-	static String[] startingMessage = new String[] {"Thiszfghjk", "is", "a", "test"};
+	static String[] startingMessage = new String[] {"This is the Log file for the Thread:", "___", "Send it to Henri.", "Goodbye!"};
 
 	/**
 	 * Path to the folder that contains all log files.
@@ -52,7 +52,7 @@ public class Logger {
 
 	/**
 	 * The Maximum of Lines that one log file can hold.
-	 * TODO this should be independent of the startingMessage
+	 * TODO this should be independent on the startingMessage
 	 */
 	static int maxLinesCount = 50;
 
@@ -115,7 +115,7 @@ public class Logger {
 			}
 	
 			if (OutputType == outputType.onlyFiles || OutputType == outputType.ALL) {
-				//printToFile(logMessage);
+				printToFile(logMessage);
 			}
 		}
 	}
@@ -139,14 +139,18 @@ public class Logger {
 	 */
 	static void printToFile(String logMessage)
 	{
+		String threadName = Thread.currentThread().getName();
+		
+		startingMessage[1] = threadName;
+
 		//Only checks for an existing file if it is the first run of the logger.
 		if (startCounter == 0) {
-			if (!Filesystem.checkFile(Filesystem.getFullFileName(logPath, fileName, Filesystem.FileEnding.log)))
-				Filesystem.createFile(logPath, fileName, Filesystem.FileEnding.log, startingMessage);
-			startCounter += 1;	
+			if (!Filesystem.checkFile(Filesystem.getFullFileName(logPath, threadName, Filesystem.FileEnding.log)))
+				Filesystem.createFile(logPath, threadName, Filesystem.FileEnding.log, startingMessage);
+			startCounter += 1;
 		}
 
-		Filesystem.appendToFile(logPath, fileName, Filesystem.FileEnding.log, logMessage, true, startingMessage.length, maxLinesCount);
+		Filesystem.appendToFile(logPath, threadName, Filesystem.FileEnding.log, logMessage, true, startingMessage.length, maxLinesCount);
 	}
 }
 
