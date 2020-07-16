@@ -1,22 +1,20 @@
-package com.stamacoding.rsaApp.server.run;
+package com.stamacoding.rsaApp.server.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
-import com.stamacoding.rsaApp.server.config.NetworkConfig;
-import com.stamacoding.rsaApp.server.config.NetworkType;
+import com.stamacoding.rsaApp.server.client.managers.ClientMessageManager;
+import com.stamacoding.rsaApp.server.client.services.ClientMainService;
 import com.stamacoding.rsaApp.server.message.Message;
-import com.stamacoding.rsaApp.server.message.MessageManager;
 import com.stamacoding.rsaApp.server.message.data.LocalData;
 import com.stamacoding.rsaApp.server.message.data.ProtectedData;
 import com.stamacoding.rsaApp.server.message.data.SendState;
 import com.stamacoding.rsaApp.server.message.data.ServerData;
-import com.stamacoding.rsaApp.server.services.mainService.MessageService;
 
 /**
- * Tests the {@link MessageService} on the client-side.
+ * Tests the {@link ClientMainService} on the client-side.
  */
 public class Client {
 	
@@ -26,17 +24,20 @@ public class Client {
 		System.out.println("------------------------------------------------------------");
 		Scanner s = new Scanner(System.in);
 		
-		System.out.print("Server send port: ");
-		NetworkConfig.Server.SEND_PORT = s.nextInt();
+		System.out.print("Client send port: ");
+		ClientConfig.SEND_PORT = s.nextInt();
 		
-		System.out.print("Server receive port: ");
-		NetworkConfig.Server.RECEIVE_PORT = s.nextInt();
+		System.out.print("Client receive port: ");
+		ClientConfig.RECEIVE_PORT = s.nextInt();
 		
 		System.out.print("Server ip: ");
-		NetworkConfig.Server.IP = s.next();
+		ClientConfig.SERVER_IP = s.next();
 		
 		System.out.print("Setup your id: ");
-		NetworkConfig.Client.ID = s.nextByte();
+		ClientConfig.ID = s.nextByte();
+		
+		System.out.print("Setup query-interval (in milliseconds): ");
+		ClientConfig.QUERY_MESSAGES_INTERVAL = s.nextLong();
 		
 		System.out.println("------------------------------------------------------------");
 		
@@ -61,11 +62,10 @@ public class Client {
 		s.close();
 		System.out.println("------------------------------------------------------------");
 		
-		NetworkConfig.TYPE = NetworkType.CLIENT;
-		MessageService.getInstance().launch();
+		ClientMainService.getInstance().launch();
 		if(input.equals("y")) {
-			Message m = new Message(new LocalData(-1, SendState.PENDING), new ProtectedData(message, System.currentTimeMillis()), new ServerData(NetworkConfig.Client.ID, idReceiving));
-			MessageManager.manage(m);
+			Message m = new Message(new LocalData(-1, SendState.PENDING), new ProtectedData(message, System.currentTimeMillis()), new ServerData(ClientConfig.ID, idReceiving));
+			ClientMessageManager.getInstance().manage(m);
 		}
 	}
 }

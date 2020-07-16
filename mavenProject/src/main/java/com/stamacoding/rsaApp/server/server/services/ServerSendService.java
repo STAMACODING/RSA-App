@@ -1,4 +1,4 @@
-package com.stamacoding.rsaApp.server.services.transferServices.sendService;
+package com.stamacoding.rsaApp.server.server.services;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -9,11 +9,10 @@ import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.NetworkUtils;
-import com.stamacoding.rsaApp.server.config.NetworkConfig;
-import com.stamacoding.rsaApp.server.config.NetworkConfig.Server;
 import com.stamacoding.rsaApp.server.message.Message;
-import com.stamacoding.rsaApp.server.message.MessageManager;
-import com.stamacoding.rsaApp.server.services.ServerService;
+import com.stamacoding.rsaApp.server.server.Server;
+import com.stamacoding.rsaApp.server.server.ServerConfig;
+import com.stamacoding.rsaApp.server.server.managers.ServerMessageManager;
 
 /**
  * {@link ServerService} sending messages to requesting clients using a {@link ServerSocket}.
@@ -29,7 +28,7 @@ public class ServerSendService extends ServerService {
 	 *  The server's port is set to {@link Server#SEND_PORT}.
 	 */
 	private ServerSendService() {
-		super(ServerSendService.class.getSimpleName(), NetworkConfig.Server.SEND_PORT);
+		super(ServerSendService.class.getSimpleName(), ServerConfig.SEND_PORT);
 	}
 	
 	/**
@@ -44,7 +43,7 @@ public class ServerSendService extends ServerService {
 	/**
 	 * <ol>
 	 * 	<li>If a client connects to the sever using a {@link Socket} and queries his messages, he tells the server his unique id.</li>
-	 * 	<li>After that using this id the server searches for messages using the {@link MessageManager} that concern the client.</li>
+	 * 	<li>After that using this id the server searches for messages using the {@link ServerMessageManager} that concern the client.</li>
 	 * 	<li>If there are any messages the server sends them (fully encrypted) to the client.</li>
 	 * </ol>
 	 */
@@ -55,14 +54,14 @@ public class ServerSendService extends ServerService {
 			connectionFromClient.setSoTimeout(5000);
 			Logger.debug(this.getClass().getSimpleName(), "Received new client request");
 
-			if(MessageManager.getAllMessages().size() != 0) {
+			if(ServerMessageManager.getInstance().getAllMessages().size() != 0) {
 				DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
 
 				byte clientId = inputStream.readByte();
 				Logger.debug(this.getClass().getSimpleName(), "Client logged in as (" + clientId + ")");
 
 				Logger.debug(this.getClass().getSimpleName(), "Searching for messages that belong to (" + clientId + ")");
-				ArrayList<Message> messagesToSendAsList = MessageManager.Server.poll(clientId);
+				ArrayList<Message> messagesToSendAsList = ServerMessageManager.getInstance().poll(clientId);
 				
 				int messageCount = messagesToSendAsList.size();
 				byte[] messagesToSend = NetworkUtils.serialize(messagesToSendAsList);

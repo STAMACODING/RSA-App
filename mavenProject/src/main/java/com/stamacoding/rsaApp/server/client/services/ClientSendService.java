@@ -1,20 +1,20 @@
-package com.stamacoding.rsaApp.server.services.transferServices.sendService;
+package com.stamacoding.rsaApp.server.client.services;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.config.NetworkConfig;
+import com.stamacoding.rsaApp.server.Service;
+import com.stamacoding.rsaApp.server.client.Client;
+import com.stamacoding.rsaApp.server.client.ClientConfig;
+import com.stamacoding.rsaApp.server.client.managers.ClientMessageManager;
 import com.stamacoding.rsaApp.server.message.Message;
-import com.stamacoding.rsaApp.server.message.MessageManager;
-import com.stamacoding.rsaApp.server.message.MessageManager.Client;
 import com.stamacoding.rsaApp.server.message.data.SendState;
-import com.stamacoding.rsaApp.server.services.Service;
 
 
 /**
- *  {@link Service} sending messages from client to server using the {@link MessageManager}.
+ *  {@link Service} sending messages from client to server using the {@link ClientMessageManager}.
  */
 public class ClientSendService extends Service {
 	
@@ -50,7 +50,7 @@ public class ClientSendService extends Service {
 	@Override
 	public void onRepeat() {
 		// If there is a message to be sent
-		Message messageToSend = MessageManager.Client.getMessageToSend();
+		Message messageToSend = ClientMessageManager.getInstance().getMessageToSend();
 		if(messageToSend != null) {
 			Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
 			Logger.debug(this.getClass().getSimpleName(), "Message to send: " + messageToSend.toString());
@@ -66,7 +66,7 @@ public class ClientSendService extends Service {
 				
 			Socket connectionToServer = null;
 			try {
-				connectionToServer = new Socket(NetworkConfig.Server.IP, NetworkConfig.Server.RECEIVE_PORT);
+				connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.SEND_PORT);
 				connectionToServer.setSoTimeout(5000);
 				Logger.debug(this.getClass().getSimpleName(), "Successfully connected to the receive server");
 				try {

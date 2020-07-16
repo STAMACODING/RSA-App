@@ -1,4 +1,4 @@
-package com.stamacoding.rsaApp.server.services.transferServices.receiveService;
+package com.stamacoding.rsaApp.server.client.services;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -8,16 +8,16 @@ import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.NetworkUtils;
-import com.stamacoding.rsaApp.server.config.NetworkConfig;
-import com.stamacoding.rsaApp.server.config.NetworkConfig.Client;
-import com.stamacoding.rsaApp.server.config.NetworkConfig.Server;
+import com.stamacoding.rsaApp.server.Service;
+import com.stamacoding.rsaApp.server.client.Client;
+import com.stamacoding.rsaApp.server.client.ClientConfig;
+import com.stamacoding.rsaApp.server.client.managers.ClientMessageManager;
 import com.stamacoding.rsaApp.server.message.Message;
-import com.stamacoding.rsaApp.server.message.MessageManager;
 import com.stamacoding.rsaApp.server.message.data.SendState;
-import com.stamacoding.rsaApp.server.services.Service;
+import com.stamacoding.rsaApp.server.server.Server;
 
 /**
- * {@link Service} receiving messages from the server and forwarding them to the {@link MessageManager}.
+ * {@link Service} receiving messages from the server and forwarding them to the {@link ClientMessageManager}.
  */
 public class ClientReceiveService extends Service{
 	
@@ -53,14 +53,14 @@ public class ClientReceiveService extends Service{
 	@Override
 	public void onRepeat() {
 		try {
-			Socket connectionToServer = new Socket(NetworkConfig.Server.IP, NetworkConfig.Server.SEND_PORT);
+			Socket connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.RECEIVE_PORT);
 			connectionToServer.setSoTimeout(5000);
 			Logger.debug(this.getClass().getSimpleName(), "Successfully connected to the send server");
 			
-			Logger.debug(this.getClass().getSimpleName(), "Querying messages from the send server using the client id (" + NetworkConfig.Client.ID + ")");
+			Logger.debug(this.getClass().getSimpleName(), "Querying messages from the send server using the client id (" + ClientConfig.ID + ")");
 			// Read message from server
 			DataOutputStream outputStream = new DataOutputStream(connectionToServer.getOutputStream());
-			outputStream.writeByte(NetworkConfig.Client.ID);
+			outputStream.writeByte(ClientConfig.ID);
 			
 			DataInputStream inputStream = new DataInputStream(connectionToServer.getInputStream());
 			byte[] messages = null;
@@ -79,7 +79,7 @@ public class ClientReceiveService extends Service{
 				    	m.decryptProtectedData();
 				    	System.err.println(m.getEncryptedProtectedData());
 				    	Logger.debug(this.getClass().getSimpleName(), "Received message: " + m.toString());
-				    	MessageManager.manage(m);
+				    	ClientMessageManager.getInstance().manage(m);
 				    }
 				}
 			}catch(Exception e) {
@@ -91,7 +91,7 @@ public class ClientReceiveService extends Service{
 			Logger.error(this.getClass().getSimpleName(), "Failed to connect to the send server");
 		}
 		try {
-			Thread.sleep(NetworkConfig.Client.QUERY_MESSAGES_INTERVAL);
+			Thread.sleep(ClientConfig.QUERY_MESSAGES_INTERVAL);
 		} catch (InterruptedException e) {
 			Logger.error(this.getClass().getSimpleName(), "Thread failed to sleep");
 			setServiceCrashed(true);

@@ -3,11 +3,11 @@ package com.stamacoding.rsaApp.server.message.data;
 import java.io.Serializable;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.server.client.services.ClientSendService;
+import com.stamacoding.rsaApp.server.client.services.DatabaseService;
 import com.stamacoding.rsaApp.server.exceptions.InvalidValueException;
 import com.stamacoding.rsaApp.server.exceptions.NullPointerException;
-import com.stamacoding.rsaApp.server.services.databaseService.DatabaseService;
-import com.stamacoding.rsaApp.server.services.transferServices.sendService.ClientSendService;
-import com.stamacoding.rsaApp.server.services.transferServices.sendService.ServerSendService;
+import com.stamacoding.rsaApp.server.server.services.ServerSendService;
 
 /**
  * Stores information about a message that is relevant to the client only. This information is not sent to the server and is also not encrypted.

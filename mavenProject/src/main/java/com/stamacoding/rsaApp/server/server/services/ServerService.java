@@ -1,9 +1,10 @@
-package com.stamacoding.rsaApp.server.services;
+package com.stamacoding.rsaApp.server.server.services;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.server.Service;
 
 /**
  *  Abstract {@link Service} adapted to work with a {@link ServerSocket}. Use {@link #getServerSocket()} to

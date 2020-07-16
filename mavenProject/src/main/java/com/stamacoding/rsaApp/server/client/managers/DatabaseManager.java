@@ -1,4 +1,4 @@
-package com.stamacoding.rsaApp.server.services.databaseService;
+package com.stamacoding.rsaApp.server.client.managers;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -16,22 +16,22 @@ import com.stamacoding.rsaApp.server.message.Message;
  *  	<li> Use <code>DBManager.getInstance()</code> to get an instance of this object.</li>
  * 	</ul>
  */
-public class DBManager{
+public class DatabaseManager{
 	
 	/** The only instance of this class */
-	private volatile static DBManager singleton = new DBManager();
+	private volatile static DatabaseManager singleton = new DatabaseManager();
 	
 	/**
-	 *  Creates an instance of this class. Gets automatically called once at the start to define the manager's {@link #singleton}. Use {@link DBManager#getInstance()} to get the
+	 *  Creates an instance of this class. Gets automatically called once at the start to define the manager's {@link #singleton}. Use {@link DatabaseManager#getInstance()} to get the
 	 *  only instance of this class.
 	 */
-	private DBManager() {}
+	private DatabaseManager() {}
 	
 	/**
 	 * Gets the only instance of this class.
 	 * @return the only instance of this class.
 	 */
-	public static DBManager getInstance() {
+	public static DatabaseManager getInstance() {
 		return singleton;
 	}
 	
@@ -95,7 +95,7 @@ public class DBManager{
 	 */
 	public Message[] getMessagesFromDB(){
 		try {
-			Connection con = DBManager.getInstance().connect();
+			Connection con = DatabaseManager.getInstance().connect();
 			
 			String query = "SELECT * from ChatHistory";
 			
@@ -179,7 +179,7 @@ public class DBManager{
 	
 	
 	public static void main(String [] args) throws Exception {
-		Message[] messages = DBManager.getInstance().getMessagesFromDB();
+		Message[] messages = DatabaseManager.getInstance().getMessagesFromDB();
 	}
 	
 }
