@@ -166,6 +166,11 @@ public class Message implements Serializable{
 	 * {@link Message#getEncryptedServerData()} returns a byte array.
 	 */
 	public void encryptServerData() {
+		if(getServerData() == null) {
+			Logger.warning(this.getClass().getSimpleName(), "ServerData is already encrypted!");
+			return;
+		}
+		
 		setEncryptedServerData(ServerData.encrypt(getServerData()));
 		this.serverData = null;
 	}
@@ -175,6 +180,11 @@ public class Message implements Serializable{
 	 * {@link Message#getServerData()} returns a reference to an object.
 	 */
 	public void decryptServerData() {
+		if(getServerData() != null) {
+			Logger.warning(this.getClass().getSimpleName(), "ServerData is already decrypted!");
+			return;
+		}
+		
 		setServerData(ServerData.decrypt(getEncryptedServerData()));
 		this.encryptedServerData = null;
 	}
@@ -184,6 +194,11 @@ public class Message implements Serializable{
 	 * {@link Message#getEncryptedProtectedData()} returns a byte array.
 	 */
 	public void encryptProtectedData() {
+		if(getProtectedData() == null) {
+			Logger.warning(this.getClass().getSimpleName(), "ProtectedData is already encrypted!");
+			return;
+		}
+		
 		setEncryptedProtectedData(ProtectedData.encrypt(getProtectedData()));
 		this.protectedData = null;
 	}
@@ -193,6 +208,11 @@ public class Message implements Serializable{
 	 * {@link Message#getProtectedData()} returns a reference to an object.
 	 */
 	public void decryptProtectedData() {
+		if(getProtectedData() != null) {
+			Logger.warning(this.getClass().getSimpleName(), "ProtectedData is already decrypted!");
+			return;
+		}
+		
 		setProtectedData(ProtectedData.decrypt(getEncryptedProtectedData()));
 		this.encryptedProtectedData = null;
 	}
