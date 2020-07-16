@@ -39,6 +39,7 @@ public class ServerMainService extends Service{
 	 */
 	@Override
 	public void onStart() {
+		ServerConfig.log();
 		if(!ServerConfig.isValid()) Logger.error(this.getClass().getSimpleName(), new InvalidValueException("Invalid server configuration! Use ServerConfig.setup() to fix"));
 		
 		ServerReceiveService.getInstance().launch();
