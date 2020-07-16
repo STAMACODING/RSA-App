@@ -50,23 +50,34 @@ public class ClientSendService extends Service {
 	 */
 	@Override
 	public void onRepeat() {
+		// 0. Check if there is any message to send
 		Message m = ClientMessageManager.getInstance().getMessageToSend();
 		if(m != null) {
 			Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
 			Logger.debug(this.getClass().getSimpleName(), "Message to send: " + m.toString());
 			
+			// 1. Encrypt message
 			encryptMessage(m);
 			try {
+				// 2. Connect to receive server
 				Socket connectionToServer = connectToReceiveServer();
 				try {
+					// 3. Send message
 					sendMessage(m, connectionToServer);
+					
+					// 4. Update message's state
 					updateMessageState(m);
+					
+					
+					// 5. Close Connection
 					connectionToServer.close();
 					Logger.debug(this.getClass().getSimpleName(), "Closed connection to the receive server");
 				} catch (IOException e) {
+					// 3. -> When failing to send message
 					Logger.error(this.getClass().getSimpleName(), "Failed to sent message");
 				}
 			} catch (IOException e) {
+				// 2. -> When failing to receive message
 				Logger.error(this.getClass().getSimpleName(), "Failed to connect to the receive server");
 			}
 			

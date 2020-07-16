@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.Service;
@@ -52,24 +53,67 @@ public class ServerReceiveService extends ServerService{
 	 */
 	@Override
 	public void onRepeat() {
-		// Accept message from client and if this is a server forward it to another client
 		try {
-			Socket connectionFromClient = getServerSocket().accept();
-			connectionFromClient.setSoTimeout(5000);
-			Logger.debug(this.getClass().getSimpleName(), "Receiving a new message from a client");
+			// 1. Accept client connection
+			Socket connectionFromClient = acceptClient();
+			
+			// 2. Receive message by reading the socket's input stream
 			DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
+			Message m = receiveMessage(inputStream);
+			
+			if(m != null) {
+				// 3. If the message has been received successfully decrypt its server data
+				m.decryptServerData();
+				
+				// 4. Log the message
+				Logger.debug(this.getClass().getSimpleName(), "Received message: " + m.toString());
+				
+				// 5. Add the message to the message manager to forward it
+				ServerMessageManager.getInstance().manage(m);
+			}else {
+				// 3. -> If the server failed to receive the message
+				Logger.error(this.getClass().getSimpleName(), new RuntimeException("Received invalid data (failed to receive message)"));
+			}
 
-			 // Read message from client
-			int serverDataLength = inputStream.readInt();
+			// 6. Close the connection to the client
+			connectionFromClient.close();
+			Logger.debug(this.getClass().getSimpleName(), "Closed connection to client");
+		} catch (IOException e) {
+			// 1. -> If the server failed to accept the client's connection or couldn't get the socket's input stream
+			Logger.error(this.getClass().getSimpleName(), "Failed to receive a message from a client");
+		}
+	}
+	
+	/**
+	 * Accept a client connecting to the receive server
+	 * @return the socket connection to the client
+	 * @throws IOException
+	 */
+	private Socket acceptClient() throws IOException {
+		Socket connectionFromClient = getServerSocket().accept();
+		connectionFromClient.setSoTimeout(5000);
+		Logger.debug(this.getClass().getSimpleName(), "Receiving a new message from a client");
+		return connectionFromClient;
+	}
+	
+	/**
+	 * Receive the message from the connected client
+	 * @param inputStream the socket's input stream
+	 * @return the received message (if there is any)
+	 */
+	private Message receiveMessage(DataInputStream inputStream) {
+		// 1. Read encrypted server data
+		int serverDataLength;
+		try {
+			serverDataLength = inputStream.readInt();
 			byte[] encryptedServerData = null, encryptedProtectedData = null;
 			if(serverDataLength>0) {
-				// Read message meta
 				encryptedServerData = new byte[serverDataLength];
 			    inputStream.readFully(encryptedServerData, 0, serverDataLength);
 			    
 			    
 			    
-			    // Read message data
+			    // 2. Read encrypted protected data
 			    int protectedDataLength = inputStream.readInt();
 			    if(protectedDataLength > 0) {
 			    	encryptedProtectedData = new byte[protectedDataLength];
@@ -80,19 +124,12 @@ public class ServerReceiveService extends ServerService{
 			    
 			    Logger.debug(this.getClass().getSimpleName(), "Successfully received message's meta and data");
 				
-				Message receivedMessage = new Message(new LocalData(-1, SendState.PENDING), encryptedProtectedData, encryptedServerData);
-				receivedMessage.decryptServerData();
-				
-				Logger.debug(this.getClass().getSimpleName(), "Received message: " + receivedMessage.toString());
-				ServerMessageManager.getInstance().manage(receivedMessage);
-			}else {
-				Logger.error(this.getClass().getSimpleName(), new RuntimeException("Received invalid data"));
+			    // 3. Create message
+				return new Message(new LocalData(-1, SendState.PENDING), encryptedProtectedData, encryptedServerData);
 			}
-
-			connectionFromClient.close();
-			Logger.debug(this.getClass().getSimpleName(), "Closed connection to client");
 		} catch (IOException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to receive a message from a client");
+			Logger.error(this.getClass().getSimpleName(), "Unexspected error while receiving a message: " + e.getMessage());
 		}
+		return null;
 	}
 }

@@ -2,22 +2,12 @@ package com.stamacoding.rsaApp.server.server.services;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.Service;
-import com.stamacoding.rsaApp.server.client.services.ClientReceiveService;
-import com.stamacoding.rsaApp.server.client.services.ClientSendService;
-import com.stamacoding.rsaApp.server.client.services.DatabaseService;
 import com.stamacoding.rsaApp.server.exceptions.InvalidValueException;
 import com.stamacoding.rsaApp.server.server.ServerConfig;
 
 /**
- * <p>{@link Service} handling all message transfers. Additionally this service stores all messages in a chat database when
- * running on a client.</p>
- * Unites the work of these services when running on client: 
- * <ul>
- *  <li>{@link DatabaseService}</li>
- *  <li>{@link ClientReceiveService}</li>
- *  <li>{@link ClientSendService}</li>
- * </ul>
- * Unites the work of these services when running on server: 
+ * <p>{@link Service} handling all message transfers on the server.</p>
+ * Unites the work of these services:
  * <ul>
  *  <li>{@link ServerReceiveService}</li>
  *  <li>{@link ServerSendService}</li>
@@ -62,10 +52,5 @@ public class ServerMainService extends Service{
 	public void onStop() {
 		ServerReceiveService.getInstance().setStopRequested(true);
 		ServerSendService.getInstance().setStopRequested(true);
-	}
-	
-	public static void main(String[] args) {
-		ServerConfig.setup(1002, 1001);
-		ServerMainService.getInstance().launch();
 	}
 }

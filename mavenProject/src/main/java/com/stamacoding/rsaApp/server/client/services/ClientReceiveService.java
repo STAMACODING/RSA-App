@@ -54,23 +54,36 @@ public class ClientReceiveService extends Service{
 	@Override
 	public void onRepeat() {
 		try {
+			// 1. Connect to server
 			Socket connectionToServer = connectToSendServer();
 			
+			// 2. Tell the server the client's id
 			loginUsingClientID(connectionToServer);
 
+			// 3. Receive the messages as response from the server
 			ArrayList<Message> messages = receiveMessages(connectionToServer);
 			
 			if(messages != null) {
+				// 4. The server responded -> there are new messages available
 				Logger.debug(this.getClass().getSimpleName(), "Successfully received " + messages.size() + " new message(s) from the send server");
+				
+				// 5. Decrypt the received messages
 				decryptMessages(messages);
+				
+				// 6. Log the received messages
 				logMessages(messages);
+				
+				// 7. Add the message to the message manager (message will automatically get stored in the chat database)
 				ClientMessageManager.getInstance().manage(messages.toArray(new Message[messages.size()]));
 			}else {
+				// 4. -> When the message ArrayList is null the server didn't respond -> No new messages available
 				Logger.debug(this.getClass().getSimpleName(), "No new messages available");
 			}
+			// 8. Close connection to server
 			connectionToServer.close();
 			Logger.debug(this.getClass().getSimpleName(), "Closed connection to the send server");
 		} catch (IOException e) {
+			// 1 -> When the client failed to connect to the server
 			Logger.error(this.getClass().getSimpleName(), "Failed to connect to the send server");
 		}
 		

@@ -6,7 +6,7 @@ import com.stamacoding.rsaApp.server.client.ClientConfig;
 import com.stamacoding.rsaApp.server.exceptions.InvalidValueException;
 
 /**
- * <p>{@link Service} handling all message transfers. Additionally this service stores all messages in a chat database.</p>
+ * <p>{@link Service} handling all client message transfers. Additionally this service stores all messages in a chat database.</p>
  * Unites the work of these services: 
  * <ul>
  *  <li>{@link DatabaseService}</li>
@@ -36,7 +36,7 @@ public class ClientMainService extends Service{
 	}
 
 	/**
-	 * Starts all services if the {@link ClientConfig} is valid.
+	 * Starts all client services if the {@link ClientConfig} is valid.
 	 */
 	@Override
 	public void onStart() {

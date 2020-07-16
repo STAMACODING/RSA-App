@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
@@ -50,41 +51,81 @@ public class ServerSendService extends ServerService {
 	@Override
 	public void onRepeat() {
 		try {
-			Socket connectionFromClient = getServerSocket().accept();
-			connectionFromClient.setSoTimeout(5000);
-			Logger.debug(this.getClass().getSimpleName(), "Received new client request");
+			// 1. Accept connection from client
+			Socket connectionFromClient = acceptClient();
 
+			// 2. If there are messages available
 			if(ServerMessageManager.getInstance().getAllMessages().size() != 0) {
-				DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
 
-				byte clientId = inputStream.readByte();
-				Logger.debug(this.getClass().getSimpleName(), "Client logged in as (" + clientId + ")");
+				// 3. Read the client's id
+				byte clientId = readClientsId(connectionFromClient);
 
-				Logger.debug(this.getClass().getSimpleName(), "Searching for messages that belong to (" + clientId + ")");
-				ArrayList<Message> messagesToSendAsList = ServerMessageManager.getInstance().poll(clientId);
+				// 4. Search for messages concerning the requesting client
+				Logger.debug(this.getClass().getSimpleName(), "Searching for messages concerning the requesting client (" + clientId + ")");
+				ArrayList<Message> messages = ServerMessageManager.getInstance().poll(clientId);
 				
-				int messageCount = messagesToSendAsList.size();
-				byte[] messagesToSend = NetworkUtils.serialize(messagesToSendAsList);
-				DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
-				
-				if(messageCount > 0) {
-					Logger.debug(this.getClass().getSimpleName(), "Found " + messageCount + " messages belonging to (" + clientId + ")");
-					
-					outputStream.writeInt(messagesToSend.length);
-					outputStream.write(messagesToSend);
-					
-					Logger.debug(this.getClass().getSimpleName(), "Successfully sent " + messageCount + " message(s) to a client");
-				}else{
-					Logger.debug(this.getClass().getSimpleName(), "Found no messages belongig to (" + clientId + ")");
-				}
-
+				// 5. Send messages to the client
+				sendMessages(connectionFromClient, clientId, messages);
 			}else {
+				// 2. If there are no messages
 				Logger.debug(this.getClass().getSimpleName(), "No messages available to send");
 			}
+			// 6. Close connection to client
 			connectionFromClient.close();
 			Logger.debug(this.getClass().getSimpleName(), "Closed connection to client");
 		} catch (IOException e) {
+			// 1. -> If the server failed to accept the client's connection
 			Logger.error(this.getClass().getSimpleName(), "Failed to send message(s) to the client");
+		}
+	}
+	
+	/**
+	 * Accept a client connecting to the send server.
+	 * @return the socket connection to the client
+	 * @throws IOException
+	 */
+	private Socket acceptClient() throws IOException {
+		Socket connectionFromClient = getServerSocket().accept();
+		connectionFromClient.setSoTimeout(5000);
+		Logger.debug(this.getClass().getSimpleName(), "Received new client request");
+		return connectionFromClient;
+	}
+	
+	/**
+	 * Read the client's id from the socket's input
+	 * @param connectionFromClient the connection to the client
+	 * @return the client's id
+	 * @throws IOException
+	 */
+	private byte readClientsId(Socket connectionFromClient) throws IOException {
+		DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
+
+		byte clientId = inputStream.readByte();
+		Logger.debug(this.getClass().getSimpleName(), "Client logged in as (" + clientId + ")");
+		return clientId;
+	}
+	
+	/**
+	 * Send the message's to the client
+	 * @param connectionFromClient the connection to the client
+	 * @param clientId the client's id
+	 * @param messages the messages to send
+	 * @throws IOException
+	 */
+	private void sendMessages(Socket connectionFromClient, byte clientId, ArrayList<Message> messages) throws IOException {
+		int messageCount = messages.size();
+		byte[] messagesToSend = NetworkUtils.serialize(messages);
+		DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
+		
+		if(messageCount > 0) {
+			Logger.debug(this.getClass().getSimpleName(), "Found " + messageCount + " messages belonging to (" + clientId + ")");
+			
+			outputStream.writeInt(messagesToSend.length);
+			outputStream.write(messagesToSend);
+			
+			Logger.debug(this.getClass().getSimpleName(), "Successfully sent " + messageCount + " message(s) to a client");
+		}else{
+			Logger.debug(this.getClass().getSimpleName(), "Found no messages belongig to (" + clientId + ")");
 		}
 	}
 

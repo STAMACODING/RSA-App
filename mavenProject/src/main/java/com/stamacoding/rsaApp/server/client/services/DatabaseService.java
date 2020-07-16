@@ -37,12 +37,16 @@ public class DatabaseService extends Service{
 	 */
 	@Override
 	public void onRepeat() {
+		// Check if there is any message to store or update
 		Message m = ClientMessageManager.getInstance().getMessageToStoreOrUpdate();
 		
 		if(m != null) {
 			Logger.debug(this.getClass().getSimpleName(), "Got message to store/update");
 			
+			// Update message if is is already stored in the chat database
 			if(m.getLocalData().isToUpdate()) updateMessage(m);
+			
+			// Store new message
 			else storeMessage(m);
 			
 		}
