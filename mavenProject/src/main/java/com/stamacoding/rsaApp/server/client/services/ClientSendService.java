@@ -61,7 +61,6 @@ public class ClientSendService extends Service {
 				try {
 					sendMessage(m, connectionToServer);
 					updateMessageState(m);
-
 					connectionToServer.close();
 					Logger.debug(this.getClass().getSimpleName(), "Closed connection to the receive server");
 				} catch (IOException e) {
@@ -123,7 +122,7 @@ public class ClientSendService extends Service {
 	 * @param m the message to update
 	 */
 	private void updateMessageState(Message m) {
-		Logger.debug(this.getClass().getSimpleName(), "Updating message status");
+		Logger.debug(this.getClass().getSimpleName(), "Updating message state");
 		
 		m.getLocalData().setSendState(SendState.SENT);
 		m.getLocalData().setUpdateRequested(true);

@@ -107,17 +107,22 @@ public class ClientReceiveService extends Service{
 	 * @return the received messages (the server's response)
 	 * @throws IOException
 	 */
-	private ArrayList<Message> receiveMessages(Socket connectionToServer) throws IOException {
-		DataInputStream inputStream = new DataInputStream(connectionToServer.getInputStream());
-		byte[] messages = null;
-		int length = inputStream.readInt();
-		if(length!=0) {
-			messages = new byte[length];
-		    inputStream.readFully(messages, 0, length);
-		    
-		    return (ArrayList<Message>) NetworkUtils.deserialize(messages);
+	private ArrayList<Message> receiveMessages(Socket connectionToServer)  {
+		DataInputStream inputStream;
+		try {
+			inputStream = new DataInputStream(connectionToServer.getInputStream());
+			byte[] messages = null;
+			int length = inputStream.readInt();
+			if(length!=0) {
+				messages = new byte[length];
+			    inputStream.readFully(messages, 0, length);
+			    
+			    return (ArrayList<Message>) NetworkUtils.deserialize(messages);
+			}
+			return null;
+		} catch (IOException e) {
+			return null;
 		}
-		return null;
 	}
 	
 	/**

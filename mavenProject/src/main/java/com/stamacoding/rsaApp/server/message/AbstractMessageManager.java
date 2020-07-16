@@ -33,7 +33,7 @@ public abstract class AbstractMessageManager {
 				
 				Logger.debug(this.getClass().getSimpleName(), "Added new message to MessageManager");
 			}
-			Logger.warning(this.getClass().getSimpleName(), "Added new message to MessageManager");
+			Logger.warning(this.getClass().getSimpleName(), "Tried to add already added message");
 		}
 	}
 }

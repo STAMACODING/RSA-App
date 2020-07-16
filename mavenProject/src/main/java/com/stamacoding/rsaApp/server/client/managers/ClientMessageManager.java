@@ -68,7 +68,8 @@ public class ClientMessageManager extends AbstractMessageManager{
 	 */
 	public Message getMessageToSend() {
 		for(int i=0; i<getAllMessages().size(); i++) {
-			if(getAllMessages().get(i).getLocalData().isToSend()) {
+			Message m = getAllMessages().get(i);
+			if(m.getLocalData().isToSend()) {
 				return getAllMessages().get(i);
 			}
 		}
