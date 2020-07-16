@@ -56,7 +56,7 @@ public class LocalData implements Serializable{
 	 */
 	public void setId(int id) {
 		if(id == -1) Logger.debug(this.getClass().getSimpleName(), "Message is set as unstored (id == -1)");
-		if(id < -1) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(int.class, "id", id));
+		if(id < -1) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(int.class, "id", id, "greater than -2"));
 		this.id = id;
 	}
 	

@@ -89,7 +89,7 @@ public class Message implements Serializable{
 	 * Sets the message's {@link ProtectedData}.
 	 * @param serverData the message's {@link ProtectedData}
 	 */
-	public void setProtectedData(ProtectedData protectedData) {
+	private void setProtectedData(ProtectedData protectedData) {
 		if(protectedData == null) Logger.error(this.getClass().getSimpleName(),  new NullPointerException(ProtectedData.class, "protectedData"));
 		
 		this.protectedData = protectedData;
@@ -109,7 +109,7 @@ public class Message implements Serializable{
 	 * Sets the message's {@link ServerData}.
 	 * @param serverData the message's {@link ServerData}
 	 */
-	public void setServerData(ServerData serverData) {
+	private void setServerData(ServerData serverData) {
 		if(serverData == null) Logger.error(this.getClass().getSimpleName(),  new NullPointerException(ServerData.class, "serverData"));
 		
 		this.serverData = serverData;
@@ -136,7 +136,7 @@ public class Message implements Serializable{
 	 * Sets the message's encrypted byte array that represents the {@link #protectedData}.
 	 * @param encryptedProtectedData the message's encrypted byte array that represents the {@link #protectedData}
 	 */
-	public void setEncryptedProtectedData(byte[] encryptedProtectedData) {
+	private void setEncryptedProtectedData(byte[] encryptedProtectedData) {
 		if(encryptedProtectedData == null) Logger.error(this.getClass().getSimpleName(), new NullPointerException(byte[].class, "encryptedProtectedData"));
 		
 		this.encryptedProtectedData = encryptedProtectedData;
@@ -154,7 +154,7 @@ public class Message implements Serializable{
 	 * Sets the message's encrypted byte array that represents the {@link #serverData}.
 	 * @param encryptedServerData the message's encrypted byte array that represents the {@link #serverData}
 	 */
-	public void setEncryptedServerData(byte[] encryptedServerData) {
+	private void setEncryptedServerData(byte[] encryptedServerData) {
 		if(encryptedServerData == null) Logger.error(this.getClass().getSimpleName(), new NullPointerException(byte[].class, "encryptedServerData"));
 		
 		this.encryptedServerData = encryptedServerData;

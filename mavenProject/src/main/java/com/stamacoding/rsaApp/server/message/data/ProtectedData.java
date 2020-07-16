@@ -32,7 +32,7 @@ public class ProtectedData implements Serializable{
 	 * @param date the time the message was originally created
 	 */
 	public ProtectedData(String textMessage, long date) {
-		if(date < 0) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(long.class, "date", date));
+		if(date < 0) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(long.class, "date", date, "greater than 0"));
 		
 		this.date = date;
 		setTextMessage(textMessage);

@@ -1,7 +1,9 @@
 package com.stamacoding.rsaApp.server.message.data;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,9 +23,21 @@ class LocalDataTest {
 		@DisplayName("Test with valid arguments")
 		@Test
 		void testWithValidArguments() {
-			assertDoesNotThrow(() -> {new LocalData(23, SendState.PENDING);});
-			assertDoesNotThrow(() -> {new LocalData(11, SendState.SENT);});
-			assertDoesNotThrow(() -> {new LocalData(-1, SendState.PENDING);});
+			assertDoesNotThrow(() -> {
+				LocalData l = new LocalData(23, SendState.PENDING);
+				assertEquals(SendState.PENDING, l.getSendState());
+				assertEquals(23, l.getId());
+			});
+			assertDoesNotThrow(() -> {
+				LocalData l = new LocalData(11, SendState.SENT);
+				assertEquals(SendState.SENT, l.getSendState());
+				assertEquals(11, l.getId());
+			});
+			assertDoesNotThrow(() -> {
+				LocalData l = new LocalData(-1, SendState.PENDING);
+				assertEquals(SendState.PENDING, l.getSendState());
+				assertEquals(-1, l.getId());
+			});
 		}
 		
 		@DisplayName("Test with sendstate set to null")
@@ -49,8 +63,14 @@ class LocalDataTest {
 		@Test
 		void testWithValidArguments() {
 			LocalData d = new LocalData(2, SendState.PENDING);
-			assertDoesNotThrow(() -> { d.setSendState(SendState.PENDING); });
-			assertDoesNotThrow(() -> { d.setSendState(SendState.SENT); });
+			assertDoesNotThrow(() -> { 
+				d.setSendState(SendState.PENDING); 
+				assertEquals(SendState.PENDING, d.getSendState());
+			});
+			assertDoesNotThrow(() -> { 
+				d.setSendState(SendState.SENT); 
+				assertEquals(SendState.SENT, d.getSendState());
+			});
 		}
 		
 		@DisplayName("Test with invalid arguments")
@@ -69,9 +89,18 @@ class LocalDataTest {
 		@Test
 		void testWithValidArguments() {
 			LocalData d = new LocalData(2, SendState.PENDING);
-			assertDoesNotThrow(() -> { d.setId(-1); });
-			assertDoesNotThrow(() -> { d.setId(23); });
-			assertDoesNotThrow(() -> { d.setId(222); });
+			assertDoesNotThrow(() -> { 
+				d.setId(-1); 
+				assertEquals(-1, d.getId());
+			});
+			assertDoesNotThrow(() -> { 
+				d.setId(23); 
+				assertEquals(23, d.getId());
+			});
+			assertDoesNotThrow(() -> { 
+				d.setId(222); 
+				assertEquals(222, d.getId());
+			});
 		}
 		
 		@DisplayName("Test with invalid arguments")

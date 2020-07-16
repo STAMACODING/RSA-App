@@ -31,8 +31,8 @@ public class ServerData implements Serializable {
 	 * @param receivingId the id of the client that received or will receive this message
 	 */
 	public ServerData(byte sendingId, byte receivingId) {
-		if(sendingId < 0) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(byte.class, "sendingId", sendingId));
-		if(receivingId < 0) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(byte.class, "receivingId", receivingId));
+		if(sendingId < 0) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(byte.class, "sendingId", sendingId, "greater than -1"));
+		if(receivingId < 0) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(byte.class, "receivingId", receivingId, "greater than -1"));
 		
 		this.sendingId = sendingId;
 		this.receivingId = receivingId;
@@ -53,6 +53,21 @@ public class ServerData implements Serializable {
 	 */
 	public byte getReceivingId() {
 		return receivingId;
+	}
+	
+	/**
+	 * Indicates if another object is equal to this one.
+	 * @return whether another object is equal
+	 */
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof ServerData) {
+			ServerData d2 = (ServerData) o;
+			if(d2.getReceivingId() != this.getReceivingId()) return false;
+			if(d2.getSendingId() != this.getSendingId()) return false;
+			return true;
+		}
+		return false;
 	}
 	
 	/**
