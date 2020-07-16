@@ -49,7 +49,7 @@ public abstract class ServerService extends Service{
 	@Override
 	public final void onStop() {
 		try {
-			getServerSocket().close();
+			if(getServerSocket() != null) getServerSocket().close();
 			Logger.debug(getServiceName(), "Closed server socket");
 		} catch (IOException e) {
 			Logger.error(getServiceName(), "Could not close server socket");
@@ -63,7 +63,7 @@ public abstract class ServerService extends Service{
 	@Override
 	public final void onCrash() {
 		try {
-			getServerSocket().close();
+			if(getServerSocket() != null) getServerSocket().close();
 			Logger.debug(getServiceName(), "Closed server socket");
 		} catch (IOException e) {
 			Logger.error(getServiceName(), "Could not close server socket");
