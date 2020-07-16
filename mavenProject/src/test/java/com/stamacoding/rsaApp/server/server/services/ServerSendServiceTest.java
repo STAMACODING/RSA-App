@@ -1,4 +1,4 @@
-package com.stamacoding.rsaApp.server.services.transferServices.sendService;
+package com.stamacoding.rsaApp.server.server.services;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,5 +8,5 @@ class ServerSendServiceTest {
 	void test() {
 		
 	}
-	
+
 }

@@ -1,6 +1,7 @@
 package com.stamacoding.rsaApp.log.logger;
 
 import java.io.File;
+
 import com.stamacoding.rsaApp.log.debug.Debug;
 import com.stamacoding.rsaApp.log.filesystem.Filesystem;
 

@@ -2,7 +2,7 @@ package com.stamacoding.rsaApp.server.message;
 
 import org.junit.jupiter.api.Test;
 
-class MessageManagerTest {
+class AbstractMessageManagerTest {
 
 	@Test
 	void test() {

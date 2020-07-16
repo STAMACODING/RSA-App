@@ -1,4 +1,4 @@
-package com.stamacoding.rsaApp.server.run;
+package com.stamacoding.rsaApp.server.server;
 
 import org.junit.jupiter.api.Test;
 

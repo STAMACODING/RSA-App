@@ -2,6 +2,7 @@ package com.stamacoding.rsaApp.server.client.services;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.Service;
+import com.stamacoding.rsaApp.server.client.Client;
 import com.stamacoding.rsaApp.server.client.managers.ClientMessageManager;
 import com.stamacoding.rsaApp.server.client.managers.DatabaseManager;
 import com.stamacoding.rsaApp.server.message.Message;

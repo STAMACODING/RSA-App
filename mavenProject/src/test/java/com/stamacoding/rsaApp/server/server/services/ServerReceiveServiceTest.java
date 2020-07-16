@@ -1,4 +1,4 @@
-package com.stamacoding.rsaApp.server.services.transferServices.receiveService;
+package com.stamacoding.rsaApp.server.server.services;
 
 import org.junit.jupiter.api.Test;
 

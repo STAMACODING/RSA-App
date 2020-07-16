@@ -3,7 +3,6 @@ package com.stamacoding.rsaApp.server.server.managers;
 import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.client.managers.ClientMessageManager;
 import com.stamacoding.rsaApp.server.client.services.ClientReceiveService;
 import com.stamacoding.rsaApp.server.message.AbstractMessageManager;
 import com.stamacoding.rsaApp.server.message.Message;
