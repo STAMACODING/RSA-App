@@ -3,6 +3,7 @@ package com.stamacoding.rsaApp.server.client.services;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.Service;
@@ -49,46 +50,18 @@ public class ClientSendService extends Service {
 	 */
 	@Override
 	public void onRepeat() {
-		// If there is a message to be sent
-		Message messageToSend = ClientMessageManager.getInstance().getMessageToSend();
-		if(messageToSend != null) {
+		Message m = ClientMessageManager.getInstance().getMessageToSend();
+		if(m != null) {
 			Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
-			Logger.debug(this.getClass().getSimpleName(), "Message to send: " + messageToSend.toString());
+			Logger.debug(this.getClass().getSimpleName(), "Message to send: " + m.toString());
 			
-			// Encrypt message before sending to server
-			messageToSend.encryptProtectedData();
-			messageToSend.encryptServerData();
-			
-			byte[] encryptedServerData = messageToSend.getEncryptedServerData();
-			byte[] encryptedProtectedData = messageToSend.getEncryptedProtectedData();
-			
-			Logger.debug(this.getClass().getSimpleName(), "Encrypted message");
-				
-			Socket connectionToServer = null;
+			encryptMessage(m);
 			try {
-				connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.SEND_PORT);
-				connectionToServer.setSoTimeout(5000);
-				Logger.debug(this.getClass().getSimpleName(), "Successfully connected to the receive server");
+				Socket connectionToServer = connectToReceiveServer();
 				try {
-					DataOutputStream outputStream = new DataOutputStream(connectionToServer.getOutputStream());
-					
-					// Send message meta
-					outputStream.writeInt(encryptedServerData.length);
-					outputStream.write(encryptedServerData);
-					
-					// Send message data
-					outputStream.writeInt(encryptedProtectedData.length);
-					outputStream.write(encryptedProtectedData);
-					
-					outputStream.flush();
-						
-					Logger.debug(this.getClass().getSimpleName(), "Successfully sent message to the receive server");
-					Logger.debug(this.getClass().getSimpleName(), "Updating message status");
-					
-					messageToSend.getLocalData().setSendState(SendState.SENT);
-					messageToSend.getLocalData().setUpdateRequested(true);
-					
-					// Close connection to the receiver
+					sendMessage(m, connectionToServer);
+					updateMessageState(m);
+
 					connectionToServer.close();
 					Logger.debug(this.getClass().getSimpleName(), "Closed connection to the receive server");
 				} catch (IOException e) {
@@ -99,6 +72,61 @@ public class ClientSendService extends Service {
 			}
 			
 		}
+	}
+	
+	/**
+	 * Encrypt the message that should get sent
+	 * @param m the message to encrypt
+	 */
+	private void encryptMessage(Message m) {
+		m.encryptProtectedData();
+		m.encryptServerData();
+		Logger.debug(this.getClass().getSimpleName(), "Encrypted message");
+	}
+	
+	/**
+	 * Connects to the receive server
+	 * @return the created socket connection
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
+	private Socket connectToReceiveServer() throws UnknownHostException, IOException {
+		Socket connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.SEND_PORT);
+		connectionToServer.setSoTimeout(5000);
+		Logger.debug(this.getClass().getSimpleName(), "Successfully connected to the receive server");
+		return connectionToServer;
+	}
+	
+	/**
+	 * Sends the message to the receive server
+	 * @param m the message to send
+	 * @param connectionToServer the connection to the receive server
+	 * @throws IOException
+	 */
+	private void sendMessage(Message m, Socket connectionToServer) throws IOException {
+		DataOutputStream out = new DataOutputStream(connectionToServer.getOutputStream());
+		// Send message meta
+		out.writeInt(m.getEncryptedServerData().length);
+		out.write(m.getEncryptedServerData());
+		
+		// Send message data
+		out.writeInt(m.getEncryptedProtectedData().length);
+		out.write(m.getEncryptedProtectedData());
+		
+		out.flush();
+			
+		Logger.debug(this.getClass().getSimpleName(), "Successfully sent message to the receive server");
+	}
+	
+	/**
+	 * Update the message's send state
+	 * @param m the message to update
+	 */
+	private void updateMessageState(Message m) {
+		Logger.debug(this.getClass().getSimpleName(), "Updating message status");
+		
+		m.getLocalData().setSendState(SendState.SENT);
+		m.getLocalData().setUpdateRequested(true);
 	}
 
 }

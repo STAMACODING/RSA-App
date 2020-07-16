@@ -1,5 +1,8 @@
 package com.stamacoding.rsaApp.server.server;
 
+import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.server.TextUtils;
+import com.stamacoding.rsaApp.server.client.ClientConfig;
 import com.stamacoding.rsaApp.server.server.services.ServerMainService;
 
 /**
@@ -36,5 +39,32 @@ public class ServerConfig {
 		if(RECEIVE_PORT == SEND_PORT) return false;
 		
 		return true;
+	}
+	
+	/**
+	 * Logs the server's configuration in a fancy way
+	 */
+	public static void log() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Log server configuration...\n\n");
+		sb.append(TextUtils.heading("Server Configuration"));
+		sb.append(TextUtils.box(""));
+		
+		// Send Port
+		sb.append(TextUtils.fancyParameter("Send Port", String.valueOf(ServerConfig.SEND_PORT)));
+		
+		// Receive Port
+		sb.append(TextUtils.fancyParameter("Receive Port", String.valueOf(ServerConfig.RECEIVE_PORT)));
+		
+		sb.append(TextUtils.box(""));
+		
+		if(isValid()) sb.append(TextUtils.heading("VALID"));
+		else sb.append(TextUtils.heading("NOT VALID"));
+		
+		Logger.debug(ClientConfig.class.getSimpleName(), sb.toString());
+	}
+	
+	public static void main(String[] args) {
+		ServerConfig.log();
 	}
 }

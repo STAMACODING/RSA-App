@@ -38,18 +38,33 @@ public class DatabaseService extends Service{
 	@Override
 	public void onRepeat() {
 		Message m = ClientMessageManager.getInstance().getMessageToStoreOrUpdate();
+		
 		if(m != null) {
 			Logger.debug(this.getClass().getSimpleName(), "Got message to store/update");
-			if(m.getLocalData().isToUpdate()) {
-				DatabaseManager.getInstance().updateMessage(m);
-				m.getLocalData().setUpdateRequested(false);
-				Logger.debug(this.getClass().getSimpleName(), "Updated message in the chat database");
-			}else {
-				DatabaseManager.getInstance().addMessageToDB(m);
-				m.getLocalData().setUpdateRequested(false);
-				Logger.debug(this.getClass().getSimpleName(), "Stored new message in the chat database");
-			}
+			
+			if(m.getLocalData().isToUpdate()) updateMessage(m);
+			else storeMessage(m);
 			
 		}
+	}
+	
+	/**
+	 * Updates the message in the chat database
+	 * @param m the message to update
+	 */
+	private void updateMessage(Message m) {
+		DatabaseManager.getInstance().updateMessage(m);
+		m.getLocalData().setUpdateRequested(false);
+		Logger.debug(this.getClass().getSimpleName(), "Updated message in the chat database");
+	}
+	
+	/**
+	 * Stores the message in the chat database
+	 * @param m the message to store
+	 */
+	private void storeMessage(Message m) {
+		DatabaseManager.getInstance().addMessageToDB(m);
+		m.getLocalData().setUpdateRequested(false);
+		Logger.debug(this.getClass().getSimpleName(), "Stored new message in the chat database");
 	}
 }

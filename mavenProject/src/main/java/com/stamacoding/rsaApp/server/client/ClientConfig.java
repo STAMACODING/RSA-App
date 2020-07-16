@@ -1,6 +1,8 @@
 package com.stamacoding.rsaApp.server.client;
 
+import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.NetworkUtils;
+import com.stamacoding.rsaApp.server.TextUtils;
 import com.stamacoding.rsaApp.server.client.services.ClientMainService;
 import com.stamacoding.rsaApp.server.client.services.ClientReceiveService;
 
@@ -60,5 +62,41 @@ public class ClientConfig {
 		if(RECEIVE_PORT == SEND_PORT) return false;
 		
 		return true;
+	}
+
+	/**
+	 * Logs the client's configuration in a fancy way
+	 */
+	public static void log() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Log client configuration...\n\n");
+		sb.append(TextUtils.heading("Client Configuration"));
+		sb.append(TextUtils.box(""));
+		
+		// Client ID
+		sb.append(TextUtils.fancyParameter("Client ID", String.valueOf(ClientConfig.ID)));
+		
+		// Server IP
+		sb.append(TextUtils.fancyParameter("Server IP", ClientConfig.SERVER_IP));
+		
+		// Send Port
+		sb.append(TextUtils.fancyParameter("Send Port", String.valueOf(ClientConfig.SEND_PORT)));
+		
+		// Receive Port
+		sb.append(TextUtils.fancyParameter("Receive Port", String.valueOf(ClientConfig.RECEIVE_PORT)));
+		
+		// Query Interval
+		sb.append(TextUtils.fancyParameter("Query interval", String.valueOf(ClientConfig.QUERY_MESSAGES_INTERVAL)));
+		
+		sb.append(TextUtils.box(""));
+		
+		if(isValid()) sb.append(TextUtils.heading("VALID"));
+		else sb.append(TextUtils.heading("NOT VALID"));
+		
+		Logger.debug(ClientConfig.class.getSimpleName(), sb.toString());
+	}
+	
+	public static void main(String[] args) {
+		ClientConfig.log();
 	}
 }

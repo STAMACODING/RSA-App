@@ -40,8 +40,10 @@ public class ClientMainService extends Service{
 	 */
 	@Override
 	public void onStart() {
+		ClientConfig.log();
 		if(!ClientConfig.isValid()) Logger.error(this.getClass().getSimpleName(), new InvalidValueException("Invalid client configuration! Use ClientConfig.setup() to fix"));
 		
+		Logger.debug(this.getClass().getSimpleName(), "Launching subservices...");
 		DatabaseService.getInstance().launch();
 		ClientReceiveService.getInstance().launch();
 		ClientSendService.getInstance().launch();
