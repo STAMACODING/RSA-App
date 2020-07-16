@@ -31,8 +31,9 @@ public abstract class AbstractMessageManager {
 			if(getAllMessages().indexOf(m) == -1) {
 				getAllMessages().add(m);
 				
-				Logger.debug(AbstractMessageManager.class.getSimpleName(), "Added new message to MessageManager");
+				Logger.debug(this.getClass().getSimpleName(), "Added new message to MessageManager");
 			}
+			Logger.warning(this.getClass().getSimpleName(), "Added new message to MessageManager");
 		}
 	}
 }

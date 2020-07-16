@@ -71,6 +71,7 @@ public class ProtectedData implements Serializable{
 	 */
 	@Override
 	public boolean equals(Object obj) {
+		if(obj == null) return false;
 		if(obj instanceof ProtectedData) {
 			ProtectedData pd = (ProtectedData) obj;
 			if(pd.getDate() != this.getDate()) return false;

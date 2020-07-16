@@ -2,9 +2,11 @@ package com.stamacoding.rsaApp.server.message;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -149,6 +151,43 @@ class MessageTest {
 			assertNotNull(m.getServerData());
 			
 			assertEquals(d, m.getServerData());
+		}
+	}
+	
+	@DisplayName("Test equals()")
+	@Nested
+	class EqualityTest{
+		
+		@DisplayName("Test equal objects")
+		@Test
+		void testEqual() {
+			Message d1 = new Message(new LocalData(23, SendState.PENDING), new ProtectedData("Hi Henri!", 2332L), new ServerData((byte) 23, (byte) 11));
+			Message d2 = new Message(new LocalData(23, SendState.PENDING), new ProtectedData("Hi Henri!", 2332L), new ServerData((byte) 23, (byte) 11));
+			assertTrue(d2.equals(d1));
+			
+			Message d3 = new Message(new LocalData(23, SendState.PENDING), ProtectedData.encrypt(new ProtectedData("Hi Henri!", 2332L)), ServerData.encrypt(new ServerData((byte) 68, (byte) 43)));
+			Message d4 = new Message(new LocalData(23, SendState.PENDING), ProtectedData.encrypt(new ProtectedData("Hi Henri!", 2332L)), ServerData.encrypt(new ServerData((byte) 68, (byte) 43)));
+			assertTrue(d3.equals(d4));
+			
+			Message d5 = new Message(new LocalData(23, SendState.PENDING), ProtectedData.encrypt(new ProtectedData("Hi Henri!", 2332L)), new ServerData((byte) 23, (byte) 11));
+			Message d6 = new Message(new LocalData(23, SendState.PENDING), ProtectedData.encrypt(new ProtectedData("Hi Henri!", 2332L)), new ServerData((byte) 23, (byte) 11));
+			assertTrue(d5.equals(d6));
+		}
+		
+		@DisplayName("Test not equal objects")
+		@Test
+		void testNotEqual() {
+			Message d1 = new Message(new LocalData(23, SendState.SENT), new ProtectedData("Hi Henri!", 23232L), new ServerData((byte) 23, (byte) 1));
+			Message d2 = new Message(new LocalData(2, SendState.PENDING), new ProtectedData("Hi He22nri!", 2332L), new ServerData((byte) 2123, (byte) 11));
+			assertFalse(d2.equals(d1));
+			
+			Message d3 = new Message(new LocalData(13, SendState.SENT), ProtectedData.encrypt(new ProtectedData("Hi Henri!", 2332L)), ServerData.encrypt(new ServerData((byte) 68, (byte) 43)));
+			Message d4 = new Message(new LocalData(23, SendState.PENDING), ProtectedData.encrypt(new ProtectedData("Hi Hesdfsdfnri!", 2332L)), ServerData.encrypt(new ServerData((byte) 68, (byte) 43)));
+			assertFalse(d3.equals(d4));
+			
+			Message d5 = new Message(new LocalData(23, SendState.PENDING), ProtectedData.encrypt(new ProtectedData("Hi dsfsf!", 232232L)), new ServerData((byte) 21, (byte) 11));
+			Message d6 = new Message(new LocalData(33, SendState.SENT), ProtectedData.encrypt(new ProtectedData("Hi Hsdfsdfdfenri!", 211332L)), new ServerData((byte) 23, (byte) 1));
+			assertFalse(d5.equals(d6));
 		}
 	}
 

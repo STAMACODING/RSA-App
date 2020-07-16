@@ -95,6 +95,22 @@ public class LocalData implements Serializable{
 	}
 	
 	/**
+	 * Indicates if another object is equal to this one.
+	 * @return whether another object is equal
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		if(obj instanceof LocalData) {
+			LocalData pd = (LocalData) obj;
+			if(pd.getId() != this.getId()) return false;
+			if(pd.getSendState() != this.getSendState()) return false;
+			return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Checks whether the message should get stored in the chat database by the {@link DatabaseService}.
 	 * @return whether the message should get stored in the chat database by the {@link DatabaseService}
 	 */

@@ -4,8 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
@@ -14,33 +13,24 @@ import com.stamacoding.rsaApp.log.logger.Logger;
  *  Contains static functions that are useful for the server team.
  */
 public class NetworkUtils {
-	
-	/**
-	 * Gets the current device's local ip address.
-	 * @return the current device's local ip address
-	 */
-	public static String getIpAdress() {
-		try {
-			return Inet4Address.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
+
 	/**
 	 * Serializes an object.
 	 * @param o the object to serialize
 	 * @return the serialized object
 	 */
 	public static byte[] serialize(Object o) {
+		if(!(o instanceof Serializable)) {
+			if(o != null) Logger.error(NetworkUtils.class.getSimpleName() + ":serialize", new RuntimeException("Cannot serialize a not serializable object!"));
+			else Logger.error(NetworkUtils.class.getSimpleName() + ":serialize", new com.stamacoding.rsaApp.server.exceptions.NullPointerException(Object.class, "o"));
+		}
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream os;
 		try {
 			os = new ObjectOutputStream(out);
 			os.writeObject(o);
 		} catch (Exception e) {
-			Logger.error(NetworkUtils.class.getSimpleName(), new RuntimeException("Failed to serialize object!"));
+			Logger.error(NetworkUtils.class.getSimpleName() + ":serialize", new RuntimeException("Failed to serialize object!"));
 			return null;
 		}
 		return out.toByteArray();
@@ -57,7 +47,7 @@ public class NetworkUtils {
 		try {
 			is = new ObjectInputStream(in);
 			Object o = is.readObject();
-			if(o == null ) Logger.error(NetworkUtils.class.getSimpleName(), new NullPointerException("Failed to deserialize object!"));
+			if( o == null ) Logger.error(NetworkUtils.class.getSimpleName() + ":deserialize", new NullPointerException("Failed to deserialize object!"));
 			return o;
 		} catch (Exception e) {
 			Logger.error(NetworkUtils.class.getSimpleName(), new RuntimeException("Failed to deserialize object!"));

@@ -2,6 +2,7 @@ package com.stamacoding.rsaApp.server.message;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.exceptions.NullPointerException;
@@ -226,5 +227,95 @@ public class Message implements Serializable{
 		sb.append(getLocalData().getSendState().toString());
 		sb.append("]");
 		return sb.toString();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		if(obj instanceof Message) {
+			Message m2 = (Message) obj;
+			if(this.getLocalData() == null) {
+				if(m2.getLocalData() != null) return false;
+			}else {
+				if(!this.getLocalData().equals(m2.getLocalData())) return false;
+			}
+			
+			if(this.getProtectedData() == null) {
+				if(m2.getProtectedData() != null) return false;
+			}else {
+				if(!this.getProtectedData().equals(m2.getProtectedData())) return false;
+			}
+			
+			if(this.getServerData() == null) {
+				if(m2.getServerData() != null) return false;
+			}else {
+				if(!this.getServerData().equals(m2.getServerData())) return false;
+			}
+			
+			if(!Arrays.equals(m2.getEncryptedProtectedData(), this.getEncryptedProtectedData())) return false;
+			if(!Arrays.equals(m2.getEncryptedServerData(), this.getEncryptedServerData())) return false;
+			
+			return true;
+		}
+		return false;
+	}
+	
+	public static void main(String[] args){
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				for(int i=0; i<=3000000; i++) {
+					Logger.debug("hhd", "test");
+					try {
+						Thread.sleep(12);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				for(int i=0; i<=3000000; i++) {
+					Logger.debug("hhd", "test");
+					try {
+						Thread.sleep(12);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				for(int i=0; i<=3000000; i++) {
+					Logger.debug("hhd", "test");
+					try {
+						Thread.sleep(12);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				for(int i=0; i<=3000000; i++) {
+					Logger.debug("hhd", "test");
+					try {
+						Thread.sleep(12);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
 	}
 }

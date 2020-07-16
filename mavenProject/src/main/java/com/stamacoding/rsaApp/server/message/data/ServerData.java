@@ -61,6 +61,7 @@ public class ServerData implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object o) {
+		if(o == null) return false;
 		if(o instanceof ServerData) {
 			ServerData d2 = (ServerData) o;
 			if(d2.getReceivingId() != this.getReceivingId()) return false;
