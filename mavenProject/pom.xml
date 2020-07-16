@@ -53,7 +53,7 @@
 		                <archive>
 		                <manifest>
 		                    <mainClass>
-		                        com.stamacoding.rsaApp.server.run.Server
+		                        com.stamacoding.rsaApp.server.server.Server
 		                    </mainClass>
 		                    
 		                </manifest>
@@ -75,7 +75,7 @@
 		                <archive>
 		                <manifest>
 		                    <mainClass>
-		                        com.stamacoding.rsaApp.server.run.Client
+		                        com.stamacoding.rsaApp.server.client.Client
 		                    </mainClass>
 		                    
 		                </manifest>
