@@ -74,10 +74,8 @@ public class ClientReceiveService extends Service{
 				    Logger.debug(this.getClass().getSimpleName(), "Successfully received " + messagesAsList.size() + " new message(s) from the send server");
 					for(Message m : messagesAsList) {
 						m.getLocalData().setSendState(SendState.SENT);
-						System.err.println(m.getEncryptedProtectedData());
 				    	m.decryptServerData();
 				    	m.decryptProtectedData();
-				    	System.err.println(m.getEncryptedProtectedData());
 				    	Logger.debug(this.getClass().getSimpleName(), "Received message: " + m.toString());
 				    	ClientMessageManager.getInstance().manage(m);
 				    }
