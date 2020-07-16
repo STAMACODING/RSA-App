@@ -56,9 +56,9 @@ public abstract class Service{
 			return;
 		}
 		Thread servicesThread = new Thread(new Runnable() {
-			
 			@Override
 			public void run() {
+				Thread.currentThread().setName(getServiceName());
 				Logger.debug(getServiceName(), "Starting");
 				onStart();
 				Logger.debug(getServiceName(), "Started");
