@@ -13,7 +13,7 @@ public class Server {
 	
 	public static void main(String[] args) {
 		
-		System.out.print(TextUtils.heading("RSA-App Server 0.0.0-SNAPSHOT"));
+		System.out.print(TextUtils.heading("RSA-App Server 1.0.0-alpha"));
 		System.out.print(TextUtils.box(""));
 		Scanner s = new Scanner(System.in);
 		

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.stamacoding</groupId>
   <artifactId>rsa-app</artifactId>
-  <version>0.0.0-SNAPSHOT</version>
+  <version>1.0.0-alpha</version>
   <name>RSA-App</name>
   <description>Chat-App for Android and Desktop based on the RSA encryption algorithm</description>
 
