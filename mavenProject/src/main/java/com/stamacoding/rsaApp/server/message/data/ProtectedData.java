@@ -3,11 +3,6 @@ package com.stamacoding.rsaApp.server.message.data;
 import java.io.Serializable;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.rsa.RSA;
-import com.stamacoding.rsaApp.rsa.keyCreate.Key;
-import com.stamacoding.rsaApp.server.NetworkUtils;
-import com.stamacoding.rsaApp.server.exceptions.InvalidValueException;
-import com.stamacoding.rsaApp.server.exceptions.NullPointerException;
 
 /**
  *  Stores essential information about a message. Should get encrypted before sending. The server should not be
@@ -32,7 +27,7 @@ public class ProtectedData implements Serializable{
 	 * @param date the time the message was originally created
 	 */
 	public ProtectedData(String textMessage, long date) {
-		if(date < 0) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(long.class, "date", date, "greater than 0"));
+		if(date < 0) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("long date (" + date +  ") should be greater than 0 !"));
 		
 		this.date = date;
 		setTextMessage(textMessage);
@@ -60,7 +55,7 @@ public class ProtectedData implements Serializable{
 	 * @param textMessage the message
 	 */
 	public void setTextMessage(String textMessage) {
-		if(textMessage == null) Logger.error(this.getClass().getSimpleName(), new NullPointerException(String.class, "textMessage"));
+		if(textMessage == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("String textMessage is not allowed to be null!"));
 		
 		this.textMessage = textMessage;
 	}
@@ -79,35 +74,5 @@ public class ProtectedData implements Serializable{
 			return true;
 		}
 		return false;
-	}
-
-
-	/**
-	 * Encrypts a {@link ProtectedData}-object.
-	 * <b>Will be replaced by {@link RSA#encrypt(Object, Key)} very soon.</b>
-	 * @param protectedData the object to encrypt
-	 * @return the object as encrypted byte array
-	 */
-	public static byte[] encrypt(ProtectedData protectedData) {
-		if(protectedData == null) Logger.error(ProtectedData.class.getSimpleName(), new NullPointerException(ProtectedData.class, "protectedData"));
-		
-		byte[] decodedProtectedData = NetworkUtils.serialize(protectedData);
-		// TODO encrypt decoded data
-		byte[] encryptedProtectedData = decodedProtectedData;
-		return encryptedProtectedData;
-	}
-	
-	/**
-	 * Decrypts a {@link ProtectedData}-objects.
-	 * <b>Will be replaced by {@link RSA#decrypt(Object, Key)} very soon.</b>
-	 * @param encryptedProtectedData the object as encrypted byte array
-	 * @return the decrypted object
-	 */
-	public static ProtectedData decrypt(byte[] encryptedProtectedData) {
-		if(encryptedProtectedData == null) Logger.error(ProtectedData.class.getSimpleName(), new NullPointerException(byte[].class, "encryptedProtectedData"));
-		
-		// TODO decrypt encrypted data
-		byte[] decryptedProtectedData = encryptedProtectedData;
-		return (ProtectedData) NetworkUtils.deserialize(decryptedProtectedData);
 	}
 }

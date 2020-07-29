@@ -3,7 +3,6 @@ package com.stamacoding.rsaApp.server.client.services;
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.Service;
 import com.stamacoding.rsaApp.server.client.ClientConfig;
-import com.stamacoding.rsaApp.server.exceptions.InvalidValueException;
 
 /**
  * <p>{@link Service} handling all client message transfers. Additionally this service stores all messages in a chat database.</p>
@@ -41,7 +40,7 @@ public class ClientMainService extends Service{
 	@Override
 	public void onStart() {
 		ClientConfig.log();
-		if(!ClientConfig.isValid()) Logger.error(this.getClass().getSimpleName(), new InvalidValueException("Invalid client configuration! Use ClientConfig.setup() to fix"));
+		if(!ClientConfig.isValid()) Logger.error(this.getClass().getSimpleName(), new IllegalStateException("Invalid client configuration! Use ClientConfig.setup() to fix"));
 		
 		Logger.debug(this.getClass().getSimpleName(), "Launching subservices...");
 		DatabaseService.getInstance().launch();

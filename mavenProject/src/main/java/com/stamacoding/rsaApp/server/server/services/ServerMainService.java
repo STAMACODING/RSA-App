@@ -2,7 +2,6 @@ package com.stamacoding.rsaApp.server.server.services;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.Service;
-import com.stamacoding.rsaApp.server.exceptions.InvalidValueException;
 import com.stamacoding.rsaApp.server.server.ServerConfig;
 
 /**
@@ -40,7 +39,7 @@ public class ServerMainService extends Service{
 	@Override
 	public void onStart() {
 		ServerConfig.log();
-		if(!ServerConfig.isValid()) Logger.error(this.getClass().getSimpleName(), new InvalidValueException("Invalid server configuration! Use ServerConfig.setup() to fix"));
+		if(!ServerConfig.isValid()) Logger.error(this.getClass().getSimpleName(), new IllegalStateException("Invalid server configuration! Use ServerConfig.setup() to fix"));
 		
 		ServerReceiveService.getInstance().launch();
 		ServerSendService.getInstance().launch();

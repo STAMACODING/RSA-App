@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.exceptions.NullPointerException;
+import com.stamacoding.rsaApp.rsa.RSA;
 import com.stamacoding.rsaApp.server.message.data.LocalData;
 import com.stamacoding.rsaApp.server.message.data.ProtectedData;
 import com.stamacoding.rsaApp.server.message.data.ServerData;
@@ -42,7 +42,7 @@ public class Message implements Serializable{
 	 * @param serverData the message's server data
 	 */
 	public Message(LocalData localData, ProtectedData protectedData, ServerData serverData) {
-		if(localData == null) Logger.error(this.getClass().getSimpleName(),  new NullPointerException(LocalData.class, "localData"));
+		if(localData == null) Logger.error(this.getClass().getSimpleName(),  new IllegalArgumentException("LocalData localData is not allowed to be null!"));
 		
 		this.localData = localData;
 		setProtectedData(protectedData);
@@ -56,7 +56,7 @@ public class Message implements Serializable{
 	 * @param encryptedServerData the message's server data as encrypted byte array
 	 */
 	public Message(LocalData localData, byte[] encryptedProtectedData, byte[] encryptedServerData) {
-		if(localData == null) Logger.error(this.getClass().getSimpleName(),  new NullPointerException(LocalData.class, "localData"));
+		if(localData == null) Logger.error(this.getClass().getSimpleName(),   new IllegalArgumentException("LocalData localData is not allowed to be null!"));
 		
 		this.localData = localData;
 		setEncryptedProtectedData(encryptedProtectedData);
@@ -70,7 +70,7 @@ public class Message implements Serializable{
 	 * @param serverData the message's server data
 	 */
 	public Message(LocalData localData, byte[] encryptedProtectedData, ServerData serverData) {
-		if(localData == null) Logger.error(this.getClass().getSimpleName(),  new NullPointerException(LocalData.class, "localData"));
+		if(localData == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("LocalData localData is not allowed to be null!"));
 		
 		this.localData = localData;
 		setEncryptedProtectedData(encryptedProtectedData);
@@ -91,7 +91,7 @@ public class Message implements Serializable{
 	 * @param serverData the message's {@link ProtectedData}
 	 */
 	private void setProtectedData(ProtectedData protectedData) {
-		if(protectedData == null) Logger.error(this.getClass().getSimpleName(),  new NullPointerException(ProtectedData.class, "protectedData"));
+		if(protectedData == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("ProtectedData protectedData is not allowed to be null!"));
 		
 		this.protectedData = protectedData;
 	}
@@ -111,7 +111,7 @@ public class Message implements Serializable{
 	 * @param serverData the message's {@link ServerData}
 	 */
 	private void setServerData(ServerData serverData) {
-		if(serverData == null) Logger.error(this.getClass().getSimpleName(),  new NullPointerException(ServerData.class, "serverData"));
+		if(serverData == null) Logger.error(this.getClass().getSimpleName(),  new IllegalArgumentException("ServerData serverData is not allowed to be null!"));
 		
 		this.serverData = serverData;
 	}
@@ -138,7 +138,7 @@ public class Message implements Serializable{
 	 * @param encryptedProtectedData the message's encrypted byte array that represents the {@link #protectedData}
 	 */
 	private void setEncryptedProtectedData(byte[] encryptedProtectedData) {
-		if(encryptedProtectedData == null) Logger.error(this.getClass().getSimpleName(), new NullPointerException(byte[].class, "encryptedProtectedData"));
+		if(encryptedProtectedData == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("byte[] encryptedProtectedData is not allowed to be null!"));
 		
 		this.encryptedProtectedData = encryptedProtectedData;
 	}
@@ -156,7 +156,7 @@ public class Message implements Serializable{
 	 * @param encryptedServerData the message's encrypted byte array that represents the {@link #serverData}
 	 */
 	private void setEncryptedServerData(byte[] encryptedServerData) {
-		if(encryptedServerData == null) Logger.error(this.getClass().getSimpleName(), new NullPointerException(byte[].class, "encryptedServerData"));
+		if(encryptedServerData == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("byte[] encryptedServerData is not allowed to be null!"));
 		
 		this.encryptedServerData = encryptedServerData;
 	}
@@ -171,7 +171,7 @@ public class Message implements Serializable{
 			return;
 		}
 		
-		setEncryptedServerData(ServerData.encrypt(getServerData()));
+		setEncryptedServerData(RSA.encryptF(getServerData()));
 		this.serverData = null;
 	}
 	
@@ -185,7 +185,7 @@ public class Message implements Serializable{
 			return;
 		}
 		
-		setServerData(ServerData.decrypt(getEncryptedServerData()));
+		setServerData((ServerData) RSA.decryptF(getEncryptedServerData()));
 		this.encryptedServerData = null;
 	}
 	
@@ -199,7 +199,7 @@ public class Message implements Serializable{
 			return;
 		}
 		
-		setEncryptedProtectedData(ProtectedData.encrypt(getProtectedData()));
+		setEncryptedProtectedData(RSA.encryptF(getProtectedData()));
 		this.protectedData = null;
 	}
 	
@@ -213,7 +213,7 @@ public class Message implements Serializable{
 			return;
 		}
 		
-		setProtectedData(ProtectedData.decrypt(getEncryptedProtectedData()));
+		setProtectedData((ProtectedData) RSA.decryptF(getEncryptedProtectedData()));
 		this.encryptedProtectedData = null;
 	}
 	

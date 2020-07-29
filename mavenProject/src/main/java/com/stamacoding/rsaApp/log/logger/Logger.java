@@ -92,6 +92,9 @@ public class Logger {
 	 */
 	public static <T extends Exception> void error(String className, T exception) throws T{
 		log(className, exception.getMessage(), logType.ERROR);
+		if(!(exception instanceof RuntimeException)) {
+			exception.printStackTrace();
+		}
 		throw exception;
 	}
 	

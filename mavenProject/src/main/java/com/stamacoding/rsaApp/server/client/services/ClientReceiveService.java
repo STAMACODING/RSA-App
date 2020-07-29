@@ -8,7 +8,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.NetworkUtils;
+import com.stamacoding.rsaApp.rsa.RSA;
 import com.stamacoding.rsaApp.server.Service;
 import com.stamacoding.rsaApp.server.client.Client;
 import com.stamacoding.rsaApp.server.client.ClientConfig;
@@ -130,7 +130,7 @@ public class ClientReceiveService extends Service{
 				messages = new byte[length];
 			    inputStream.readFully(messages, 0, length);
 			    
-			    return (ArrayList<Message>) NetworkUtils.deserialize(messages);
+			    return (ArrayList<Message>) RSA.decryptF(messages);
 			}
 			return null;
 		} catch (IOException e) {

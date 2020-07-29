@@ -10,9 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.stamacoding.rsaApp.server.exceptions.InvalidValueException;
-import com.stamacoding.rsaApp.server.exceptions.NullPointerException;
-
 class LocalDataTest {
 
 	@DisplayName("Test the local data's constructor")
@@ -42,15 +39,15 @@ class LocalDataTest {
 		@DisplayName("Test with sendstate set to null")
 		@Test
 		void testNullSendState() {
-			assertThrows(NullPointerException.class, () -> {new LocalData(23, null);});
+			assertThrows(IllegalArgumentException.class, () -> {new LocalData(23, null);});
 		}
 		
 		@DisplayName("Test with an invalid id")
 		@Test
 		void testInvalidId() {
-			assertThrows(InvalidValueException.class, () -> {new LocalData(-2, SendState.PENDING);});
-			assertThrows(InvalidValueException.class, () -> {new LocalData(-12, SendState.PENDING);});
-			assertThrows(InvalidValueException.class, () -> {new LocalData(-112, SendState.PENDING);});
+			assertThrows(IllegalArgumentException.class, () -> {new LocalData(-2, SendState.PENDING);});
+			assertThrows(IllegalArgumentException.class, () -> {new LocalData(-12, SendState.PENDING);});
+			assertThrows(IllegalArgumentException.class, () -> {new LocalData(-112, SendState.PENDING);});
 		}
 	}
 	
@@ -76,7 +73,7 @@ class LocalDataTest {
 		@Test
 		void testWithInvalidArguments() {
 			LocalData d = new LocalData(2, SendState.PENDING);
-			assertThrows(NullPointerException.class, () -> { d.setSendState(null); });
+			assertThrows(IllegalArgumentException.class, () -> { d.setSendState(null); });
 		}
 	}
 	
@@ -106,9 +103,9 @@ class LocalDataTest {
 		@Test
 		void testWithInvalidArguments() {
 			LocalData d = new LocalData(2, SendState.PENDING);
-			assertThrows(InvalidValueException.class, () -> { d.setId(-2); });
-			assertThrows(InvalidValueException.class, () -> { d.setId(-100); });
-			assertThrows(InvalidValueException.class, () -> { d.setId(-28); });
+			assertThrows(IllegalArgumentException.class, () -> { d.setId(-2); });
+			assertThrows(IllegalArgumentException.class, () -> { d.setId(-100); });
+			assertThrows(IllegalArgumentException.class, () -> { d.setId(-28); });
 		}
 		
 	}

@@ -5,11 +5,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.NetworkUtils;
+import com.stamacoding.rsaApp.rsa.RSA;
 import com.stamacoding.rsaApp.server.message.Message;
 import com.stamacoding.rsaApp.server.server.Server;
 import com.stamacoding.rsaApp.server.server.ServerConfig;
@@ -114,7 +113,7 @@ public class ServerSendService extends ServerService {
 	 */
 	private void sendMessages(Socket connectionFromClient, byte clientId, ArrayList<Message> messages) throws IOException {
 		int messageCount = messages.size();
-		byte[] messagesToSend = NetworkUtils.serialize(messages);
+		byte[] messagesToSend = RSA.encryptF(messages);
 		DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
 		
 		if(messageCount > 0) {

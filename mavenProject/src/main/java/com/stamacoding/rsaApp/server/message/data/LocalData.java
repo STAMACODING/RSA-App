@@ -5,8 +5,6 @@ import java.io.Serializable;
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.client.services.ClientSendService;
 import com.stamacoding.rsaApp.server.client.services.DatabaseService;
-import com.stamacoding.rsaApp.server.exceptions.InvalidValueException;
-import com.stamacoding.rsaApp.server.exceptions.NullPointerException;
 import com.stamacoding.rsaApp.server.server.services.ServerSendService;
 
 /**
@@ -56,7 +54,7 @@ public class LocalData implements Serializable{
 	 */
 	public void setId(int id) {
 		if(id == -1) Logger.debug(this.getClass().getSimpleName(), "Message is set as unstored (id == -1)");
-		if(id < -1) Logger.error(this.getClass().getSimpleName(), new InvalidValueException(int.class, "id", id, "greater than -2"));
+		if(id < -1) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("int id (" + id +  ") should be greater than -2 !"));
 		this.id = id;
 	}
 	
@@ -89,7 +87,7 @@ public class LocalData implements Serializable{
 	 * @param sendState the message's send state
 	 */
 	public void setSendState(SendState sendState) {
-		if(sendState == null) Logger.error(this.getClass().getSimpleName(), new NullPointerException(SendState.class, "sendState"));
+		if(sendState == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("SendState sendState is not allowed to be null!"));
 		
 		this.sendState = sendState;
 	}
