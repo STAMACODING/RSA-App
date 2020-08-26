@@ -111,15 +111,19 @@ public class DatabaseManager{
 			int sendingId;
 			int status;
 			
+			printMessageFromDB(rs);
+			
+			
 			while(rs.next()) {
+				
 				messageId = rs.getInt("messageId");
-				date = new Date(rs.getLong("time"));	
+				date = new Date(rs.getLong("timestamp_sec"));
 				message = rs.getString("message");
 				sendingId = rs.getInt("sendingID");
 				status = rs.getInt("status");
-	
+				
 			}
-			//printMessageFromDB(rs);
+		
 			
 		}catch(Exception e) {
 			Logger.error(this.getClass().getSimpleName(), "Failed to get messages from database");
@@ -150,10 +154,12 @@ public class DatabaseManager{
 		System.out.println("");
 		
 		try {
+			
 			while(rs.next()) {
+				
 				messageId = rs.getInt("messageId");
 			
-				 date = new Date(rs.getLong("time"));
+				date = new Date(rs.getLong("timestamp_sec"));
 				
 				message = rs.getString("message");
 				sendingId = rs.getInt("sendingID");
