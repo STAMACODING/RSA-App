@@ -27,7 +27,6 @@ public class Message implements Serializable{
 	/** The message's {@link ProtectedData} as encrypted byte array */
 	private byte[] encryptedProtectedData;
 	
-	
 	/** The message's {@link ServerData} */
 	private ServerData serverData;
 	

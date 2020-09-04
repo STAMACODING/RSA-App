@@ -23,7 +23,7 @@ import com.stamacoding.rsaApp.server.server.Server;
 public class ClientReceiveService extends Service{
 	
 	/** The only instance of this class */
-	private static volatile ClientReceiveService singleton = new ClientReceiveService();
+	private static ClientReceiveService singleton = new ClientReceiveService();
 
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link ClientReceiveService#getInstance()} to get the

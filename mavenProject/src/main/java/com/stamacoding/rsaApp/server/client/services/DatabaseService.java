@@ -13,7 +13,7 @@ import com.stamacoding.rsaApp.server.message.Message;
 public class DatabaseService extends Service{
 	
 	/** The only instance of this class */
-	private static volatile DatabaseService singleton = new DatabaseService();
+	private static DatabaseService singleton = new DatabaseService();
 
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link DatabaseService#getInstance()} to get the

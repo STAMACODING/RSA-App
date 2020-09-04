@@ -20,7 +20,7 @@ import com.stamacoding.rsaApp.server.server.managers.ServerMessageManager;
 public class ServerSendService extends ServerService {
 	
 	/** The only instance of this class */
-	private static volatile ServerSendService singleton = new ServerSendService();
+	private static ServerSendService singleton = new ServerSendService();
 
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link ServerSendService#getInstance()} to get the

@@ -9,6 +9,8 @@ import java.sql.Statement;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.message.Message;
+import com.stamacoding.rsaApp.server.message.data.LocalData;
+import com.stamacoding.rsaApp.server.message.data.SendState;
 
 /**
  *  Interface to the client's chat database. In this chat database all messages the client receives and sends get stored.
@@ -19,7 +21,7 @@ import com.stamacoding.rsaApp.server.message.Message;
 public class DatabaseManager{
 	
 	/** The only instance of this class */
-	private volatile static DatabaseManager singleton = new DatabaseManager();
+	private static DatabaseManager singleton = new DatabaseManager();
 	
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the manager's {@link #singleton}. Use {@link DatabaseManager#getInstance()} to get the

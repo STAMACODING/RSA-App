@@ -11,7 +11,7 @@ import com.stamacoding.rsaApp.server.message.Message;
 public class ClientMessageManager extends AbstractMessageManager{
 	
 	/** The only instance of this class */
-	private static volatile ClientMessageManager singleton = new ClientMessageManager();
+	private static ClientMessageManager singleton = new ClientMessageManager();
 
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link ClientReceiveService#getInstance()} to get the
@@ -54,8 +54,10 @@ public class ClientMessageManager extends AbstractMessageManager{
 	 */
 	public Message getMessageToStoreOrUpdate() {
 		for(int i=0; i<getAllMessages().size(); i++) {
-			if(getAllMessages().get(i).getLocalData().isToStore() || getAllMessages().get(i).getLocalData().isToUpdate()) {
-				return getAllMessages().get(i);
+			Message m = getAllMessages().get(i);
+			if(m == null || m.getLocalData() == null) return null;
+			if(m.getLocalData().isToStore() || m.getLocalData().isToUpdate()) {
+				return m;
 			}
 		}
 		return null;
@@ -69,8 +71,9 @@ public class ClientMessageManager extends AbstractMessageManager{
 	public Message getMessageToSend() {
 		for(int i=0; i<getAllMessages().size(); i++) {
 			Message m = getAllMessages().get(i);
+			if(m == null || m.getLocalData() == null) return null;
 			if(m.getLocalData().isToSend()) {
-				return getAllMessages().get(i);
+				return m;
 			}
 		}
 		return null;

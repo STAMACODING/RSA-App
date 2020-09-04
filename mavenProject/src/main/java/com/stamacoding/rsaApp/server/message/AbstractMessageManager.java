@@ -28,12 +28,16 @@ public abstract class AbstractMessageManager {
 	 */
 	public void manage(Message...messages) {
 		for(Message m : messages) {
-			if(getAllMessages().indexOf(m) == -1) {
-				getAllMessages().add(m);
-				
-				Logger.debug(this.getClass().getSimpleName(), "Added new message to MessageManager");
+			if(m == null) {
+				Logger.warning(this.getClass().getSimpleName(), "Tried to add null message");
+				continue;
 			}
-			Logger.warning(this.getClass().getSimpleName(), "Tried to add already added message");
+			if(getAllMessages().indexOf(m) != -1) {
+				Logger.warning(this.getClass().getSimpleName(), "Tried to add already added message: " + m.toString());
+				continue;
+			}
+			getAllMessages().add(m);
+			Logger.debug(this.getClass().getSimpleName(), "Added new message to MessageManager: " + m.toString());
 		}
 	}
 }

@@ -15,7 +15,7 @@ import com.stamacoding.rsaApp.server.server.ServerConfig;
 public class ServerMainService extends Service{
 	
 	/** The only instance of this class */
-	private static volatile ServerMainService singleton = new ServerMainService();
+	private static ServerMainService singleton = new ServerMainService();
 
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link MessageService#getInstance()} to get the
