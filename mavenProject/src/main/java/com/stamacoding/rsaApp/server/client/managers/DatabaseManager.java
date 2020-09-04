@@ -59,13 +59,20 @@ public class DatabaseManager{
 	}
 	
 	/**
-	 * Updates a message in the chat database. The message has
+	 * Updates a message's SendState in the ChatHistory database. The message has
 	 * to be already stored in the database to get updated successfully.
-	 * @param updatedMessage
+	 * @param messageID of message that shoul be updated
+	 * @param newSendState updated SendState
 	 */
-	public boolean updateMessage(Message updatedMessage) {
+	public boolean updateMessageStatus(int messageID, SendState newSendState) {
+		int mID = messageID;
+		SendState st = newSendState;
+		MessageDAO messageDAO = new MessageDAO();
+		boolean worked = false;
 		
-		return true;
+		worked = messageDAO.updateStatus(mID, st);
+		
+		return worked;
 	}
 	
 	/**
@@ -87,6 +94,20 @@ public class DatabaseManager{
 		
 		return messages;		
 			
+	}
+	
+	/**
+	 * deletes a message Object from ChatHistory DB
+	 * @param messageID the id of the message that will be deleted
+	 * @return true if process is executed succesfully
+	 */
+	public boolean deleteMessage(int messageID) {
+		int mID = messageID;
+		MessageDAO messageDAO = new MessageDAO();
+		boolean worked = false;
+		
+		worked = messageDAO.deleteMessage(mID);
+		return worked;
 	}
 	
 	/**

@@ -140,7 +140,7 @@ public class MessageDAO {
 			status = 1;
 		}		
 		 
-		 if (messageId == 0 || date == 0 || message == null || sendingId == 0 || receivingId == 0 || status == 0) { // more information needed !!!
+		if (messageId == 0 || date == 0 || message == null || sendingId == 0 || receivingId == 0 || status == 0) { // more information needed !!!
 			 System.out.println("Failed to provide all neccessary data to add new message!!" );
 			 System.out.println("Failed to insert Message into ChatHistory");
 			 return false;
@@ -168,49 +168,33 @@ public class MessageDAO {
 	}
 	
 	/**
-	 * updates a certain user in DB
-	 * @param userID to identify the user which has to be updated
-	 * @param u , this is the updatedUserObject
-	 * stops when userID would change
-	 * stops when password, eMail or lastName is empty
-	 * gives error when update failed
+	 * updates a certain message's send state in DB
+	 * @param messageID to identify the message which has to be updated
+	 * @param st , this is the updatedMessage SendState
+	 * gives error when update fails
 	 * throws exception when error occures
 	 * @throws Exception 
 	 */
-	public void updateUser(int userID, User u ) throws Exception {
-		int uID = userID;
-		User updatedUser = u;
-		User oldUser = getUser(uID);
-		System.out.println(" from updatedUser");
+	public boolean updateStatus(int mID, SendState st) {
+		int messageID = mID;
+		SendState sendState = st;
 		String updateStatement;
 		
-		// get data from updated User
-		String lastName = updatedUser.getLastName();
-		String name = updatedUser.getName();
-		int birthDate = updatedUser.getBirthDate();
-		String eMail = updatedUser.geteMail();
-		String password = updatedUser.getPassword();
-		
-		if(lastName == null || eMail == null || password == null) { // stops when password, eMail or lastName is empty
-			System.out.println("lastName, eMail or password was set to 'null, which is not allowed");
-			return;
-		}
-		
-		if (oldUser.getUserID() != updatedUser.getUserID()) { // stops when userID would change
-			System.out.println("You tried to change the the userID of oldUser " + oldUser.getUserID() + ". This is not allowed !!");
-			return;
+		// get new SendState
+		SendState newSendState = st;
+		int status;
+		if (st == SendState.PENDING) {
+			status = 0;
+		}else {
+			status = 1;
 		}
 		
 		Connection con = getDBConnection(url, userName, password);
 		
-		//insert new user Data into prepared Statement
-		updateStatement = " UPDATE users "
-				+ "Set  lastName    = \"" + lastName + "\""
-					+ ",name        = \"" + name     + "\""
-					+ ",birthDate   =   " + birthDate
-					+ ",eMail       = \"" + eMail    + "\""
-					+ ",password    = \"" + password + "\""
-					+ "WHERe userID =  " + uID + " ";
+		//insert new message Data into prepared Statement
+		updateStatement = " UPDATE ChatHistory "
+				+ "Set  status    = " + status + " "
+				+ "where messageId = " + messageID + " ;";
 				
 		PreparedStatement pst;
 		try {
@@ -222,42 +206,46 @@ public class MessageDAO {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("Failed to update user information");
-			con.close();
+			return false;
 		}
-				
+			
+		return true;
 	}
 	
 	/**
-	 * deletes a user from Database
-	 * @param userID the userID of the user that will be delted
-	 * throws error when user is not existing
+	 * deletes a message from Database
+	 * @param messageID the messageID of the message that will be deleted
+	 * throws error when message is not existing
 	 * throw exception when process fails
 	 * @throws Exception 
 	 */
-	public void deleteUserObject(int userID) throws Exception {
+	public boolean deleteMessage(int messageID) {
 		
-		int uID = userID;
+		int mID = messageID;
 		 
 		 Connection con = getDBConnection(url, userName, password);
 		 
-		 String query = (String) "Delete from users where userID = " + uID;
+		 String query = (String) "Delete from ChatHistory where userID = " + mID;
 		 PreparedStatement pst;
 		 try {
 			pst = con.prepareStatement(query);
 			pst.executeUpdate();
-			System.out.println("Deleted user with userID: " + uID + " from usersDB.db");
+			System.out.println("Deleted message with messageID: " + mID + " from ChatHistory");
 			con.close();
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Failed to execute delete query");
 			e.printStackTrace();
-			// add exception when the user which is supposed to be deleted does not exist
-			con.close();
+			// add exception when the message which is supposed to be deleted does not exist
+			return false;
 		} 
+		 
+		 return true;
 	}
 	
 	
-	 /* connects to users database
+	 /* connects to ChatHistory database
 	 * @param URL the path to the DB
 	 * @param uName username of DB
 	 * @param p password of DB
