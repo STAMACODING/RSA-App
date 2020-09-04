@@ -49,9 +49,13 @@ public class DatabaseManager{
 	 * @return whether the storing process succeeded
 	 */
 	public boolean addMessageToDB(Message m) {
-		m.getLocalData().setId(23); // to tell message that it has been stored in the DB
+		boolean worked = false;
 		
-		return true;
+		MessageDAO messageDAO = new MessageDAO();
+		worked = messageDAO.addNewMessage(m);
+		m.getLocalData().setId(23); // to tell message that it has been stored in the DB ?????????????
+		
+		return worked;
 	}
 	
 	/**

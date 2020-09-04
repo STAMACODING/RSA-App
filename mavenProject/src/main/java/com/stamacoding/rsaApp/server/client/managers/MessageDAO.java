@@ -118,37 +118,53 @@ public class MessageDAO {
 	 * throw exception when process fails
 	 * @throws Exception 
 	 */
-	public void addNewMessage( Message newM) throws Exception {
-		 Message newMessage = newM;
+	public boolean addNewMessage( Message newM) {
+		
+		Message newMessage = newM;
 		 
-		 LocalData messageLocalData = newMessage.getLocalData();
-		 ProtectedData messageProtectedData = newMessage.getProtectedData();
-		 ServerData messageServerData = newMessage.getServerData();
+		LocalData messageLocalData = newMessage.getLocalData();
+		ProtectedData messageProtectedData = newMessage.getProtectedData();
+		ServerData messageServerData = newMessage.getServerData();
 		 
-		 if (userPassword == null) { // user needs to provide password !!!
-			 System.out.println("user: " + u.getUserID() + " did not provide a password!!" );
-			 System.out.println("failed to insert User into DB");
-			 return;
+		int messageId = messageLocalData.getId();
+		long date = messageProtectedData.getDate();
+		String message = messageProtectedData.getTextMessage();
+		int sendingId = (int) messageServerData.getSendingId();
+		int receivingId = (int) messageServerData.getReceivingId();
+		
+		SendState st = messageLocalData.getSendState();
+		int status;
+		if (st == SendState.PENDING) {
+			status = 0;
+		}else {
+			status = 1;
+		}		
+		 
+		 if (messageId == 0 || date == 0 || message == null || sendingId == 0 || receivingId == 0 || status == 0) { // more information needed !!!
+			 System.out.println("Failed to provide all neccessary data to add new message!!" );
+			 System.out.println("Failed to insert Message into ChatHistory");
+			 return false;
 		 }
 		 
 		 Connection con = getDBConnection(url, userName, password);
 		 
-		 String query = (String) "Insert into users(lastName,name,birthDate,eMail,password) "
-			 		+ "values(\"" + userLastName + "\", \"" + uName + "\", " + userBirthDate + ", \"" + userEMail + "\", \"" + userPassword + "\")";
+		 String query = (String) "Insert into ChatHistory(message,sendingID,receivingID,status,timestamp_sec) "
+			 		+ "values(\"" + message + "\", " + sendingId + ", " + receivingId + ", " + status + ", " + date + ") ";
 		 
 		 PreparedStatement pst;
 		 try {
 			pst = con.prepareStatement(query);
 			pst.executeUpdate();
-			System.out.println("Added new user to the userDB.db database");
+			System.out.println("Added new message to the ChatHistory");
 			con.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Failed to execute insert query");
-			System.out.println("failed to insert User into DB");
+			System.out.println("failed to insert message into DB");
 			e.printStackTrace();
-			con.close();
+			return false;
 		} 
+		 return true;
 	}
 	
 	/**
