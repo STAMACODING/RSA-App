@@ -10,7 +10,7 @@ import com.stamacoding.rsaApp.server.message.Message;
 public class ServerMessageManager extends AbstractMessageManager{
 	
 	/** The only instance of this class */
-	private static volatile ServerMessageManager singleton = new ServerMessageManager();
+	private static ServerMessageManager singleton = new ServerMessageManager();
 
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link ClientReceiveService#getInstance()} to get the
