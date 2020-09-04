@@ -34,34 +34,7 @@ public class DatabaseManager{
 	public static DatabaseManager getInstance() {
 		return singleton;
 	}
-	
 
-	/** The URL to the database file. */
-	private final String url = "jdbc:sqlite:DB/UserDatabase.db";
-	
-	/** The used user name to interact with the database. */
-	private final String userName = "root";
-	
-	/** The used password to interact with the database. */
-	private final String password = "root";
-
-	/**
-	 * Connects to the chat database using the JDBC driver. Returns {@code null} if the process fails.
-	 * @return the created connection
-	 */
-	public Connection connect(){
-		Connection con = null;
-		try {
-			Class.forName("org.sqlite.JDBC");
-			con = DriverManager.getConnection(url, userName, password);
-			Logger.debug(this.getClass().getSimpleName(), "Connecting to DB/UserDatabse.db succesfull");
-			
-			return con;
-		}catch(ClassNotFoundException | SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to connect to chat database");
-			return con;
-		}
-	}
 	
 	/**
 	 * Stores a message in the chat database. By doing that the message's id is set to something not equal to {@code -1}.
@@ -74,7 +47,8 @@ public class DatabaseManager{
 	 * @return whether the storing process succeeded
 	 */
 	public boolean addMessageToDB(Message m) {
-		m.getLocalData().setId(23);
+		m.getLocalData().setId(23); // to tell message that it has been stored in the DB
+		
 		return true;
 	}
 	
@@ -83,52 +57,30 @@ public class DatabaseManager{
 	 * to be already stored in the database to get updated successfully.
 	 * @param updatedMessage
 	 */
-	public void updateMessage(Message updatedMessage) {
+	public boolean updateMessage(Message updatedMessage) {
 		
+		return true;
 	}
 	
 	/**
 	 * Gets all messages stored in the chat database as array. Returns
 	 * {@code null} if the process fails.
-	 * @return all messages stored in the chat database
-	 * @throws Exception 
+	 * @param id // the sendingId for which the messages should be retrieved
+	 * @return all messages stored in the chat database 
 	 */
-	public Message[] getMessagesFromDB(){
-		try {
-			Connection con = DatabaseManager.getInstance().connect();
-			
-			String query = "SELECT * from ChatHistory";
-			
-			Statement state = con.createStatement();
-			Logger.debug(this.getClass().getSimpleName(), "Statement instance initiated");
-			
-			ResultSet rs = state.executeQuery(query);
-			Logger.debug(this.getClass().getSimpleName(), "Query executed succesfully");
-			
-			int messageId;
-			Date date;
-			String message;
-			int sendingId;
-			int status;
-			
-			printMessageFromDB(rs);
-			
-			
-			while(rs.next()) {
-				
-				messageId = rs.getInt("messageId");
-				date = new Date(rs.getLong("timestamp_sec"));
-				message = rs.getString("message");
-				sendingId = rs.getInt("sendingID");
-				status = rs.getInt("status");
-				
-			}
+	public Message[] getMessagesFromDB(int sendingId){
 		
+		int sID = sendingId;
+		int messageLimit = 10; // how many messges can be retreived and stored in array
+		Message[] messages = new Message [messageLimit];
+		
+		MessageDAO messagesDAO = new MessageDAO();
+		messages = messagesDAO.getMessages(sID, messageLimit);
+		
+		// printMessageFromDB(rs);
+		
+		return messages;		
 			
-		}catch(Exception e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to get messages from database");
-		}
-		return null;
 	}
 	
 	/**
@@ -185,7 +137,7 @@ public class DatabaseManager{
 	
 	
 	public static void main(String [] args) throws Exception {
-		Message[] messages = DatabaseManager.getInstance().getMessagesFromDB();
+		//Message[] messages = DatabaseManager.getInstance().getMessagesFromDB();
 	}
 	
 }
