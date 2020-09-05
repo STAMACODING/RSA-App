@@ -20,7 +20,7 @@ import com.stamacoding.rsaApp.server.server.managers.ServerMessageManager;
 public class ServerSendService extends ServerService {
 	
 	/** The only instance of this class */
-	private static ServerSendService singleton = new ServerSendService();
+	private volatile static ServerSendService singleton = new ServerSendService();
 
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link ServerSendService#getInstance()} to get the
@@ -57,14 +57,14 @@ public class ServerSendService extends ServerService {
 			if(ServerMessageManager.getInstance().getAllMessages().size() != 0) {
 
 				// 3. Read the client's id
-				byte clientId = readClientsId(connectionFromClient);
+				String username = readUsername(connectionFromClient);
 
 				// 4. Search for messages concerning the requesting client
-				Logger.debug(this.getClass().getSimpleName(), "Searching for messages concerning the requesting client (" + clientId + ")");
-				ArrayList<Message> messages = ServerMessageManager.getInstance().poll(clientId);
+				Logger.debug(this.getClass().getSimpleName(), "Searching for messages concerning the requesting client (" + username + ")");
+				ArrayList<Message> messages = ServerMessageManager.getInstance().poll(username);
 				
 				// 5. Send messages to the client
-				sendMessages(connectionFromClient, clientId, messages);
+				sendMessages(connectionFromClient, username, messages);
 			}else {
 				// 2. If there are no messages
 				Logger.debug(this.getClass().getSimpleName(), "No messages available to send");
@@ -96,12 +96,12 @@ public class ServerSendService extends ServerService {
 	 * @return the client's id
 	 * @throws IOException
 	 */
-	private byte readClientsId(Socket connectionFromClient) throws IOException {
+	private String readUsername(Socket connectionFromClient) throws IOException {
 		DataInputStream inputStream = new DataInputStream(connectionFromClient.getInputStream());
 
-		byte clientId = inputStream.readByte();
-		Logger.debug(this.getClass().getSimpleName(), "Client logged in as (" + clientId + ")");
-		return clientId;
+		String username = inputStream.readUTF();
+		Logger.debug(this.getClass().getSimpleName(), "Client logged in as (" + username + ")");
+		return username;
 	}
 	
 	/**
@@ -111,20 +111,20 @@ public class ServerSendService extends ServerService {
 	 * @param messages the messages to send
 	 * @throws IOException
 	 */
-	private void sendMessages(Socket connectionFromClient, byte clientId, ArrayList<Message> messages) throws IOException {
+	private void sendMessages(Socket connectionFromClient, String username, ArrayList<Message> messages) throws IOException {
 		int messageCount = messages.size();
 		byte[] messagesToSend = RSA.encryptF(messages);
 		DataOutputStream outputStream = new DataOutputStream(connectionFromClient.getOutputStream());
 		
 		if(messageCount > 0) {
-			Logger.debug(this.getClass().getSimpleName(), "Found " + messageCount + " messages belonging to (" + clientId + ")");
+			Logger.debug(this.getClass().getSimpleName(), "Found " + messageCount + " messages belonging to (" + username + ")");
 			
 			outputStream.writeInt(messagesToSend.length);
 			outputStream.write(messagesToSend);
 			
 			Logger.debug(this.getClass().getSimpleName(), "Successfully sent " + messageCount + " message(s) to a client");
 		}else{
-			Logger.debug(this.getClass().getSimpleName(), "Found no messages belongig to (" + clientId + ")");
+			Logger.debug(this.getClass().getSimpleName(), "Found no messages belongig to (" + username + ")");
 		}
 	}
 

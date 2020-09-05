@@ -16,7 +16,7 @@ import com.stamacoding.rsaApp.server.client.ClientConfig;
 public class ClientMainService extends Service{
 	
 	/** The only instance of this class */
-	private static ClientMainService singleton = new ClientMainService();
+	private volatile static ClientMainService singleton = new ClientMainService();
 
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link ClientMainService#getInstance()} to get the
@@ -59,7 +59,7 @@ public class ClientMainService extends Service{
 	}
 	
 	public static void main(String[] args) {
-		ClientConfig.setup((byte) 32, "192.168.2.123", 1001, 1002, 5000);
+		ClientConfig.setup("harryholly02", "test123", "192.168.2.123", 1001, 1002, 5000);
 		ClientMainService.getInstance().launch();
 	}
 }

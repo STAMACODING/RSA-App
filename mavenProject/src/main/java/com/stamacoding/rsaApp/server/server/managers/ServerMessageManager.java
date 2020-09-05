@@ -10,7 +10,7 @@ import com.stamacoding.rsaApp.server.message.Message;
 public class ServerMessageManager extends AbstractMessageManager{
 	
 	/** The only instance of this class */
-	private static ServerMessageManager singleton = new ServerMessageManager();
+	private volatile static ServerMessageManager singleton = new ServerMessageManager();
 
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link ClientReceiveService#getInstance()} to get the
@@ -33,10 +33,10 @@ public class ServerMessageManager extends AbstractMessageManager{
 	 * @param clientId the client's id
 	 * @return an {@link ArrayList} containing all messages that are concerned to the client with the specified id
 	 */
-	public ArrayList<Message> poll(byte clientId) {
+	public ArrayList<Message> poll(String username) {
 		ArrayList<Message> messagesToSend = new ArrayList<Message>();
 		for(int i=0; i<getAllMessages().size(); i++) {
-			if(getAllMessages().get(i).getServerData().getReceivingId() == clientId) {
+			if(getAllMessages().get(i).getServerData().getReceiving().equals(username)) {
 				messagesToSend.add(getAllMessages().get(i));
 				Logger.debug(this.getClass().getSimpleName(), "Polling message: " + messagesToSend.get(i).toString());
 				getAllMessages().get(i).encryptServerData();

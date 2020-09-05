@@ -4,7 +4,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.Service;
 import com.stamacoding.rsaApp.server.client.Client;
 import com.stamacoding.rsaApp.server.client.managers.ClientMessageManager;
-import com.stamacoding.rsaApp.server.client.managers.DatabaseManager;
+import com.stamacoding.rsaApp.server.client.managers.MessageDatabaseManager;
 import com.stamacoding.rsaApp.server.message.Message;
 
 /**
@@ -13,7 +13,7 @@ import com.stamacoding.rsaApp.server.message.Message;
 public class DatabaseService extends Service{
 	
 	/** The only instance of this class */
-	private static DatabaseService singleton = new DatabaseService();
+	private volatile static DatabaseService singleton = new DatabaseService();
 
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link DatabaseService#getInstance()} to get the
@@ -57,7 +57,7 @@ public class DatabaseService extends Service{
 	 * @param m the message to update
 	 */
 	private void updateMessage(Message m) {
-		DatabaseManager.getInstance().updateMessage(m);
+		MessageDatabaseManager.getInstance().updateMessage(m);
 		m.getLocalData().setUpdateRequested(false);
 		Logger.debug(this.getClass().getSimpleName(), "Updated message in the chat database");
 	}
@@ -67,7 +67,7 @@ public class DatabaseService extends Service{
 	 * @param m the message to store
 	 */
 	private void storeMessage(Message m) {
-		DatabaseManager.getInstance().addMessageToDB(m);
+		MessageDatabaseManager.getInstance().addMessageToDB(m);
 		m.getLocalData().setUpdateRequested(false);
 		Logger.debug(this.getClass().getSimpleName(), "Stored new message in the chat database");
 	}

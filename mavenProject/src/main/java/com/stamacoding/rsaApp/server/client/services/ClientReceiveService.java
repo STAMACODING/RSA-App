@@ -23,7 +23,7 @@ import com.stamacoding.rsaApp.server.server.Server;
 public class ClientReceiveService extends Service{
 	
 	/** The only instance of this class */
-	private static ClientReceiveService singleton = new ClientReceiveService();
+	private volatile static ClientReceiveService singleton = new ClientReceiveService();
 
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link ClientReceiveService#getInstance()} to get the
@@ -109,9 +109,9 @@ public class ClientReceiveService extends Service{
 	 * @throws IOException
 	 */
 	private void loginUsingClientID(Socket connectionToServer) throws IOException {
-		Logger.debug(this.getClass().getSimpleName(), "Querying messages from the send server using the client id (" + ClientConfig.ID + ")");
+		Logger.debug(this.getClass().getSimpleName(), "Querying messages from the send server using the username (" + ClientConfig.USER_NAME + ")");
 		DataOutputStream outputStream = new DataOutputStream(connectionToServer.getOutputStream());
-		outputStream.writeByte(ClientConfig.ID);
+		outputStream.writeUTF(ClientConfig.USER_NAME);
 	}
 	
 	/**

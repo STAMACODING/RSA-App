@@ -16,7 +16,7 @@ class AbstractMessageManagerTest {
 	@DisplayName("Test manage()")
 	@Test
 	void testManage() {
-		Message m = new Message(new LocalData(3, SendState.PENDING), new ProtectedData("Hallo Tim!", 2443444L), new ServerData((byte) 23, (byte) 11));
+		Message m = new Message(new LocalData(3, SendState.PENDING), new ProtectedData("Hallo Tim!", 2443444L), new ServerData("lol", "lol1"));
 		AbstractMessageManager manager = new AbstractMessageManager() {};
 		assertDoesNotThrow(() -> {manager.manage(m);});
 		assertEquals(m, manager.getAllMessages().get(0));

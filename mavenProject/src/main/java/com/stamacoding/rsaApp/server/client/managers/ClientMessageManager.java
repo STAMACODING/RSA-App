@@ -11,7 +11,7 @@ import com.stamacoding.rsaApp.server.message.Message;
 public class ClientMessageManager extends AbstractMessageManager{
 	
 	/** The only instance of this class */
-	private static ClientMessageManager singleton = new ClientMessageManager();
+	private volatile static ClientMessageManager singleton = new ClientMessageManager();
 
 	/**
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link ClientReceiveService#getInstance()} to get the
@@ -38,7 +38,7 @@ public class ClientMessageManager extends AbstractMessageManager{
 		Logger.debug(ClientMessageManager.class.getSimpleName(), "Querying stored messages from chat database");
 		Message[] storedMessages = null;
 		try {
-			storedMessages = DatabaseManager.getInstance().getMessagesFromDB();
+			storedMessages = MessageDatabaseManager.getInstance().getMessagesFromDB();
 			manage(storedMessages);
 			return true;
 		} catch (Exception e) {

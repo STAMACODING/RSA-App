@@ -227,9 +227,9 @@ public class Message implements Serializable{
 		sb.append(getLocalData().getId());
 		sb.append("] (");
 		if(getServerData() != null) {
-			sb.append(getServerData().getSendingId());
+			sb.append(getServerData().getSending());
 			sb.append(") => (");
-			sb.append(getServerData().getReceivingId());
+			sb.append(getServerData().getReceiving());
 			sb.append("): \"");
 		}else{
 			sb.append("?) => (?): \"");

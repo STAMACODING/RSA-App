@@ -37,8 +37,12 @@ public class Client {
 		ClientConfig.SERVER_IP = s.next();
 		System.out.print(TextUtils.inputAfter());
 		
-		System.out.print(TextUtils.inputBefore("Set client's id"));
-		ClientConfig.ID = s.nextByte();
+		System.out.print(TextUtils.inputBefore("Your username"));
+		ClientConfig.USER_NAME = s.next();
+		System.out.print(TextUtils.inputAfter());
+		
+		System.out.print(TextUtils.inputBefore("Your password"));
+		ClientConfig.USER_PASSWORD = s.next();
 		System.out.print(TextUtils.inputAfter());
 		
 		System.out.print(TextUtils.inputBefore("Set query-interval (in milliseconds)"));
@@ -49,7 +53,7 @@ public class Client {
 		String input = s.next(), message = "";
 		System.out.print(TextUtils.inputAfter());
 		
-		byte idReceiving = 0;
+		String userReceiving = null;
 		
 		if(input.equals("y")) {
 			System.out.print(TextUtils.inputBefore("Set message"));
@@ -60,8 +64,8 @@ public class Client {
 				e.printStackTrace();
 			}
 			
-			System.out.print(TextUtils.inputBefore("Set receiver's id"));
-			idReceiving = s.nextByte();
+			System.out.print(TextUtils.inputBefore("Set receiver's username"));
+			userReceiving = s.next();
 			System.out.print(TextUtils.inputAfter());
 		}
 	
@@ -72,7 +76,7 @@ public class Client {
 		
 		ClientMainService.getInstance().launch();
 		if(input.equals("y")) {
-			Message m = new Message(new LocalData(-1, SendState.PENDING), new ProtectedData(message, System.currentTimeMillis()), new ServerData(ClientConfig.ID, idReceiving));
+			Message m = new Message(new LocalData(-1, SendState.PENDING), new ProtectedData(message, System.currentTimeMillis()), new ServerData(ClientConfig.USER_NAME, userReceiving));
 			ClientMessageManager.getInstance().manage(m);
 		}
 	}

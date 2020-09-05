@@ -11,8 +11,11 @@ import com.stamacoding.rsaApp.server.client.services.ClientReceiveService;
  */
 public class ClientConfig {
 	
-	/** The client's unique id */
-	public static byte ID = -1;
+	/** The user's unique name */
+	public static String USER_NAME = null;
+	
+	/** The user's password */
+	public static String USER_PASSWORD = null;
 	
 	/**
 	 * The time the {@link ClientReceiveService} waits before querying new messages from
@@ -40,8 +43,9 @@ public class ClientConfig {
 	 * @param receivePort the client's receive port
 	 * @param queryMessagesInterval The time the {@link ClientReceiveService} waits before querying new messages from the server
 	 */
-	public static void setup(byte ID, String serverIP, int sendPort, int receivePort, long queryMessagesInterval) {
-		ClientConfig.ID = ID;
+	public static void setup(String userName, String userPassword, String serverIP, int sendPort, int receivePort, long queryMessagesInterval) {
+		ClientConfig.USER_NAME = userName;
+		ClientConfig.USER_PASSWORD = userPassword;
 		ClientConfig.SERVER_IP = serverIP;
 		ClientConfig.SEND_PORT = sendPort;
 		ClientConfig.RECEIVE_PORT = receivePort;
@@ -54,7 +58,8 @@ public class ClientConfig {
 	 * @return if the configurations are valid
 	 */
 	public static boolean isValid() {	
-		if(ID < 0) return false;
+		if(USER_PASSWORD == null || USER_PASSWORD.length() == 0) return false;
+		if(USER_NAME == null || USER_NAME.length() == 0) return false;
 		if(!NetworkUtils.isValidInet4Address(SERVER_IP)) return false;
 		
 		if(SEND_PORT < 0) return false;
@@ -73,8 +78,9 @@ public class ClientConfig {
 		sb.append(TextUtils.heading("Client Configuration"));
 		sb.append(TextUtils.box(""));
 		
-		// Client ID
-		sb.append(TextUtils.fancyParameter("Client ID", String.valueOf(ClientConfig.ID)));
+		// Client Information
+		sb.append(TextUtils.fancyParameter("User name", String.valueOf(ClientConfig.USER_NAME)));
+		sb.append(TextUtils.fancyParameter("User password", String.valueOf(ClientConfig.USER_PASSWORD)));
 		
 		// Server IP
 		sb.append(TextUtils.fancyParameter("Server IP", ClientConfig.SERVER_IP));
