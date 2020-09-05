@@ -51,10 +51,12 @@ public class ClientSendService extends Service {
 	@Override
 	public void onRepeat() {
 		// 0. Check if there is any message to send
-		Message m = ClientMessageManager.getInstance().getMessageToSend();
-		if(m != null) {
+		Message originalM = ClientMessageManager.getInstance().getMessageToSend();
+		if(originalM != null) {
 			Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
-			Logger.debug(this.getClass().getSimpleName(), "Message to send: " + m.toString());
+			Logger.debug(this.getClass().getSimpleName(), "Message to send: " + originalM.toString());
+			
+			Message m = originalM.clone();
 			
 			// 1. Encrypt message
 			encryptMessage(m);
@@ -66,7 +68,7 @@ public class ClientSendService extends Service {
 					sendMessage(m, connectionToServer);
 					
 					// 4. Update message's state
-					updateMessageState(m);
+					updateMessageState(originalM);
 					
 					
 					// 5. Close Connection
@@ -89,8 +91,7 @@ public class ClientSendService extends Service {
 	 * @param m the message to encrypt
 	 */
 	private void encryptMessage(Message m) {
-		m.encryptProtectedData();
-		m.encryptServerData();
+		m.encrypt();
 		Logger.debug(this.getClass().getSimpleName(), "Encrypted message");
 	}
 	
@@ -125,7 +126,7 @@ public class ClientSendService extends Service {
 		
 		out.flush();
 			
-		Logger.debug(this.getClass().getSimpleName(), "Successfully sent message to the receive server");
+		Logger.debug(this.getClass().getSimpleName(), "Successfully sent message to the receive server: " + m.toString());
 	}
 	
 	/**

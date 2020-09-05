@@ -131,4 +131,9 @@ public class LocalData implements Serializable{
 	public boolean isToSend() {
 		return getSendState().equals(SendState.PENDING);
 	}
+	
+	@Override
+	public LocalData clone() {
+		return new LocalData(getId(), getSendState());
+	}
 }

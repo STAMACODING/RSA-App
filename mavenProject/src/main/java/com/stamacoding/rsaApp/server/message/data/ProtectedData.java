@@ -75,4 +75,9 @@ public class ProtectedData implements Serializable{
 		}
 		return false;
 	}
+	
+	@Override
+	public ProtectedData clone() {
+		return new ProtectedData(getTextMessage(), getDate());
+	}
 }

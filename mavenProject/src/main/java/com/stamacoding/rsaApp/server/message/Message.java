@@ -8,6 +8,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.rsa.RSA;
 import com.stamacoding.rsaApp.server.message.data.LocalData;
 import com.stamacoding.rsaApp.server.message.data.ProtectedData;
+import com.stamacoding.rsaApp.server.message.data.SendState;
 import com.stamacoding.rsaApp.server.message.data.ServerData;
 
 /**
@@ -19,7 +20,7 @@ public class Message implements Serializable{
 	private static final long serialVersionUID = 7382792471329161848L;
 	
 	/** The message's {@link LocalData} */
-	private final LocalData localData;
+	private LocalData localData = new LocalData(-1, SendState.PENDING);
 	
 	/** The message's {@link ProtectedData} */
 	private ProtectedData protectedData;
@@ -34,6 +35,8 @@ public class Message implements Serializable{
 	private byte[] encryptedServerData;
 	
 	
+	private Message() {}
+	
 	/**
 	 * Creates a fully decoded message. All parameters are not allowed to be {@code null}.
 	 * @param localData the message's local data
@@ -41,9 +44,7 @@ public class Message implements Serializable{
 	 * @param serverData the message's server data
 	 */
 	public Message(LocalData localData, ProtectedData protectedData, ServerData serverData) {
-		if(localData == null) Logger.error(this.getClass().getSimpleName(),  new IllegalArgumentException("LocalData localData is not allowed to be null!"));
-		
-		this.localData = localData;
+		setLocalData(localData);
 		setProtectedData(protectedData);
 		setServerData(serverData);
 	}
@@ -55,9 +56,7 @@ public class Message implements Serializable{
 	 * @param encryptedServerData the message's server data as encrypted byte array
 	 */
 	public Message(LocalData localData, byte[] encryptedProtectedData, byte[] encryptedServerData) {
-		if(localData == null) Logger.error(this.getClass().getSimpleName(),   new IllegalArgumentException("LocalData localData is not allowed to be null!"));
-		
-		this.localData = localData;
+		setLocalData(localData);
 		setEncryptedProtectedData(encryptedProtectedData);
 		setEncryptedServerData(encryptedServerData);
 	}
@@ -69,9 +68,7 @@ public class Message implements Serializable{
 	 * @param serverData the message's server data
 	 */
 	public Message(LocalData localData, byte[] encryptedProtectedData, ServerData serverData) {
-		if(localData == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("LocalData localData is not allowed to be null!"));
-		
-		this.localData = localData;
+		setLocalData(localData);
 		setEncryptedProtectedData(encryptedProtectedData);
 		setServerData(serverData);
 	}
@@ -248,6 +245,12 @@ public class Message implements Serializable{
 		return sb.toString();
 	}
 
+	private void setLocalData(LocalData localData) {
+		if(localData == null) Logger.error(this.getClass().getSimpleName(),  new IllegalArgumentException("LocalData localData is not allowed to be null!"));
+		
+		this.localData = localData;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == null) return false;
@@ -278,6 +281,33 @@ public class Message implements Serializable{
 		}
 		return false;
 	}
+	
+	public void encrypt() {
+		encryptProtectedData();
+		encryptServerData();
+	}
+	
+	public void decrypt() {
+		decryptProtectedData();
+		decryptServerData();
+	}
+	
+	public boolean isEncrypted() {
+		return getEncryptedProtectedData() == null && getEncryptedServerData() == null;
+	}
+	
+	@Override
+	public Message clone(){
+		Message m = new Message();
+		if(getEncryptedProtectedData() != null) m.setEncryptedProtectedData(getEncryptedProtectedData().clone());
+		if(getEncryptedServerData() != null) m.setEncryptedServerData(getEncryptedServerData().clone());
+		if(getLocalData() != null) m.setLocalData(getLocalData().clone());
+		if(getProtectedData() != null) m.setProtectedData(getProtectedData().clone());
+		if(getServerData() != null) m.setServerData(getServerData().clone());
+		return m;
+	}
+	
+	
 	
 	public static void main(String[] args){
 		new Thread(new Runnable() {

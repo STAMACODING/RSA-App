@@ -39,8 +39,7 @@ public class ServerMessageManager extends AbstractMessageManager{
 			if(getAllMessages().get(i).getServerData().getReceiving().equals(username)) {
 				messagesToSend.add(getAllMessages().get(i));
 				Logger.debug(this.getClass().getSimpleName(), "Polling message: " + messagesToSend.get(i).toString());
-				getAllMessages().get(i).encryptServerData();
-				getAllMessages().get(i).encryptProtectedData();
+				getAllMessages().get(i).encrypt();
 			}
 		}
 		for(Message m : messagesToSend) {

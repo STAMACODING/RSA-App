@@ -147,8 +147,7 @@ public class ClientReceiveService extends Service{
 			m.getLocalData().setId(-1);
 			m.getLocalData().setSendState(SendState.SENT);
 			
-	    	m.decryptServerData();
-	    	m.decryptProtectedData();
+	    	m.decrypt();
 		}
 		Logger.debug(this.getClass().getSimpleName(), "Decrypted " + messages.size() +  " message(s)");
 	}

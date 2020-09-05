@@ -64,4 +64,8 @@ public class ServerData implements Serializable {
 		}
 		return false;
 	}
+	
+	public ServerData clone() {
+		return new ServerData(getSending(), getReceiving());
+	}
 }
