@@ -57,9 +57,4 @@ public class ClientMainService extends Service{
 		ClientReceiveService.getInstance().setStopRequested(true);
 		ClientSendService.getInstance().setStopRequested(true);
 	}
-	
-	public static void main(String[] args) {
-		ClientConfig.setup("harryholly02", "test123", "192.168.2.123", 1001, 1002, 5000);
-		ClientMainService.getInstance().launch();
-	}
 }

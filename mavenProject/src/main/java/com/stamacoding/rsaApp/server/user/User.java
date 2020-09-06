@@ -1,9 +1,23 @@
 package com.stamacoding.rsaApp.server.user;
 
-public class User{
+import java.io.Serializable;
+
+public class User implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4715340391545299952L;
+	
+	
 	private long id;
 	private String name;
 	private String password;
+	
+	public User(String name, String password) {
+		setId(-1);
+		setName(name);
+		setPassword(password);
+	}
 	
 	public User(long id, String name, String password) {
 		setId(id);
@@ -34,6 +48,4 @@ public class User{
 	public void setId(long id) {
 		this.id = id;
 	}
-	
-	
 }

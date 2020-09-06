@@ -25,29 +25,65 @@ public class Client {
 		System.out.print(TextUtils.box(""));
 		Scanner s = new Scanner(System.in);
 		
-		System.out.print(TextUtils.inputBefore("Set client receive port"));
-		ClientConfig.RECEIVE_PORT = s.nextInt();
-		System.out.print(TextUtils.inputAfter());
-		
-		System.out.print(TextUtils.inputBefore("Set client send port"));
-		ClientConfig.SEND_PORT = s.nextInt();
-		System.out.print(TextUtils.inputAfter());
-		
-		System.out.print(TextUtils.inputBefore("Set server's ip"));
-		ClientConfig.SERVER_IP = s.next();
-		System.out.print(TextUtils.inputAfter());
-		
-		System.out.print(TextUtils.inputBefore("Your username"));
-		ClientConfig.USER_NAME = s.next();
-		System.out.print(TextUtils.inputAfter());
-		
-		System.out.print(TextUtils.inputBefore("Your password"));
-		ClientConfig.USER_PASSWORD = s.next();
-		System.out.print(TextUtils.inputAfter());
-		
-		System.out.print(TextUtils.inputBefore("Set query-interval (in milliseconds)"));
-		ClientConfig.QUERY_MESSAGES_INTERVAL = s.nextLong();
-		System.out.print(TextUtils.inputAfter());
+		ClientConfig.read();
+		do {
+			ClientConfig.log();
+			System.out.print(TextUtils.inputBefore("Want to change your configurations? (y/n)"));
+			boolean change = s.next().equals("y");
+			System.out.print(TextUtils.inputAfter());
+			
+			if(!change) break;
+			
+			System.out.print(TextUtils.inputBefore("Set client receive port"));
+			ClientConfig.RECEIVE_PORT = s.nextInt();
+			System.out.print(TextUtils.inputAfter());
+			
+			System.out.print(TextUtils.inputBefore("Set client send port"));
+			ClientConfig.SEND_PORT = s.nextInt();
+			System.out.print(TextUtils.inputAfter());
+			
+			System.out.print(TextUtils.inputBefore("Set sign-up port"));
+			ClientConfig.SIGNUP_PORT = s.nextInt();
+			System.out.print(TextUtils.inputAfter());
+			
+			System.out.print(TextUtils.inputBefore("Set log-in port"));
+			ClientConfig.LOGIN_PORT = s.nextInt();
+			System.out.print(TextUtils.inputAfter());
+			
+			System.out.print(TextUtils.inputBefore("Set ping port"));
+			ClientConfig.PING_PORT = s.nextInt();
+			System.out.print(TextUtils.inputAfter());
+			
+			System.out.print(TextUtils.inputBefore("Set server's ip"));
+			ClientConfig.SERVER_IP = s.next();
+			System.out.print(TextUtils.inputAfter());
+			
+			System.out.print(TextUtils.inputBefore("Your username"));
+			ClientConfig.USER_NAME = s.next();
+			System.out.print(TextUtils.inputAfter());
+			
+			System.out.print(TextUtils.inputBefore("Your password"));
+			ClientConfig.USER_PASSWORD = s.next();
+			System.out.print(TextUtils.inputAfter());
+			
+			System.out.print(TextUtils.inputBefore("Set query-interval (in milliseconds)"));
+			ClientConfig.QUERY_MESSAGES_INTERVAL = s.nextLong();
+			System.out.print(TextUtils.inputAfter());
+			
+			System.out.print(TextUtils.inputBefore("Set retry-signup-interval (in milliseconds)"));
+			ClientConfig.RETRY_SIGNUP_INTERVAL = s.nextLong();
+			System.out.print(TextUtils.inputAfter());
+			
+			System.out.print(TextUtils.inputBefore("Set retry-login-interval (in milliseconds)"));
+			ClientConfig.RETRY_LOGIN_INTERVAL = s.nextLong();
+			System.out.print(TextUtils.inputAfter());
+			
+			System.out.print(TextUtils.inputBefore("Set ping-interval (in milliseconds)"));
+			ClientConfig.PING_INTERVAL = s.nextLong();
+			System.out.print(TextUtils.inputAfter());
+			
+			ClientConfig.save();
+		} while(true);
 		
 		System.out.print(TextUtils.inputBefore("Do you want to send a message? (y/n)"));
 		String input = s.next(), message = "";

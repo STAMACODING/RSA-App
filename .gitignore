@@ -2,6 +2,7 @@
 
 # Files
 *.log
+*.config
 
 #VSCode Meta
 
