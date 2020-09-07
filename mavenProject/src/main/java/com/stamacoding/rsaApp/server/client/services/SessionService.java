@@ -26,6 +26,7 @@ public class SessionService extends Service{
 	 */
 	private SessionService() {
 		super(SessionService.class.getSimpleName());
+		if(ClientConfig.REGISTERED) getSession().setState(LoginState.SIGNED_IN);
 	}
 	
 	/**

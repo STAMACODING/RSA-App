@@ -23,6 +23,9 @@ public class ClientConfig {
 	/** The user's password */
 	public static String USER_PASSWORD = null;
 	
+	// TODO doc
+	public static boolean REGISTERED = false;
+	
 	/**
 	 * The client sends messages to this port.
 	 */
@@ -59,7 +62,7 @@ public class ClientConfig {
 	 * @param receivePort the client's receive port
 	 * @param queryMessagesInterval The time the {@link ClientReceiveService} waits before querying new messages from the server
 	 */
-	public static void setup(String userName, String userPassword, String serverIP, int sendPort, int receivePort, int signupPort, int loginPort, int pingPort, long queryMessagesInterval, long retrySignUpInterval, long retryLoginInterval, long pingInterval) {
+	public static void setup(String userName, String userPassword, String serverIP, int sendPort, int receivePort, int signupPort, int loginPort, int pingPort, long queryMessagesInterval, long retrySignUpInterval, long retryLoginInterval, long pingInterval, boolean registered) {
 		USER_NAME = userName;
 		USER_PASSWORD = userPassword;
 		SERVER_IP = serverIP;
@@ -74,6 +77,8 @@ public class ClientConfig {
 		RETRY_SIGNUP_INTERVAL = retrySignUpInterval;
 		RETRY_LOGIN_INTERVAL = retryLoginInterval;
 		PING_INTERVAL = pingInterval;
+		
+		REGISTERED = registered;
 	}
 
 	/**
@@ -151,6 +156,8 @@ public class ClientConfig {
 		// Ping Interval
 		sb.append(TextUtils.fancyParameter("Ping Interval", String.valueOf(ClientConfig.PING_INTERVAL)));
 		
+		sb.append(TextUtils.fancyParameter("Registered", String.valueOf(ClientConfig.REGISTERED).toUpperCase()));
+		
 		sb.append(TextUtils.box(""));
 		
 		if(isValid()) sb.append(TextUtils.heading("VALID"));
@@ -179,6 +186,8 @@ public class ClientConfig {
 	    properties.put("RETRY_SIGNUP_INTERVAL", String.valueOf(RETRY_SIGNUP_INTERVAL));
 	    properties.put("RETRY_LOGIN_INTERVAL", String.valueOf(RETRY_LOGIN_INTERVAL));
 	    properties.put("PING_INTERVAL", String.valueOf(PING_INTERVAL));
+	    
+	    properties.put("REGISTERED", String.valueOf(REGISTERED));
 
 	    try {
 			properties.storeToXML(new FileOutputStream(FILE_NAME), "Client Configurations");
@@ -206,7 +215,8 @@ public class ClientConfig {
 					Long.valueOf(properties.getProperty("QUERY_MESSAGES_INTERVAL")),  
 					Long.valueOf(properties.getProperty("RETRY_SIGNUP_INTERVAL")),  
 					Long.valueOf(properties.getProperty("RETRY_LOGIN_INTERVAL")),  
-					Long.valueOf(properties.getProperty("PING_INTERVAL"))
+					Long.valueOf(properties.getProperty("PING_INTERVAL")),
+					Boolean.valueOf(properties.getProperty("REGISTERED"))
 					);
 			Logger.debug(ClientConfig.class.getSimpleName(), "Read preferences from .xml file");
 		} catch (IOException e) {

@@ -66,6 +66,10 @@ public class Client {
 			ClientConfig.USER_PASSWORD = s.next();
 			System.out.print(TextUtils.inputAfter());
 			
+			System.out.print(TextUtils.inputBefore("Are you a registered user? (y/n)"));
+			ClientConfig.REGISTERED = s.next().equals("y");
+			System.out.print(TextUtils.inputAfter());
+			
 			System.out.print(TextUtils.inputBefore("Set query-interval (in milliseconds)"));
 			ClientConfig.QUERY_MESSAGES_INTERVAL = s.nextLong();
 			System.out.print(TextUtils.inputAfter());
