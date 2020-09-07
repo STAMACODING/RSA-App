@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.client.services.ClientSendService;
-import com.stamacoding.rsaApp.server.client.services.DatabaseService;
+import com.stamacoding.rsaApp.server.client.services.ChatDatabaseService;
 import com.stamacoding.rsaApp.server.server.services.ServerSendService;
 
 /**
@@ -92,33 +92,45 @@ public class LocalData implements Serializable{
 		this.sendState = sendState;
 	}
 	
-	/**
-	 * Indicates if another object is equal to this one.
-	 * @return whether another object is equal
-	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		result = prime * result + ((sendState == null) ? 0 : sendState.hashCode());
+		result = prime * result + (updateRequested ? 1231 : 1237);
+		return result;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
-		if(obj == null) return false;
-		if(obj instanceof LocalData) {
-			LocalData pd = (LocalData) obj;
-			if(pd.getId() != this.getId()) return false;
-			if(pd.getSendState() != this.getSendState()) return false;
+		if (this == obj)
 			return true;
-		}
-		return false;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LocalData other = (LocalData) obj;
+		if (id != other.id)
+			return false;
+		if (sendState != other.sendState)
+			return false;
+		if (updateRequested != other.updateRequested)
+			return false;
+		return true;
 	}
 	
 	/**
-	 * Checks whether the message should get stored in the chat database by the {@link DatabaseService}.
-	 * @return whether the message should get stored in the chat database by the {@link DatabaseService}
+	 * Checks whether the message should get stored in the chat database by the {@link ChatDatabaseService}.
+	 * @return whether the message should get stored in the chat database by the {@link ChatDatabaseService}
 	 */
 	public boolean isToStore() {
 		return getId() == -1;
 	}
 
 	/**
-	 * Checks whether the message should get updated by the {@link DatabaseService}.
-	 * @return whether the message should get updated by the {@link DatabaseService}
+	 * Checks whether the message should get updated by the {@link ChatDatabaseService}.
+	 * @return whether the message should get updated by the {@link ChatDatabaseService}
 	 */
 	public boolean isToUpdate() {
 		return this.isUpdateRequested() && !isToStore();

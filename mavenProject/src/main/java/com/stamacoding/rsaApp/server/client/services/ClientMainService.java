@@ -8,7 +8,7 @@ import com.stamacoding.rsaApp.server.client.ClientConfig;
  * <p>{@link Service} handling all client message transfers. Additionally this service stores all messages in a chat database.</p>
  * Unites the work of these services: 
  * <ul>
- *  <li>{@link DatabaseService}</li>
+ *  <li>{@link ChatDatabaseService}</li>
  *  <li>{@link ClientReceiveService}</li>
  *  <li>{@link ClientSendService}</li>
  * </ul>
@@ -43,7 +43,11 @@ public class ClientMainService extends Service{
 		if(!ClientConfig.isValid()) Logger.error(this.getClass().getSimpleName(), new IllegalStateException("Invalid client configuration! Use ClientConfig.setup() to fix"));
 		
 		Logger.debug(this.getClass().getSimpleName(), "Launching subservices...");
-		DatabaseService.getInstance().launch();
+
+		// Unfinished
+		SessionService.getInstance().launch();
+		
+		ChatDatabaseService.getInstance().launch();
 		ClientReceiveService.getInstance().launch();
 		ClientSendService.getInstance().launch();
 	}
@@ -53,8 +57,11 @@ public class ClientMainService extends Service{
 	 */
 	@Override
 	public void onStop() {
-		DatabaseService.getInstance().setStopRequested(true);
+		ChatDatabaseService.getInstance().setStopRequested(true);
 		ClientReceiveService.getInstance().setStopRequested(true);
 		ClientSendService.getInstance().setStopRequested(true);
+		
+		// Unfinished
+		SessionService.getInstance().setStopRequested(true);
 	}
 }

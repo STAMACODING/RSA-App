@@ -14,7 +14,7 @@ public class ProtectedData implements Serializable{
 	private static final long serialVersionUID = -4421436516268769528L;
 
 	/** The message as decoded string */
-	private String textMessage;
+	private final String textMessage;
 	
 	/** The time the message was originally created */
 	private final long date;
@@ -28,9 +28,10 @@ public class ProtectedData implements Serializable{
 	 */
 	public ProtectedData(String textMessage, long date) {
 		if(date < 0) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("long date (" + date +  ") should be greater than 0 !"));
+		if(textMessage == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("String textMessage is not allowed to be null!"));
 		
 		this.date = date;
-		setTextMessage(textMessage);
+		this.textMessage = textMessage;
 	}
 	
 	
@@ -49,31 +50,34 @@ public class ProtectedData implements Serializable{
 	public String getTextMessage() {
 		return textMessage;
 	}
-
-	/**
-	 * Sets the message.
-	 * @param textMessage the message
-	 */
-	public void setTextMessage(String textMessage) {
-		if(textMessage == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("String textMessage is not allowed to be null!"));
-		
-		this.textMessage = textMessage;
-	}
 	
-	/**
-	 * Indicates if another object is equal to this one.
-	 * @return whether another object is equal
-	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (date ^ (date >>> 32));
+		result = prime * result + ((textMessage == null) ? 0 : textMessage.hashCode());
+		return result;
+	}
+
+
 	@Override
 	public boolean equals(Object obj) {
-		if(obj == null) return false;
-		if(obj instanceof ProtectedData) {
-			ProtectedData pd = (ProtectedData) obj;
-			if(pd.getDate() != this.getDate()) return false;
-			if(!pd.getTextMessage().equals(this.getTextMessage())) return false;
+		if (this == obj)
 			return true;
-		}
-		return false;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProtectedData other = (ProtectedData) obj;
+		if (date != other.date)
+			return false;
+		if (textMessage == null) {
+			if (other.textMessage != null)
+				return false;
+		} else if (!textMessage.equals(other.textMessage))
+			return false;
+		return true;
 	}
 	
 	@Override

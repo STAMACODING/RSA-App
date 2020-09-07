@@ -10,6 +10,7 @@ import com.stamacoding.rsaApp.server.server.ServerConfig;
  * <ul>
  *  <li>{@link ServerReceiveService}</li>
  *  <li>{@link ServerSendService}</li>
+ *  <li>Not documentated new ones (coming soon)</li>
  * </ul>
  */
 public class ServerMainService extends Service{
@@ -41,8 +42,14 @@ public class ServerMainService extends Service{
 		ServerConfig.log();
 		if(!ServerConfig.isValid()) Logger.error(this.getClass().getSimpleName(), new IllegalStateException("Invalid server configuration! Use ServerConfig.setup() to fix"));
 		
-		ServerReceiveService.getInstance().launch();
+		UserDatabaseService.getInstance().launch();
 		ServerSendService.getInstance().launch();
+		ServerReceiveService.getInstance().launch();
+		
+		// TODO: Unfinished
+		PingService.getInstance().launch();
+		SignUpService.getInstance().launch();
+		LoginService.getInstance().launch();
 	}
 	
 	/**
@@ -52,5 +59,11 @@ public class ServerMainService extends Service{
 	public void onStop() {
 		ServerReceiveService.getInstance().setStopRequested(true);
 		ServerSendService.getInstance().setStopRequested(true);
+		
+		SignUpService.getInstance().setStopRequested(true);
+		LoginService.getInstance().setStopRequested(true);
+		PingService.getInstance().setStopRequested(true);
+		
+		UserDatabaseService.getInstance().setStopRequested(true);
 	}
 }

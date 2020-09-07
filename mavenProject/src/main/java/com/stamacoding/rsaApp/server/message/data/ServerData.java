@@ -50,19 +50,36 @@ public class ServerData implements Serializable {
 		return receivingUser;
 	}
 	
-	/**
-	 * Indicates if another object is equal to this one.
-	 * @return whether another object is equal
-	 */
 	@Override
-	public boolean equals(Object o) {
-		if(o instanceof ServerData) {
-			ServerData d2 = (ServerData) o;
-			if(!d2.getReceiving().equals(this.getReceiving())) return false;
-			if(!d2.getSending().equals(this.getSending())) return false;
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((receivingUser == null) ? 0 : receivingUser.hashCode());
+		result = prime * result + ((sendingUser == null) ? 0 : sendingUser.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		}
-		return false;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ServerData other = (ServerData) obj;
+		if (receivingUser == null) {
+			if (other.receivingUser != null)
+				return false;
+		} else if (!receivingUser.equals(other.receivingUser))
+			return false;
+		if (sendingUser == null) {
+			if (other.sendingUser != null)
+				return false;
+		} else if (!sendingUser.equals(other.sendingUser))
+			return false;
+		return true;
 	}
 	
 	public ServerData clone() {

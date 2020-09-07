@@ -252,34 +252,46 @@ public class Message implements Serializable{
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(encryptedProtectedData);
+		result = prime * result + Arrays.hashCode(encryptedServerData);
+		result = prime * result + ((localData == null) ? 0 : localData.hashCode());
+		result = prime * result + ((protectedData == null) ? 0 : protectedData.hashCode());
+		result = prime * result + ((serverData == null) ? 0 : serverData.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
-		if(obj == null) return false;
-		if(obj instanceof Message) {
-			Message m2 = (Message) obj;
-			if(this.getLocalData() == null) {
-				if(m2.getLocalData() != null) return false;
-			}else {
-				if(!this.getLocalData().equals(m2.getLocalData())) return false;
-			}
-			
-			if(this.getProtectedData() == null) {
-				if(m2.getProtectedData() != null) return false;
-			}else {
-				if(!this.getProtectedData().equals(m2.getProtectedData())) return false;
-			}
-			
-			if(this.getServerData() == null) {
-				if(m2.getServerData() != null) return false;
-			}else {
-				if(!this.getServerData().equals(m2.getServerData())) return false;
-			}
-			
-			if(!Arrays.equals(m2.getEncryptedProtectedData(), this.getEncryptedProtectedData())) return false;
-			if(!Arrays.equals(m2.getEncryptedServerData(), this.getEncryptedServerData())) return false;
-			
+		if (this == obj)
 			return true;
-		}
-		return false;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Message other = (Message) obj;
+		if (!Arrays.equals(encryptedProtectedData, other.encryptedProtectedData))
+			return false;
+		if (!Arrays.equals(encryptedServerData, other.encryptedServerData))
+			return false;
+		if (localData == null) {
+			if (other.localData != null)
+				return false;
+		} else if (!localData.equals(other.localData))
+			return false;
+		if (protectedData == null) {
+			if (other.protectedData != null)
+				return false;
+		} else if (!protectedData.equals(other.protectedData))
+			return false;
+		if (serverData == null) {
+			if (other.serverData != null)
+				return false;
+		} else if (!serverData.equals(other.serverData))
+			return false;
+		return true;
 	}
 	
 	public void encrypt() {

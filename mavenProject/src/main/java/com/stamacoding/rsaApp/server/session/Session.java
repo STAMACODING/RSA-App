@@ -2,13 +2,13 @@ package com.stamacoding.rsaApp.server.session;
 
 public class Session {
 	private long id;
-	private SessionState state = SessionState.NONE;
+	private LoginState state = LoginState.NONE;
 	
 	public Session(long id) {
 		setId(id);
 	}
 	
-	public Session(long id, SessionState state) {
+	public Session(long id, LoginState state) {
 		setId(id);
 	}
 
@@ -21,11 +21,11 @@ public class Session {
 	}
 	
 
-	public SessionState getState() {
+	public LoginState getState() {
 		return state;
 	}
 
-	public void setState(SessionState state) {
+	public void setState(LoginState state) {
 		this.state = state;
 	}
 }

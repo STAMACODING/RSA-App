@@ -9,12 +9,11 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.rsa.RSA;
 import com.stamacoding.rsaApp.server.Service;
 import com.stamacoding.rsaApp.server.client.ClientConfig;
-import com.stamacoding.rsaApp.server.session.SessionState;
+import com.stamacoding.rsaApp.server.session.LoginState;
 import com.stamacoding.rsaApp.server.user.User;
 import com.stamacoding.rsaApp.server.session.Session;
 
-// TODO
-// ServerServices (Login, Signup, Ping) needed, documentation needed, Config should be edited
+// TODO ServerServices (Login, Signup, Ping) needed, documentation needed, Config should be edited
 public class SessionService extends Service{
 	private final Session session = new Session(-1);
 
@@ -22,7 +21,7 @@ public class SessionService extends Service{
 	private volatile static SessionService singleton = new SessionService();
 
 	/**
-	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link DatabaseService#getInstance()} to get the
+	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link ChatDatabaseService#getInstance()} to get the
 	 *  only instance of this class.
 	 */
 	private SessionService() {
@@ -41,11 +40,11 @@ public class SessionService extends Service{
 	public void onStart() {
 		super.onStart();
 		
-		while(getSession().getState() == SessionState.NONE) {
+		while(getSession().getState() == LoginState.NONE) {
 			Logger.debug(this.getClass().getSimpleName(), "Trying to sign up (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
 			getSession().setState(signup());
 			
-			if(getSession().getState() == SessionState.SIGNED_IN) {
+			if(getSession().getState() == LoginState.SIGNED_IN) {
 				Logger.debug(this.getClass().getSimpleName(), "Signed up successfull (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
 			}else {
 				Logger.warning(this.getClass().getSimpleName(), "Failed to sign up (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
@@ -57,11 +56,11 @@ public class SessionService extends Service{
 			}
 		}
 		
-		while(getSession().getState() != SessionState.LOGGED_IN) {
+		while(getSession().getState() != LoginState.LOGGED_IN) {
 			Logger.debug(this.getClass().getSimpleName(), "Trying to log in (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
 			getSession().setState(login());
 			
-			if(getSession().getState() == SessionState.LOGGED_IN) {
+			if(getSession().getState() == LoginState.LOGGED_IN) {
 				Logger.debug(this.getClass().getSimpleName(), "Logged in successfull (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
 			}else {
 				Logger.warning(this.getClass().getSimpleName(), "Failed to log in (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
@@ -101,7 +100,7 @@ public class SessionService extends Service{
 		}
 	}
 
-	private SessionState signup() {
+	private LoginState signup() {
 		try {
 			Socket connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.SIGNUP_PORT);
 			Logger.debug(this.getClass().getSimpleName(), "Connected to server successfully");
@@ -125,19 +124,26 @@ public class SessionService extends Service{
 			in.close();
 			connectionToServer.close();
 			
-			if(answer == -1) {
-				Logger.error(this.getClass().getSimpleName(), "Failed to sign up! Server returned -1.");
-				return SessionState.NONE;
+			switch(answer) {
+			case -3:
+				Logger.error(this.getClass().getSimpleName(), "Failed to sign up! Your password is too short! (-3)");
+				return LoginState.NONE;
+			case -2:
+				Logger.error(this.getClass().getSimpleName(), "Failed to sign up! Your username is too short! (-2)");
+				return LoginState.NONE;
+			case -1:
+				Logger.error(this.getClass().getSimpleName(), "Failed to sign up! Your username is already in use! (-1)");
+				return LoginState.NONE;
 			}
-			return SessionState.SIGNED_IN;
+			return LoginState.SIGNED_IN;
 		} catch (IOException e) {
 			Logger.error(this.getClass().getSimpleName(), "Connection error");
 		}
 		
-		return SessionState.NONE;
+		return LoginState.NONE;
 	}
 	
-	private SessionState login() {
+	private LoginState login() {
 		try {
 			Socket connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.LOGIN_PORT);
 			Logger.debug(this.getClass().getSimpleName(), "Connected to server successfully");
@@ -163,16 +169,16 @@ public class SessionService extends Service{
 			
 			if(answer == -1L) {
 				Logger.error(this.getClass().getSimpleName(), "Failed to log in! Server returned -1.");
-				return SessionState.SIGNED_IN;
+				return LoginState.SIGNED_IN;
 			}else {
 				getSession().setId(answer);
 			}
-			return SessionState.LOGGED_IN;
+			return LoginState.LOGGED_IN;
 		} catch (IOException e) {
 			Logger.error(this.getClass().getSimpleName(), "Connection error");
 		}
 		
-		return SessionState.SIGNED_IN;
+		return LoginState.SIGNED_IN;
 	}
 
 	private Session getSession() {

@@ -46,34 +46,6 @@ class ProtectedDataTest {
 		
 	}
 	
-	@DisplayName("Test the textMessage's setter")
-	@Nested
-	class TextMessageSetterTest{
-		
-		@DisplayName("Test with a valid textMessage")
-		@Test
-		void testValidTextMessage() {
-			ProtectedData d = new ProtectedData("Hello World!", 2133L);
-			
-			assertDoesNotThrow(() -> {
-				d.setTextMessage("Valid message ;)");
-				assertEquals("Valid message ;)", d.getTextMessage());
-			});
-			assertDoesNotThrow(() -> {
-				d.setTextMessage("Hallo du da!");
-				assertEquals("Hallo du da!", d.getTextMessage());
-			});
-		}
-		
-		@DisplayName("Test with null textMessage")
-		@Test
-		void testNullTextMessage() {
-			ProtectedData d = new ProtectedData("Hello World!", 2133L);
-			
-			assertThrows(IllegalArgumentException.class, () -> {d.setTextMessage(null);});
-		}
-	}
-	
 	@DisplayName("Test equals()")
 	@Nested
 	class EqualityTest{
