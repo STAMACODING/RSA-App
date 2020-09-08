@@ -197,34 +197,4 @@ class LocalDataTest {
 		}
 		
 	}
-	
-	@DisplayName("Test equals()")
-	@Nested
-	class EqualityTest{
-		
-		@DisplayName("Test equal objects")
-		@Test
-		void testEqual() {
-			LocalData d1 = new LocalData(3, SendState.PENDING);
-			LocalData d2 = new LocalData(3, SendState.PENDING);
-			
-			assertTrue(d2.equals(d1));
-		}
-		
-		@DisplayName("Test not equal objects")
-		@Test
-		void testNotEqual() {
-			LocalData d1 = new LocalData(3, SendState.PENDING);
-			LocalData d2 = new LocalData(4, SendState.PENDING);
-			assertFalse(d2.equals(d1));
-			
-			LocalData d3 = new LocalData(3, SendState.PENDING);
-			LocalData d4 = new LocalData(3, SendState.SENT);
-			assertFalse(d3.equals(d4));
-			
-			LocalData d5 = new LocalData(3, SendState.SENT);
-			LocalData d6 = new LocalData(4, SendState.PENDING);
-			assertFalse(d5.equals(d6));
-		}
-	}
 }
