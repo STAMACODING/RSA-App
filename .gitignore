@@ -3,6 +3,7 @@
 # Files
 *.log
 *.config
+*.db
 
 #VSCode Meta
 

@@ -1,6 +1,9 @@
 package com.stamacoding.rsaApp.server.client.managers;
 
+import java.util.ArrayList;
+
 import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.server.client.services.ChatDatabaseService;
 import com.stamacoding.rsaApp.server.client.services.ClientReceiveService;
 import com.stamacoding.rsaApp.server.message.AbstractMessageManager;
 import com.stamacoding.rsaApp.server.message.Message;
@@ -36,10 +39,10 @@ public class ClientMessageManager extends AbstractMessageManager{
 	 */
 	public boolean init() {
 		Logger.debug(ClientMessageManager.class.getSimpleName(), "Querying stored messages from chat database");
-		Message[] storedMessages = null;
+		ArrayList<Message> storedMessages = null;
 		try {
-			storedMessages = MessageDatabaseManager.getInstance().getMessagesFromDB();
-			manage(storedMessages);
+			storedMessages = ChatDatabaseService.getInstance().getMessages();
+			manage((Message[]) storedMessages.toArray());
 			return true;
 		} catch (Exception e) {
 			Logger.warning(ClientMessageManager.class.getSimpleName(), "Couldn't get messages from chat database.");

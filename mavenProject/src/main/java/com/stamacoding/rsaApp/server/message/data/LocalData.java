@@ -3,8 +3,8 @@ package com.stamacoding.rsaApp.server.message.data;
 import java.io.Serializable;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.client.services.ClientSendService;
 import com.stamacoding.rsaApp.server.client.services.ChatDatabaseService;
+import com.stamacoding.rsaApp.server.client.services.ClientSendService;
 import com.stamacoding.rsaApp.server.server.services.ServerSendService;
 
 /**
@@ -16,7 +16,7 @@ public class LocalData implements Serializable{
 	private static final long serialVersionUID = -2576893616665222300L;
 
 	/** The message's unique id in the chat database. Is set to {@code -1} if the message has not been saved yet. */
-	private int id;
+	private long id;
 	
 	/** Stores whether the message needs to be updated in the chat database. */
 	private boolean updateRequested = false;
@@ -35,7 +35,7 @@ public class LocalData implements Serializable{
 	 * @param id the message's unique id in the chat database (use {@code -1} if the message has not been saved yet)
 	 * @param sendState the message's send state
 	 */
-	public LocalData(int id, SendState sendState) {
+	public LocalData(long id, SendState sendState) {
 		setId(id);
 		setSendState(sendState);
 	}
@@ -44,7 +44,7 @@ public class LocalData implements Serializable{
 	 * Gets the message's unique id in the chat database.
 	 * @return the message's unique id in the chat database.
 	 */
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -52,8 +52,7 @@ public class LocalData implements Serializable{
 	 * Sets the message's unique id in the chat database. Is not allowed to be smaller than {@code -1}.
 	 * @param id the message's unique id in the chat database
 	 */
-	public void setId(int id) {
-		if(id == -1) Logger.debug(this.getClass().getSimpleName(), "Message is set as unstored (id == -1)");
+	public void setId(long id) {
 		if(id < -1) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("int id (" + id +  ") should be greater than -2 !"));
 		this.id = id;
 	}
@@ -91,14 +90,13 @@ public class LocalData implements Serializable{
 		
 		this.sendState = sendState;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((sendState == null) ? 0 : sendState.hashCode());
-		result = prime * result + (updateRequested ? 1231 : 1237);
 		return result;
 	}
 
@@ -114,8 +112,6 @@ public class LocalData implements Serializable{
 		if (id != other.id)
 			return false;
 		if (sendState != other.sendState)
-			return false;
-		if (updateRequested != other.updateRequested)
 			return false;
 		return true;
 	}
@@ -147,5 +143,27 @@ public class LocalData implements Serializable{
 	@Override
 	public LocalData clone() {
 		return new LocalData(getId(), getSendState());
+	}
+	
+	public static int getSendStateAsInt(SendState sendState) {
+		switch(sendState) {
+		case PENDING:
+			return 0;
+		case SENT:
+			return 1;
+		default:
+			return -1;
+		}
+	}
+	
+	public static SendState getIntAsSendState(int sendState) {
+		switch(sendState) {
+		case 0:
+			return SendState.PENDING;
+		case 1:
+			return SendState.SENT;
+		default:
+			return null;
+		}
 	}
 }

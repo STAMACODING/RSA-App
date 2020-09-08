@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.rsa.RSA;
+import com.stamacoding.rsaApp.server.client.ClientConfig;
 import com.stamacoding.rsaApp.server.message.data.LocalData;
 import com.stamacoding.rsaApp.server.message.data.ProtectedData;
 import com.stamacoding.rsaApp.server.message.data.SendState;
@@ -305,7 +306,11 @@ public class Message implements Serializable{
 	}
 	
 	public boolean isEncrypted() {
-		return getEncryptedProtectedData() == null && getEncryptedServerData() == null;
+		return getProtectedData() == null && getServerData() == null;
+	}
+	
+	public boolean isStored() {
+		return getLocalData().getId() > 0;
 	}
 	
 	@Override
@@ -319,64 +324,26 @@ public class Message implements Serializable{
 		return m;
 	}
 	
+	public static Message exampleMessage(boolean encrypted) {
+		Message m = new Message();
+		m.setLocalData(new LocalData(-1, SendState.PENDING));
+		m.setProtectedData(new ProtectedData(randomString(1, 15), System.currentTimeMillis()));
+		m.setServerData(new ServerData(randomString(1, 15), randomString(1, 15)));
+		
+		if(encrypted) {
+			m.encrypt();
+		}
+		return m;
+	}
 	
-	
-	public static void main(String[] args){
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				for(int i=0; i<=3000000; i++) {
-					Logger.debug("hhd", "test");
-					try {
-						Thread.sleep(12);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}).start();
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				for(int i=0; i<=3000000; i++) {
-					Logger.debug("hhd", "test");
-					try {
-						Thread.sleep(12);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}).start();
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				for(int i=0; i<=3000000; i++) {
-					Logger.debug("hhd", "test");
-					try {
-						Thread.sleep(12);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}).start();
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				for(int i=0; i<=3000000; i++) {
-					Logger.debug("hhd", "test");
-					try {
-						Thread.sleep(12);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}).start();
+	private static String randomString(int minLenght, int maxLenght) {
+		int length = (int) ((Math.random() * (maxLenght - minLenght)) + minLenght);
+		
+		StringBuilder sb = new StringBuilder();
+		for(int i=0; i<length; i++) {
+			char randomChar = (char) ((Math.random() * (125 - 65)) + 65);
+			sb.append(randomChar);
+		}
+		return sb.toString();
 	}
 }

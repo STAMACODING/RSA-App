@@ -88,7 +88,7 @@ public class ClientConfig {
 	 */
 	public static boolean isValid() {	
 		if(USER_PASSWORD == null || USER_PASSWORD.length() == 0) return false;
-		if(USER_NAME == null || USER_NAME.length() == 0) return false;
+		if(USER_NAME == null || USER_NAME.length() == 0 || USER_NAME.length() > 15) return false;
 		if(!NetworkUtils.isValidInet4Address(SERVER_IP)) return false;
 		
 		if(SEND_PORT < 0) return false;

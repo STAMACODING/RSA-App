@@ -26,8 +26,8 @@ public class ServerData implements Serializable {
 	 * @param receivingId the id of the client that received or will receive this message
 	 */
 	public ServerData(String sendingUser, String receivingUser) {
-		if(sendingUser == null || sendingUser.length() == 0) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("Invalid username (sending)!"));
-		if(receivingUser == null || receivingUser.length() == 0) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("Invalid username (receiving)!"));
+		if(sendingUser == null || sendingUser.length() == 0 || sendingUser.length() > 15) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("Invalid username (sending)!"));
+		if(receivingUser == null || receivingUser.length() == 0 || receivingUser.length() > 15) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("Invalid username (receiving)!"));
 		
 		this.sendingUser = sendingUser;
 		this.receivingUser = receivingUser;
