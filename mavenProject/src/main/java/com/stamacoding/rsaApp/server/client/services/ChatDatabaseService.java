@@ -34,7 +34,7 @@ public class ChatDatabaseService extends DatabaseService{
 	public ChatDatabaseService() {
 		super("ChatDatabaseService", 
 				new DatabaseConfiguration(
-						"jdbc:sqlite:MessageDatabase.db",
+						"jdbc:sqlite:ClientDatabase.db",
 						"root",
 						"root"));
 	}
