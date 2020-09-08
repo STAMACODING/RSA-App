@@ -258,7 +258,6 @@ public class Message implements Serializable{
 		int result = 1;
 		result = prime * result + Arrays.hashCode(encryptedProtectedData);
 		result = prime * result + Arrays.hashCode(encryptedServerData);
-		result = prime * result + ((localData == null) ? 0 : localData.hashCode());
 		result = prime * result + ((protectedData == null) ? 0 : protectedData.hashCode());
 		result = prime * result + ((serverData == null) ? 0 : serverData.hashCode());
 		return result;
@@ -277,11 +276,6 @@ public class Message implements Serializable{
 			return false;
 		if (!Arrays.equals(encryptedServerData, other.encryptedServerData))
 			return false;
-		if (localData == null) {
-			if (other.localData != null)
-				return false;
-		} else if (!localData.equals(other.localData))
-			return false;
 		if (protectedData == null) {
 			if (other.protectedData != null)
 				return false;
@@ -294,7 +288,7 @@ public class Message implements Serializable{
 			return false;
 		return true;
 	}
-	
+
 	public void encrypt() {
 		encryptProtectedData();
 		encryptServerData();

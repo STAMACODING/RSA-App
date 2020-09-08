@@ -3,6 +3,7 @@ package com.stamacoding.rsaApp.server.client.services;
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.Service;
 import com.stamacoding.rsaApp.server.client.ClientConfig;
+import com.stamacoding.rsaApp.server.session.LoginState;
 
 /**
  * <p>{@link Service} handling all client message transfers. Additionally this service stores all messages in a chat database.</p>
@@ -44,10 +45,14 @@ public class ClientMainService extends Service{
 		
 		Logger.debug(this.getClass().getSimpleName(), "Launching subservices...");
 
-		// Unfinished
-		SessionService.getInstance().launch();
 		
 		ChatDatabaseService.getInstance().launch();
+		SessionService.getInstance().launch();
+		// Waiting for being online
+		while(SessionService.getInstance().getSession().getState() != LoginState.LOGGED_IN) {
+			if(isStopRequested() || isServiceCrashed()) return;
+		}
+
 		ClientReceiveService.getInstance().launch();
 		ClientSendService.getInstance().launch();
 	}

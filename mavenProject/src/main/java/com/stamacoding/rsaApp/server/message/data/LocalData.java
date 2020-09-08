@@ -90,31 +90,6 @@ public class LocalData implements Serializable{
 		
 		this.sendState = sendState;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + ((sendState == null) ? 0 : sendState.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		LocalData other = (LocalData) obj;
-		if (id != other.id)
-			return false;
-		if (sendState != other.sendState)
-			return false;
-		return true;
-	}
 	
 	/**
 	 * Checks whether the message should get stored in the chat database by the {@link ChatDatabaseService}.

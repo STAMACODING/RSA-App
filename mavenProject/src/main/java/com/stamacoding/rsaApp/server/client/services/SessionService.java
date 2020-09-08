@@ -47,6 +47,8 @@ public class SessionService extends Service{
 			
 			if(getSession().getState() == LoginState.SIGNED_IN) {
 				Logger.debug(this.getClass().getSimpleName(), "Signed up successfull (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
+				ClientConfig.REGISTERED = true;
+				ClientConfig.save();
 			}else {
 				Logger.warning(this.getClass().getSimpleName(), "Failed to sign up (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
 				try {
@@ -182,7 +184,7 @@ public class SessionService extends Service{
 		return LoginState.SIGNED_IN;
 	}
 
-	private Session getSession() {
+	public Session getSession() {
 		return session;
 	}
 }
