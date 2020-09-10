@@ -214,7 +214,7 @@ public class ChatDatabaseService extends DatabaseService{
 					+ "date, sendState, "
 					+ "sending, receiving "
 					+ "FROM Messages WHERE id = " + id + ";");
-			if(res != null) {
+			if(res != null && res.next()) {
 				Message m = new Message(
 						new LocalData(res.getInt(1), LocalData.getIntAsSendState(res.getInt(4))), 
 						new ProtectedData(res.getString(2), res.getLong(3)), 

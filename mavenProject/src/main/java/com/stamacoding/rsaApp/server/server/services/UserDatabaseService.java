@@ -4,17 +4,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.client.services.ChatDatabaseService;
 import com.stamacoding.rsaApp.server.client.services.database.DatabaseConfiguration;
 import com.stamacoding.rsaApp.server.client.services.database.DatabaseService;
-import com.stamacoding.rsaApp.server.message.Message;
-import com.stamacoding.rsaApp.server.message.data.LocalData;
-import com.stamacoding.rsaApp.server.message.data.ProtectedData;
-import com.stamacoding.rsaApp.server.message.data.ServerData;
 import com.stamacoding.rsaApp.server.server.managers.UserManager;
 import com.stamacoding.rsaApp.server.user.User;
 
@@ -194,8 +189,7 @@ public class UserDatabaseService extends DatabaseService{
 			
 			ResultSet res = stm.executeQuery();
 			
-			if(res != null) {
-				res.next();
+			if(res != null && res.next()) {
 				User u = new User(res.getLong(1), username, res.getString(3));
 				return u;
 			}else {
@@ -223,8 +217,7 @@ public class UserDatabaseService extends DatabaseService{
 			
 			ResultSet res = stm.executeQuery();
 			
-			if(res != null) {
-				res.next();
+			if(res != null && res.next()) {
 				User u = new User(id, res.getString(2), res.getString(3));
 				return u;
 			}else {
@@ -277,8 +270,7 @@ public class UserDatabaseService extends DatabaseService{
 			PreparedStatement stm = getConnection().prepareStatement("SELECT name, password FROM Users WHERE name = ?;");
 			ResultSet res = stm.executeQuery();
 			
-			if(res != null) {
-				res.next();
+			if(res != null && res.next()) {
 				if(password.equals(res.getString(2))) {
 					Logger.debug(this.getServiceName(), "Password is correct (" + username + " : " + password + ")");
 					return true;
@@ -304,7 +296,7 @@ public class UserDatabaseService extends DatabaseService{
 			
 			ResultSet res = stm.executeQuery();
 			
-			if(res != null) {
+			if(res != null && res.next()) {
 				Logger.debug(this.getServiceName(), "Username is not available (" + username + ")");
 				return false;
 			}
