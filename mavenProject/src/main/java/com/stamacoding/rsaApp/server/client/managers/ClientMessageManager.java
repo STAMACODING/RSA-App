@@ -51,7 +51,8 @@ public class ClientMessageManager extends AbstractMessageManager{
 	 */
 	public Message pollToSend() {
 		for(int i=0; i<getCurrentlyManagedMessages().size(); i++) {
-			Message m = getCurrentlyManagedMessages().get(i);
+			Message m = null;
+			try {m = getCurrentlyManagedMessages().get(i);}catch(IndexOutOfBoundsException e){};
 			if(m == null || m.getLocalData() == null) return null;
 			if(m.getLocalData().isToSend()) {
 				getCurrentlyManagedMessages().remove(m);
