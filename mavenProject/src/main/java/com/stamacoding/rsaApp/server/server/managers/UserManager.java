@@ -25,15 +25,15 @@ public class UserManager {
 		return singleton;
 	}
 	
-	/** {@link ArrayList} containing all users stored in the user database */
+	/** {@link ArrayList} containing all users to be stored or updated */
 	private volatile ArrayList<User> users = new ArrayList<User>();
 	
 	
 	/**
-	 * Gets an {@link ArrayList} containing all users managed by the user manager.
-	 * @return {@link ArrayList} containing all users managed by the user manager
+	 * Gets an {@link ArrayList} containing all users to be stored or updated.
+	 * @return {@link ArrayList} containing all users to be stored or updated
 	 */
-	public ArrayList<User> getUsers() {
+	private ArrayList<User> getUsers() {
 		return users;
 	}
 	
@@ -49,30 +49,13 @@ public class UserManager {
 		}
 	}
 	
-	public User getUserToStoreOrUpdate() {
+	public User poll() {
 		for(int i=0; i<getUsers().size(); i++) {
-			if(!getUsers().get(i).isStored() || getUsers().get(i).isUpdateRequested()) return getUsers().get(i);
-		}
-		return null;
-	}
-	
-	public boolean isUsernameAvailable(String username) {
-		for(int i=0; i<getUsers().size(); i++) {
-			if(getUsers().get(i).getName().equals(username)) return false;
-		}
-		return true;
-	}
-	
-	public boolean canLogin(String username, String password) {
-		for(int i=0; i<getUsers().size(); i++) {
-			if(getUsers().get(i).getName().equals(username) && getUsers().get(i).getPassword().equals(password)) return true;
-		}
-		return false;
-	}
-	
-	public User getUser(String username) {
-		for(int i=0; i<getUsers().size(); i++) {
-			if(getUsers().get(i).getName().equals(username)) return getUsers().get(i);
+			if(!getUsers().get(i).isStored() || getUsers().get(i).isUpdateRequested()) {
+				User u = getUsers().get(i);
+				getUsers().remove(u);
+				return u;
+			}
 		}
 		return null;
 	}

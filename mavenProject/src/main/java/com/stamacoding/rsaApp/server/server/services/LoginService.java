@@ -55,8 +55,8 @@ public class LoginService extends ServerService{
 				Logger.debug(getServiceName(), "Client wants to login as: " + user.toString());
 				
 				DataOutputStream out = new DataOutputStream(connectionFromClient.getOutputStream());
-				if(UserManager.getInstance().canLogin(user.getName(), user.getPassword())) {
-					Logger.debug(getServiceName(), "User logged in (0): " + UserManager.getInstance().getUser(user.getName()).toString());
+				if(UserDatabaseService.getInstance().isPasswordCorrect(user.getName(), user.getPassword())) {
+					Logger.debug(getServiceName(), "User logged in (0): " + UserDatabaseService.getInstance().getUser(user.getName()).toString());
 					
 					// TODO: Session Service, Session Manager (...)
 					out.writeLong((long) (Math.random() * Long.MAX_VALUE));

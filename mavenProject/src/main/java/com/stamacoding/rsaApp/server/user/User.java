@@ -12,7 +12,7 @@ public class User implements Serializable{
 	private static final long serialVersionUID = 4715340391545299952L;
 	
 	
-	private long userId = -1; // why long ??
+	private long id = -1;
 	private String name = null;
 	private String password = null;
 	private boolean updateRequested = false;
@@ -23,13 +23,13 @@ public class User implements Serializable{
 	}
 	
 	public User(long id, String name, String password) {
-		setUserId(id);
+		setId(id);
 		setName(name);
 		setPassword(password);
 	}
 	
-	public long getUserId() {
-		return userId;
+	public long getId() {
+		return id;
 	}
 
 	public String getName() {
@@ -37,7 +37,7 @@ public class User implements Serializable{
 	}
 
 	public void setName(String name) {
-		if(name == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("String name is not allowed to be null!"));
+		if(name == null || name.length() == 0) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("String name is not allowed to be null!"));
 		
 		this.name = name;
 	}
@@ -47,16 +47,16 @@ public class User implements Serializable{
 	}
 
 	public void setPassword(String password) {
-		if(password == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("String password is not allowed to be null!"));
+		if(password == null || password.length() == 0) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("String password is not allowed to be null!"));
 		
 		this.password = password;
 	}
 
-	public void setUserId(long id) {
+	public void setId(long id) {
 		if(id == -1) Logger.debug(this.getClass().getSimpleName(), "User is set as unstored (id == -1)");
 		if(id < -1) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("int userId (" + id +  ") should be greater than -2 !"));
 		
-		this.userId = id;
+		this.id = id;
 	}
 
 	public boolean isUpdateRequested() {
@@ -71,7 +71,7 @@ public class User implements Serializable{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (userId ^ (userId >>> 32));
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		return result;
@@ -86,7 +86,7 @@ public class User implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		if (userId != other.userId)
+		if (id != other.id)
 			return false;
 		if (name == null) {
 			if (other.name != null)
@@ -102,14 +102,14 @@ public class User implements Serializable{
 	}
 	
 	public boolean isStored() {
-		return (getUserId() >= 0);
+		return (getId() >= 0);
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		sb.append(getUserId());
+		sb.append(getId());
 		sb.append("] ( \"");
 		sb.append(getName());
 		sb.append("\" § \"");
@@ -118,17 +118,5 @@ public class User implements Serializable{
 		sb.append(isUpdateRequested());
 		sb.append("]");
 		return sb.toString();
-	}
-	
-	public void print() {
-		
-		String UserString;
-		String UserHeader;
-		
-		UserHeader = "userID | name | password | updateRequest.State| ";
-		UserString = this.getUserId() + " | " + this.getName() + " | " + this.getPassword() + " | " + this.isUpdateRequested() + " | ";
-		System.out.println(UserHeader);
-		System.out.println(UserString);
-		
 	}
 }

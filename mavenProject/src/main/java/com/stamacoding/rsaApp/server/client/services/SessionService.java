@@ -127,14 +127,7 @@ public class SessionService extends Service{
 			in.close();
 			connectionToServer.close();
 			
-			switch(answer) {
-			case -3:
-				Logger.error(this.getClass().getSimpleName(), "Failed to sign up! Your password is too short! (-3)");
-				return LoginState.NONE;
-			case -2:
-				Logger.error(this.getClass().getSimpleName(), "Failed to sign up! Your username is too short! (-2)");
-				return LoginState.NONE;
-			case -1:
+			if(answer == -1L) {
 				Logger.error(this.getClass().getSimpleName(), "Failed to sign up! Your username is already in use! (-1)");
 				return LoginState.NONE;
 			}
@@ -171,7 +164,7 @@ public class SessionService extends Service{
 			connectionToServer.close();
 			
 			if(answer == -1L) {
-				Logger.error(this.getClass().getSimpleName(), "Failed to log in! Server returned -1.");
+				Logger.error(this.getClass().getSimpleName(), "Failed to log in! Invalid password or username.");
 				return LoginState.SIGNED_IN;
 			}else {
 				getSession().setId(answer);

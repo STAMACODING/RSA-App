@@ -48,22 +48,33 @@ public class ChatDatabaseService extends DatabaseService{
 	}
 
 	/**
-	 * If {@link Client#getMessageToStoreOrUpdate()} returns a message, this message will get updated/stored.
+	 * If {@link Client#pollToStoreOrUpdate()} returns a message, this message will get updated/stored.
 	 * @see Service#onRepeat()
 	 */
 	@Override
 	public void onRepeat() {
 		// Check if there is any message to store or update
-		Message m = ClientMessageManager.getInstance().getMessageToStoreOrUpdate();
+		Message m = ClientMessageManager.getInstance().pollToStoreOrUpdate();
 		
 		if(m != null) {
 			Logger.debug(this.getClass().getSimpleName(), "Got message to store/update: " + m.toString());
 			
 			// Update message if is is already stored in the chat database
-			if(m.getLocalData().isToUpdate()) updateMessage(m);
+			if(m.getLocalData().isToUpdate()) {
+				if(!updateMessage(m) && m.getLocalData().isToUpdate()) {
+					Logger.warning(this.getClass().getSimpleName(), "Readding message to the message manager to get updated again");
+					m.getLocalData().setUpdateRequested(true);
+					ClientMessageManager.getInstance().manage(m);
+				}
+			}
 			
 			// Store new message
-			else storeMessage(m);
+			else{
+				if(!storeMessage(m) && !m.isStored()) {
+					Logger.warning(this.getClass().getSimpleName(), "Readding message to the message manager to get stored again");
+					ClientMessageManager.getInstance().manage(m);
+				}
+			}
 			
 		}
 	}
@@ -189,6 +200,93 @@ public class ChatDatabaseService extends DatabaseService{
 		return false;
 	}
 	
+	
+	private Message getMessage(long id) {
+		if(!isConnected()) {
+			Logger.error(this.getServiceName(), "Cannot get message! You aren't connected to the chat database");
+			return null;
+		}
+		
+		try {
+			Statement stm = getConnection().createStatement();
+			ResultSet res = stm.executeQuery("SELECT "
+					+ "id, textMessage, "
+					+ "date, sendState, "
+					+ "sending, receiving "
+					+ "FROM Messages WHERE id = " + id + ";");
+			if(res != null) {
+				Message m = new Message(
+						new LocalData(res.getInt(1), LocalData.getIntAsSendState(res.getInt(4))), 
+						new ProtectedData(res.getString(2), res.getLong(3)), 
+						new ServerData(res.getString(5), res.getString(6)));
+				
+				Logger.debug(this.getClass().getSimpleName(), "Got message: " + m.toString());
+				return m;
+			}
+			Logger.warning(this.getClass().getSimpleName(), "Didn't find any message with this id!");
+			return null;
+		} catch (SQLException e) {
+			Logger.error(this.getClass().getSimpleName(), "Failed to get message (SQL exception)");
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private ArrayList<Message> getMessages() {
+		if(!isConnected()) {
+			Logger.error(this.getServiceName(), "Cannot get messages! You aren't connected to the chat database");
+			return null;
+		}
+		
+		try {
+			Statement stm = getConnection().createStatement();
+			ResultSet res = stm.executeQuery("SELECT "
+					+ "id, textMessage, "
+					+ "date, sendState, "
+					+ "sending, receiving "
+					+ "FROM Messages;");
+			
+			if(res != null) {
+				ArrayList<Message> messages = new ArrayList<Message>();
+				
+				while(res.next()) {
+					Message m = new Message(
+							new LocalData(res.getInt(1), LocalData.getIntAsSendState(res.getInt(4))), 
+							new ProtectedData(res.getString(2), res.getLong(3)), 
+							new ServerData(res.getString(5), res.getString(6)));
+					messages.add(m);
+				}
+				Logger.debug(this.getClass().getSimpleName(), "Got (" + messages.size() + ") messages");
+				return messages;
+			}
+			Logger.debug(this.getClass().getSimpleName(), "Got (0) messages");
+			return null;
+		} catch (SQLException e) {
+			Logger.error(this.getClass().getSimpleName(), "Failed to get messages (SQL exception)");
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private boolean deleteMessages() {
+		if(!isConnected()) {
+			Logger.error(this.getServiceName(), "Cannot delete messages! You aren't connected to the chat database");
+			return false;
+		}
+		
+		try {
+			Statement stm = getConnection().createStatement();
+			stm.executeUpdate("DELETE FROM Messages;");
+			stm.close();
+			Logger.debug(this.getClass().getSimpleName(), "Deleted messages!");
+			return true;
+		} catch (SQLException e) {
+			Logger.error(this.getClass().getSimpleName(), "Failed to delete messages (SQL exception)");
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	public String toString() {
 		if(!isConnected()) {
 			Logger.error(this.getServiceName(), "Cannot print database! You aren't connected to the chat database");
@@ -221,85 +319,7 @@ public class ChatDatabaseService extends DatabaseService{
 		for(int i=0; i<127; i++) sb.append("#");
 		return sb.toString();
 	}
-	
-	public Message getMessage(long id) {
-		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot get message! You aren't connected to the chat database");
-			return null;
-		}
-		
-		try {
-			Statement stm = getConnection().createStatement();
-			ResultSet res = stm.executeQuery("SELECT "
-					+ "id, textMessage, "
-					+ "date, sendState, "
-					+ "sending, receiving "
-					+ "FROM Messages WHERE id = " + id + ";");
-			
-			Message m = new Message(
-					new LocalData(res.getInt(1), LocalData.getIntAsSendState(res.getInt(4))), 
-					new ProtectedData(res.getString(2), res.getLong(3)), 
-					new ServerData(res.getString(5), res.getString(6)));
-			
-			Logger.debug(this.getClass().getSimpleName(), "Got message: " + m.toString());
-			return m;
-		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to get message (SQL exception)");
-			e.printStackTrace();
-		}
-		return null;
-	}
 
-	public ArrayList<Message> getMessages() {
-		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot get messages! You aren't connected to the chat database");
-			return null;
-		}
-		
-		try {
-			Statement stm = getConnection().createStatement();
-			ResultSet res = stm.executeQuery("SELECT "
-					+ "id, textMessage, "
-					+ "date, sendState, "
-					+ "sending, receiving "
-					+ "FROM Messages;");
-			
-			ArrayList<Message> messages = new ArrayList<Message>();
-			
-			while(res.next()) {
-				Message m = new Message(
-						new LocalData(res.getInt(1), LocalData.getIntAsSendState(res.getInt(4))), 
-						new ProtectedData(res.getString(2), res.getLong(3)), 
-						new ServerData(res.getString(5), res.getString(6)));
-				messages.add(m);
-			}
-			Logger.debug(this.getClass().getSimpleName(), "Got (" + messages.size() + ") messages");
-			return messages;
-		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to get messages (SQL exception)");
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	public boolean deleteMessages() {
-		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot delete messages! You aren't connected to the chat database");
-			return false;
-		}
-		
-		try {
-			Statement stm = getConnection().createStatement();
-			stm.executeUpdate("DELETE FROM Messages;");
-			stm.close();
-			Logger.debug(this.getClass().getSimpleName(), "Deleted messages!");
-			return true;
-		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to delete messages (SQL exception)");
-			e.printStackTrace();
-		}
-		return false;
-	}
 
 	@Override
 	protected void initialize() {

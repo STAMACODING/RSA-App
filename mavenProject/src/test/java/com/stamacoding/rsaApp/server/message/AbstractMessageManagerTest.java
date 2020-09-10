@@ -19,7 +19,7 @@ class AbstractMessageManagerTest {
 		Message m = new Message(new LocalData(3, SendState.PENDING), new ProtectedData("Hallo Tim!", 2443444L), new ServerData("lol", "lol1"));
 		AbstractMessageManager manager = new AbstractMessageManager() {};
 		assertDoesNotThrow(() -> {manager.manage(m);});
-		assertEquals(m, manager.getAllMessages().get(0));
+		assertEquals(m, manager.getCurrentlyManagedMessages().get(0));
 	}
 
 }

@@ -8,7 +8,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.Service;
 
 public abstract class DatabaseService extends Service{
-	private Connection connection;
+	private volatile Connection connection;
 	private final DatabaseConfiguration configuration;
 	
 	public DatabaseService(String serviceName, DatabaseConfiguration configuration) {

@@ -54,19 +54,11 @@ public class SignUpService extends ServerService {
 				Logger.debug(getServiceName(), "Client wants to register as: " + unregisteredUser.toString());
 				
 				DataOutputStream out = new DataOutputStream(connectionFromClient.getOutputStream());
-				if(UserManager.getInstance().isUsernameAvailable(unregisteredUser.getName())) {
-					if(unregisteredUser.getName().length() <= 0) {
-						Logger.debug(getServiceName(), "Username is too short (-2)");
-						out.writeInt(-2);
-					}else if(unregisteredUser.getPassword().length() <= 0) {
-						Logger.debug(getServiceName(), "Password is too short (-3)");
-						out.writeInt(-3);
-					}else {
-						UserManager.getInstance().add(unregisteredUser);
+				if(UserDatabaseService.getInstance().isUsernameAvailable(unregisteredUser.getName())) {
+					UserManager.getInstance().add(unregisteredUser);
 
-						Logger.debug(getServiceName(), "Registered new user (0): " + unregisteredUser.toString());
-						out.writeInt(0);
-					}
+					Logger.debug(getServiceName(), "Registered new user (0): " + unregisteredUser.toString());
+					out.writeInt(0);
 				}else {
 					Logger.debug(getServiceName(), "Username is already in use! (-1)");
 					out.writeInt(-1);

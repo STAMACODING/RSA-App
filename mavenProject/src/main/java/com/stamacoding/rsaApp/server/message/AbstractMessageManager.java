@@ -10,7 +10,7 @@ import com.stamacoding.rsaApp.log.logger.Logger;
 public abstract class AbstractMessageManager {
 
 	
-	/** {@link ArrayList} containing all messages stored in the chat database */
+	/** {@link ArrayList} containing all messages that have to get stored or updated */
 	private volatile ArrayList<Message> messages = new ArrayList<Message>();
 	
 	
@@ -18,7 +18,7 @@ public abstract class AbstractMessageManager {
 	 * Gets an {@link ArrayList} containing all messages managed by the message manager.
 	 * @return {@link ArrayList} containing all messages managed by the message manager
 	 */
-	public ArrayList<Message> getAllMessages() {
+	public ArrayList<Message> getCurrentlyManagedMessages() {
 		return messages;
 	}
 	
@@ -32,11 +32,11 @@ public abstract class AbstractMessageManager {
 				Logger.warning(this.getClass().getSimpleName(), "Tried to add null message");
 				continue;
 			}
-			if(getAllMessages().indexOf(m) != -1) {
+			if(getCurrentlyManagedMessages().indexOf(m) != -1) {
 				Logger.warning(this.getClass().getSimpleName(), "Tried to add already added message: " + m.toString());
 				continue;
 			}
-			getAllMessages().add(m);
+			getCurrentlyManagedMessages().add(m);
 			Logger.debug(this.getClass().getSimpleName(), "Added new message to MessageManager: " + m.toString());
 		}
 	}

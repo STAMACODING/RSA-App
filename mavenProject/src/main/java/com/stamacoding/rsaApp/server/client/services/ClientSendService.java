@@ -41,7 +41,7 @@ public class ClientSendService extends Service {
 	/**
 	 * Sends a message from a client to the server if there is any message to send.
 	 *  <ol>
-	 * 	<li>If {@link Client#getMessageToSend()} does not return null, there is a message to send.</li>
+	 * 	<li>If {@link Client#pollToSend()} does not return null, there is a message to send.</li>
 	 * 	<li>After that the client connect to the server using a {@link Socket}.</li>
 	 * 	<li>Then the message gets encoded and sent.</li>
 	 * 	<li>If the server successfully receives the message, the message's {@link SendState} will get updated to {@link SendState#SENT}.</li>
@@ -51,12 +51,10 @@ public class ClientSendService extends Service {
 	@Override
 	public void onRepeat() {
 		// 0. Check if there is any message to send
-		Message originalM = ClientMessageManager.getInstance().getMessageToSend();
-		if(originalM != null) {
+		Message m = ClientMessageManager.getInstance().pollToSend();
+		if(m != null) {
 			Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
-			Logger.debug(this.getClass().getSimpleName(), "Message to send: " + originalM.toString());
-			
-			Message m = originalM.clone();
+			Logger.debug(this.getClass().getSimpleName(), "Message to send: " + m.toString());
 			
 			// 1. Encrypt message
 			encryptMessage(m);
@@ -68,8 +66,7 @@ public class ClientSendService extends Service {
 					sendMessage(m, connectionToServer);
 					
 					// 4. Update message's state
-					updateMessageState(originalM);
-					
+					updateMessageState(m);
 					
 					// 5. Close Connection
 					connectionToServer.close();
@@ -138,6 +135,7 @@ public class ClientSendService extends Service {
 		
 		m.getLocalData().setSendState(SendState.SENT);
 		m.getLocalData().setUpdateRequested(true);
+		ClientMessageManager.getInstance().manage(m);
 	}
 
 }

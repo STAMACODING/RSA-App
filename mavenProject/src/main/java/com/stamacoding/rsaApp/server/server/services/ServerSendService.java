@@ -54,7 +54,7 @@ public class ServerSendService extends ServerService {
 			Socket connectionFromClient = acceptClient();
 
 			// 2. If there are messages available
-			if(ServerMessageManager.getInstance().getAllMessages().size() != 0) {
+			if(ServerMessageManager.getInstance().getCurrentlyManagedMessages().size() != 0) {
 
 				// 3. Read the client's id
 				String username = readUsername(connectionFromClient);
