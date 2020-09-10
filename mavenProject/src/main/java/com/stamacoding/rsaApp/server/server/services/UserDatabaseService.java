@@ -59,18 +59,55 @@ public class UserDatabaseService extends DatabaseService{
 		}
 	}
 	
-	// TODO
-	private void updateUser(User u) {
-		// TODO Auto-generated method stub
-		Logger.debug(this.getClass().getSimpleName(), "Updated user: " + u.toString());
-		u.setUpdateRequested(false);
+	/**
+	 * updates the login Data of a user in the DB
+	 * @param u the Object of the new User
+	 * @return
+	 */
+	private boolean updateUser(User u) {
+		if(!isConnected()) {
+			Logger.error(this.getServiceName(), "Cannot update User! You aren't connected to the user database");
+			return false;
+		}
+		
+		if(!u.isStored()) {
+			Logger.error(this.getServiceName(), "Cannot update unstored user!");
+			return false;
+			}
+		
+		try {
+			PreparedStatement pst = getConnection().prepareStatement("UPDATE userLoginSystem SET "
+					+ "name = ?, "
+					+ "password = ?, "
+					+ "WHERE id = ?;");
+			
+			int userID = (int) u.getUserId();
+			pst.setString(1, u.getName());
+			pst.setString(2, u.getPassword());
+			pst.setInt(3, userID);
+			
+			pst.executeUpdate();
+			
+			Logger.debug(this.getClass().getSimpleName(), "Updated user: " + u.toString());
+			u.setUpdateRequested(false);
+			pst.close();
+			return true;
+		} catch (SQLException e) {
+			Logger.error(this.getClass().getSimpleName(), "Failed to update user (SQL exception)");
+			e.printStackTrace();
+		}
+		return false;
 	}
 
-	// TODO
+	/**
+	 * stores a completely new user to the userLoginDB
+	 * @param u the Object of the new user
+	 * @return wheteher the storing proccess was executed corretly
+	 */
 	private boolean storeUser(User u) {
 		// TODO Auto-generated method stub
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot store message! You aren't connected to the chat database");
+			Logger.error(this.getServiceName(), "Cannot store user! You aren't connected to the chat database");
 			return false;
 		}
 		
@@ -93,10 +130,8 @@ public class UserDatabaseService extends DatabaseService{
 			Statement statement = getConnection().createStatement();
 			ResultSet res = statement.executeQuery("SELECT MAX(id) AS LAST FROM Messages");
 			long id = Long.parseLong(res.getString("LAST"));
-			//m.getLocalData().setId(id);
 			
 			Logger.debug(this.getClass().getSimpleName(), "Stored user: " + u.toString());
-			//u.getLocalData().setUpdateRequested(false); manchmal weiss ich nicht ganz was du machen willls "_"
 			pst.close();
 			return true;
 		} catch (SQLException e) {
