@@ -268,6 +268,8 @@ public class UserDatabaseService extends DatabaseService{
 		}
 		try {
 			PreparedStatement stm = getConnection().prepareStatement("SELECT name, password FROM Users WHERE name = ?;");
+			stm.setString(1, username);
+			
 			ResultSet res = stm.executeQuery();
 			
 			if(res != null && res.next()) {

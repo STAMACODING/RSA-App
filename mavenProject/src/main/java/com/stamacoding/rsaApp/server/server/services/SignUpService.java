@@ -59,6 +59,7 @@ public class SignUpService extends ServerService {
 
 					Logger.debug(getServiceName(), "Registered new user (0): " + unregisteredUser.toString());
 					out.writeInt(0);
+					Logger.debug(getServiceName(), "Currently registered users:\n" + UserDatabaseService.getInstance().toString());
 				}else {
 					Logger.debug(getServiceName(), "Username is already in use! (-1)");
 					out.writeInt(-1);
