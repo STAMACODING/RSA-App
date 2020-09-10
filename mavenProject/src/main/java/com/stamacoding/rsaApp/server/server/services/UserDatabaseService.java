@@ -186,15 +186,17 @@ public class UserDatabaseService extends DatabaseService{
 			return null;
 		}
 		try {
-			Statement stm = getConnection().createStatement();
-			ResultSet res = stm.executeQuery("SELECT "
-					+ "id, "
+			PreparedStatement stm = getConnection().prepareStatement("SELECT "
+					+ "id, name, "
 					+ "password "
-					+ "FROM Users WHERE name = " + username + ";");
+					+ "FROM Users WHERE name = ?;");
+			stm.setString(1, username);
+			
+			ResultSet res = stm.executeQuery();
 			
 			if(res != null) {
 				res.next();
-				User u = new User(res.getLong(1), username, res.getString(1));
+				User u = new User(res.getLong(1), username, res.getString(3));
 				return u;
 			}else {
 				Logger.warning(this.getClass().getSimpleName(), "Didn't find any user with the name \"" + username + "\"");
@@ -213,15 +215,17 @@ public class UserDatabaseService extends DatabaseService{
 			return null;
 		}
 		try {
-			Statement stm = getConnection().createStatement();
-			ResultSet res = stm.executeQuery("SELECT "
-					+ "name, "
+			PreparedStatement stm = getConnection().prepareStatement("SELECT "
+					+ "id, name, "
 					+ "password "
-					+ "FROM Users WHERE id = " + id + ";");
+					+ "FROM Users WHERE id = ?;");
+			stm.setLong(1, id);
+			
+			ResultSet res = stm.executeQuery();
 			
 			if(res != null) {
 				res.next();
-				User u = new User(id, res.getString(1), res.getString(2));
+				User u = new User(id, res.getString(2), res.getString(3));
 				return u;
 			}else {
 				Logger.warning(this.getClass().getSimpleName(), "Didn't find any user with the id \"" + id + "\"");
@@ -270,12 +274,12 @@ public class UserDatabaseService extends DatabaseService{
 			return false;
 		}
 		try {
-			Statement stm = getConnection().createStatement();
-			ResultSet res = stm.executeQuery("SELECT password FROM Users WHERE username = " + username + " ;");
+			PreparedStatement stm = getConnection().prepareStatement("SELECT name, password FROM Users WHERE name = ?;");
+			ResultSet res = stm.executeQuery();
 			
 			if(res != null) {
 				res.next();
-				if(password.equals(res.getString(1))) {
+				if(password.equals(res.getString(2))) {
 					Logger.debug(this.getServiceName(), "Password is correct (" + username + " : " + password + ")");
 					return true;
 				}
@@ -295,8 +299,10 @@ public class UserDatabaseService extends DatabaseService{
 			return false;
 		}
 		try {
-			Statement stm = getConnection().createStatement();
-			ResultSet res = stm.executeQuery("SELECT name FROM Users WHERE name = " + username + " ;");
+			PreparedStatement stm = getConnection().prepareStatement("SELECT name FROM Users WHERE name = ?;");
+			stm.setString(1, username);
+			
+			ResultSet res = stm.executeQuery();
 			
 			if(res != null) {
 				Logger.debug(this.getServiceName(), "Username is not available (" + username + ")");
@@ -324,7 +330,6 @@ public class UserDatabaseService extends DatabaseService{
 			e.printStackTrace();
 		}
 		Logger.debug(this.getServiceName(), "Logging user database...\n" + this.toString());
-		storeUser(new User(-1, "HenriHolly", "123"));
 	}
 	
 	public static void main(String[] args) {
