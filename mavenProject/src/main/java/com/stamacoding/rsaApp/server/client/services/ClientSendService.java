@@ -52,6 +52,7 @@ public class ClientSendService extends Service {
 	public void onRepeat() {
 		// 0. Check if there is any message to send
 		Message m = ClientMessageManager.getInstance().pollToSend();
+		Message cloneM = m.clone();
 		if(m != null) {
 			Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
 			Logger.debug(this.getClass().getSimpleName(), "Message to send: " + m.toString());
@@ -66,7 +67,7 @@ public class ClientSendService extends Service {
 					sendMessage(m, connectionToServer);
 					
 					// 4. Update message's state
-					updateMessageState(m);
+					updateMessageState(cloneM);
 					
 					// 5. Close Connection
 					connectionToServer.close();
@@ -132,6 +133,7 @@ public class ClientSendService extends Service {
 	 */
 	private void updateMessageState(Message m) {
 		Logger.debug(this.getClass().getSimpleName(), "Updating message state");
+		
 		
 		m.getLocalData().setSendState(SendState.SENT);
 		m.getLocalData().setUpdateRequested(true);
