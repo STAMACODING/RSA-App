@@ -52,8 +52,10 @@ public class ClientSendService extends Service {
 	public void onRepeat() {
 		// 0. Check if there is any message to send
 		Message m = ClientMessageManager.getInstance().pollToSend();
-		Message cloneM = m.clone();
+		
 		if(m != null) {
+			Message cloneM = m.clone();
+			
 			Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
 			Logger.debug(this.getClass().getSimpleName(), "Message to send: " + m.toString());
 			
