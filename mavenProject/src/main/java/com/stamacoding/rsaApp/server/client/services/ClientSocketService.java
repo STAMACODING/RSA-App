@@ -1,15 +1,15 @@
 package com.stamacoding.rsaApp.server.client.services;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.global.NetworkUtils;
 import com.stamacoding.rsaApp.server.global.service.InputOutputService;
 
-public abstract class ClientSocketService extends InputOutputService<ObjectInputStream, ObjectOutputStream> {
+public abstract class ClientSocketService extends InputOutputService{
 	private Socket socketConnection;
 	private int port;
 	private String serverIp;
@@ -26,8 +26,8 @@ public abstract class ClientSocketService extends InputOutputService<ObjectInput
 		try {
 			setSocketConnection(new Socket(getServerIp(), getPort()));
 			getSocketConnection().setSoTimeout(5000);
-			setOutputStream(new ObjectOutputStream(getSocketConnection().getOutputStream()));
-			setInputStream(new ObjectInputStream(getSocketConnection().getInputStream()));
+			setOutputStream(new DataOutputStream(getSocketConnection().getOutputStream()));
+			setInputStream(new DataInputStream(getSocketConnection().getInputStream()));
 			
 			Logger.debug(this.getServiceName(), "Connected to server (" + getServerIp() + " : " + getPort() + ")");
 			

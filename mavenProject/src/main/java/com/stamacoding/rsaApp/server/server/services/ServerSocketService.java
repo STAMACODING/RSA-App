@@ -1,8 +1,8 @@
 package com.stamacoding.rsaApp.server.server.services;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -14,7 +14,7 @@ import com.stamacoding.rsaApp.server.global.service.Service;
  *  Abstract {@link Service} adapted to work with a {@link ServerSocket}. Use {@link #getServerSocket()} to
  *  gets the server's socket. Use {@link #getPort()} to get the server's port.
  */
-public abstract class ServerSocketService extends InputOutputService<ObjectInputStream, ObjectOutputStream>{
+public abstract class ServerSocketService extends InputOutputService{
 	
 	/** The service's {@link ServerSocket} */
 	private ServerSocket serverSocket;
@@ -54,8 +54,8 @@ public abstract class ServerSocketService extends InputOutputService<ObjectInput
 		try {
 			setClientSocket(getServerSocket().accept());
 			getClientSocket().setSoTimeout(5000);
-			setInputStream(new ObjectInputStream(getClientSocket().getInputStream()));
-			setOutputStream(new ObjectOutputStream(getClientSocket().getOutputStream()));
+			setInputStream(new DataInputStream(getClientSocket().getInputStream()));
+			setOutputStream(new DataOutputStream(getClientSocket().getOutputStream()));
 			Logger.debug(this.getServiceName(), "Accepted client connection");
 			
 			onAccept();
