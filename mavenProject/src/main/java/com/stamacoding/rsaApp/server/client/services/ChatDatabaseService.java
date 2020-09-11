@@ -373,6 +373,6 @@ public class ChatDatabaseService extends DatabaseService{
 		}
 		Logger.debug(this.getServiceName(), "Logging chat database...\n" + this.toString());
 
-		ClientMessageManager.getInstance().manage((Message[]) getPendingMessages().toArray());
+		ClientMessageManager.getInstance().manage(getPendingMessages());
 	}
 }

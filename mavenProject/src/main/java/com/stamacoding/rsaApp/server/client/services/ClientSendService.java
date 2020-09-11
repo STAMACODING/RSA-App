@@ -127,7 +127,7 @@ public class ClientSendService extends ClientSocketService {
 
 		getOutputStream().flush();
 			
-		Logger.debug(this.getClass().getSimpleName(), "Successfully sent message to the receive server: " + getMessage().toString());
+		Logger.debug(this.getClass().getSimpleName(), "Sent message to the receive server: " + getMessage().toString());
 	}
 	
 	/**

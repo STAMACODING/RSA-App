@@ -27,17 +27,33 @@ public abstract class AbstractMessageManager {
 	 * @param messages to get managed
 	 */
 	public void manage(Message...messages) {
-		for(Message m : messages) {
-			if(m == null) {
+		for(int i=0; i<messages.length; i++) {
+			if(messages[i] == null) {
 				Logger.warning(this.getClass().getSimpleName(), "Tried to add null message");
 				continue;
 			}
-			if(getCurrentlyManagedMessages().indexOf(m) != -1) {
-				Logger.warning(this.getClass().getSimpleName(), "Tried to add already added message: " + m.toString());
+			if(getCurrentlyManagedMessages().indexOf(messages[i]) != -1) {
+				Logger.warning(this.getClass().getSimpleName(), "Tried to add already added message: " + messages[i].toString());
 				continue;
 			}
-			getCurrentlyManagedMessages().add(m);
-			Logger.debug(this.getClass().getSimpleName(), "Added new message to MessageManager: " + m.toString());
+			getCurrentlyManagedMessages().add(messages[i]);
+			Logger.debug(this.getClass().getSimpleName(), "Added new message to MessageManager: " + messages[i].toString());
+		}
+	}
+	
+
+	public void manage(ArrayList<Message> pendingMessages) {
+		for(int i=0; i<pendingMessages.size(); i++) {
+			if(pendingMessages.get(i) == null) {
+				Logger.warning(this.getClass().getSimpleName(), "Tried to add null message");
+				continue;
+			}
+			if(getCurrentlyManagedMessages().indexOf(pendingMessages.get(i)) != -1) {
+				Logger.warning(this.getClass().getSimpleName(), "Tried to add already added message: " + pendingMessages.get(i).toString());
+				continue;
+			}
+			getCurrentlyManagedMessages().add(pendingMessages.get(i));
+			Logger.debug(this.getClass().getSimpleName(), "Added new message to MessageManager: " + pendingMessages.get(i).toString());
 		}
 	}
 }
