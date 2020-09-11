@@ -2,8 +2,8 @@ package com.stamacoding.rsaApp.server.server;
 
 import java.util.Scanner;
 
-import com.stamacoding.rsaApp.server.TextUtils;
 import com.stamacoding.rsaApp.server.client.services.ClientMainService;
+import com.stamacoding.rsaApp.server.global.TextUtils;
 import com.stamacoding.rsaApp.server.server.services.ServerMainService;
 
 /**

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.client.services.ClientReceiveService;
-import com.stamacoding.rsaApp.server.message.AbstractMessageManager;
-import com.stamacoding.rsaApp.server.message.Message;
+import com.stamacoding.rsaApp.server.global.message.AbstractMessageManager;
+import com.stamacoding.rsaApp.server.global.message.Message;
 
 public class ServerMessageManager extends AbstractMessageManager{
 	

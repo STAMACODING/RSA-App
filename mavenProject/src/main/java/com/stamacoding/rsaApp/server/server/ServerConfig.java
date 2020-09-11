@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.TextUtils;
+import com.stamacoding.rsaApp.server.global.TextUtils;
 import com.stamacoding.rsaApp.server.server.services.ServerMainService;
 
 /**

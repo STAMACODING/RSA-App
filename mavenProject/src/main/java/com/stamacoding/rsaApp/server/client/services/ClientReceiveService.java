@@ -1,26 +1,23 @@
 package com.stamacoding.rsaApp.server.client.services;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.rsa.RSA;
-import com.stamacoding.rsaApp.server.Service;
 import com.stamacoding.rsaApp.server.client.Client;
 import com.stamacoding.rsaApp.server.client.ClientConfig;
 import com.stamacoding.rsaApp.server.client.managers.ClientMessageManager;
-import com.stamacoding.rsaApp.server.message.Message;
-import com.stamacoding.rsaApp.server.message.data.SendState;
+import com.stamacoding.rsaApp.server.global.message.Message;
+import com.stamacoding.rsaApp.server.global.message.data.SendState;
+import com.stamacoding.rsaApp.server.global.service.Service;
 import com.stamacoding.rsaApp.server.server.Server;
 
 /**
  * {@link Service} receiving messages from the server and forwarding them to the {@link ClientMessageManager}.
  */
-public class ClientReceiveService extends Service{
+public class ClientReceiveService extends ClientSocketService{
 	
 	/** The only instance of this class */
 	private volatile static ClientReceiveService singleton = new ClientReceiveService();
@@ -30,7 +27,7 @@ public class ClientReceiveService extends Service{
 	 *  only instance of this class.
 	 */
 	private ClientReceiveService() {
-		super(ClientReceiveService.class.getSimpleName());
+		super(ClientReceiveService.class.getSimpleName(), ClientConfig.SERVER_IP, ClientConfig.RECEIVE_PORT);
 	}
 	
 	/**
@@ -52,16 +49,13 @@ public class ClientReceiveService extends Service{
 	 * @see Service#onRepeat()
 	 */
 	@Override
-	public void onRepeat() {
+	public void onAccept() {
 		try {
-			// 1. Connect to server
-			Socket connectionToServer = connectToSendServer();
-			
 			// 2. Tell the server the client's id
-			loginUsingClientID(connectionToServer);
+			sendUsername();
 
 			// 3. Receive the messages as response from the server
-			ArrayList<Message> messages = receiveMessages(connectionToServer);
+			ArrayList<Message> messages = receiveMessages();
 			
 			if(messages != null) {
 				// 4. The server responded -> there are new messages available
@@ -79,9 +73,6 @@ public class ClientReceiveService extends Service{
 				// 4. -> When the message ArrayList is null the server didn't respond -> No new messages available
 				Logger.debug(this.getClass().getSimpleName(), "No new messages available");
 			}
-			// 8. Close connection to server
-			connectionToServer.close();
-			Logger.debug(this.getClass().getSimpleName(), "Closed connection to the send server");
 		} catch (IOException e) {
 			// 1 -> When the client failed to connect to the server
 			Logger.error(this.getClass().getSimpleName(), "Failed to connect to the send server");
@@ -91,27 +82,14 @@ public class ClientReceiveService extends Service{
 	}
 	
 	/**
-	 * Connects to the send server
-	 * @return the created socket connection
-	 * @throws UnknownHostException
-	 * @throws IOException
-	 */
-	private Socket connectToSendServer() throws UnknownHostException, IOException {
-		Socket connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.RECEIVE_PORT);
-		connectionToServer.setSoTimeout(5000);
-		Logger.debug(this.getClass().getSimpleName(), "Connected to the send server");
-		return connectionToServer;
-	}
-	
-	/**
 	 * Logs in to the send server by sending the client id
 	 * @param connectionToServer the socket connection to the send server
 	 * @throws IOException
 	 */
-	private void loginUsingClientID(Socket connectionToServer) throws IOException {
+	private void sendUsername() throws IOException {
 		Logger.debug(this.getClass().getSimpleName(), "Querying messages from the send server using the username (" + ClientConfig.USER_NAME + ")");
-		DataOutputStream outputStream = new DataOutputStream(connectionToServer.getOutputStream());
-		outputStream.writeUTF(ClientConfig.USER_NAME);
+		getOutputStream().writeUTF(ClientConfig.USER_NAME);
+		getOutputStream().flush();
 	}
 	
 	/**
@@ -120,15 +98,13 @@ public class ClientReceiveService extends Service{
 	 * @return the received messages (the server's response)
 	 * @throws IOException
 	 */
-	private ArrayList<Message> receiveMessages(Socket connectionToServer)  {
-		DataInputStream inputStream;
+	private ArrayList<Message> receiveMessages()  {
 		try {
-			inputStream = new DataInputStream(connectionToServer.getInputStream());
 			byte[] messages = null;
-			int length = inputStream.readInt();
+			int length = getInputStream().readInt();
 			if(length!=0) {
 				messages = new byte[length];
-			    inputStream.readFully(messages, 0, length);
+			    getInputStream().readFully(messages, 0, length);
 			    
 			    return (ArrayList<Message>) RSA.decryptF(messages);
 			}

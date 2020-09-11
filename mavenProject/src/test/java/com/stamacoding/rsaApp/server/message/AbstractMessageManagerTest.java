@@ -6,10 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.stamacoding.rsaApp.server.message.data.LocalData;
-import com.stamacoding.rsaApp.server.message.data.ProtectedData;
-import com.stamacoding.rsaApp.server.message.data.SendState;
-import com.stamacoding.rsaApp.server.message.data.ServerData;
+import com.stamacoding.rsaApp.server.global.message.AbstractMessageManager;
+import com.stamacoding.rsaApp.server.global.message.Message;
+import com.stamacoding.rsaApp.server.global.message.data.LocalData;
+import com.stamacoding.rsaApp.server.global.message.data.ProtectedData;
+import com.stamacoding.rsaApp.server.global.message.data.SendState;
+import com.stamacoding.rsaApp.server.global.message.data.ServerData;
 
 class AbstractMessageManagerTest {
 

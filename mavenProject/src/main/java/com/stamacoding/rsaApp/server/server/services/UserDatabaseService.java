@@ -8,10 +8,10 @@ import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.server.client.services.ChatDatabaseService;
-import com.stamacoding.rsaApp.server.client.services.database.DatabaseConfiguration;
-import com.stamacoding.rsaApp.server.client.services.database.DatabaseService;
+import com.stamacoding.rsaApp.server.global.service.database.DatabaseConfiguration;
+import com.stamacoding.rsaApp.server.global.service.database.DatabaseService;
+import com.stamacoding.rsaApp.server.global.user.User;
 import com.stamacoding.rsaApp.server.server.managers.UserManager;
-import com.stamacoding.rsaApp.server.user.User;
 
 public class UserDatabaseService extends DatabaseService{
 	/** The only instance of this class */

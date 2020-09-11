@@ -1,18 +1,11 @@
 package com.stamacoding.rsaApp.server.server.services;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.rsa.RSA;
-import com.stamacoding.rsaApp.server.server.Server;
 import com.stamacoding.rsaApp.server.server.ServerConfig;
-import com.stamacoding.rsaApp.server.server.managers.UserManager;
-import com.stamacoding.rsaApp.server.user.User;
 
-public class PingService extends ServerService{
+public class PingService extends ServerSocketService{
 
 	
 	/** The only instance of this class */
@@ -35,21 +28,10 @@ public class PingService extends ServerService{
 	}
 	
 	@Override
-	public void onRepeat() {
-		super.onRepeat();
-
+	public void onAccept() {
 		try {
-			Socket connectionFromClient = getServerSocket().accept();
-			connectionFromClient.setSoTimeout(5000);
-			Logger.debug(getServiceName(), "Accepted connection from client");
-			
-			DataInputStream in = new DataInputStream(connectionFromClient.getInputStream());
-			
-			long sessionId = in.readLong();
+			long sessionId = getInputStream().readLong();
 			// TODO process sessionId
-			
-			in.close();
-			connectionFromClient.close();
 		} catch (IOException e) {
 			Logger.error(this.getClass().getSimpleName(), "Connection error");
 		}

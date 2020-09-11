@@ -1,23 +1,23 @@
 package com.stamacoding.rsaApp.server.client.services;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.Service;
 import com.stamacoding.rsaApp.server.client.Client;
 import com.stamacoding.rsaApp.server.client.ClientConfig;
 import com.stamacoding.rsaApp.server.client.managers.ClientMessageManager;
-import com.stamacoding.rsaApp.server.message.Message;
-import com.stamacoding.rsaApp.server.message.data.SendState;
+import com.stamacoding.rsaApp.server.global.message.Message;
+import com.stamacoding.rsaApp.server.global.message.data.SendState;
+import com.stamacoding.rsaApp.server.global.service.Service;
+import com.stamacoding.rsaApp.server.server.services.ServerReceiveService;
 
 
 /**
  *  {@link Service} sending messages from client to server using the {@link ClientMessageManager}.
  */
-public class ClientSendService extends Service {
+public class ClientSendService extends ClientSocketService {
+	private Message message;
 	
 	/** The only instance of this class */
 	private volatile static ClientSendService singleton = new ClientSendService();
@@ -27,7 +27,7 @@ public class ClientSendService extends Service {
 	 *  only instance of this class.
 	 */
 	private ClientSendService() {
-		super(ClientSendService.class.getSimpleName());
+		super(ClientSendService.class.getSimpleName(), ClientConfig.SERVER_IP, ClientConfig.SEND_PORT);
 	}
 	
 	/**
@@ -51,61 +51,62 @@ public class ClientSendService extends Service {
 	@Override
 	public void onRepeat() {
 		// 0. Check if there is any message to send
-		Message m = ClientMessageManager.getInstance().pollToSend();
+		setMessage(ClientMessageManager.getInstance().pollToSend());
 		
-		if(m != null) {
-			Message cloneM = m.clone();
-			
-			Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
-			Logger.debug(this.getClass().getSimpleName(), "Message to send: " + m.toString());
-			
-			// 1. Encrypt message
-			encryptMessage(m);
-			try {
-				// 2. Connect to receive server
-				Socket connectionToServer = connectToReceiveServer();
-				try {
-					// 3. Send message
-					sendMessage(m, connectionToServer);
-					
-					// 4. Update message's state
-					updateMessageState(cloneM);
-					
-					// 5. Close Connection
-					connectionToServer.close();
-					Logger.debug(this.getClass().getSimpleName(), "Closed connection to the receive server");
-				} catch (IOException e) {
-					// 3. -> When failing to send message
-					Logger.error(this.getClass().getSimpleName(), "Failed to sent message");
-				}
-			} catch (IOException e) {
-				// 2. -> When failing to receive message
-				Logger.error(this.getClass().getSimpleName(), "Failed to connect to the receive server");
-			}
-			
+		if(getMessage() != null) {			
+			super.onRepeat();
 		}
 	}
 	
-	/**
-	 * Encrypt the message that should get sent
-	 * @param m the message to encrypt
-	 */
-	private void encryptMessage(Message m) {
-		m.encrypt();
+	@Override
+	protected void onAccept() {
+		Message clonedMessage = getMessage().clone();
+		
+		Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
+		Logger.debug(this.getClass().getSimpleName(), "Message to send: " + getMessage().toString());
+		
+		// 1. Encrypt message
+		getMessage().encrypt();
 		Logger.debug(this.getClass().getSimpleName(), "Encrypted message");
+		try {
+			// 2. Send message
+			sendMessage();
+			
+			// 3. Receive answer
+			if(receiveAnswer()) {
+				// 4. Update message's state
+				updateMessageState(clonedMessage);
+			}else {
+				// 4. Re-add message to message manager
+				Logger.error(this.getServiceName(), "Failed to send message");
+				ClientMessageManager.getInstance().manage(getMessage());
+			}
+		} catch (IOException e) {
+			// 2. -> When failing to send message
+			Logger.error(this.getClass().getSimpleName(), "Failed to send message");
+		}
 	}
 	
-	/**
-	 * Connects to the receive server
-	 * @return the created socket connection
-	 * @throws UnknownHostException
-	 * @throws IOException
-	 */
-	private Socket connectToReceiveServer() throws UnknownHostException, IOException {
-		Socket connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.SEND_PORT);
-		connectionToServer.setSoTimeout(5000);
-		Logger.debug(this.getClass().getSimpleName(), "Successfully connected to the receive server");
-		return connectionToServer;
+	private boolean receiveAnswer() {
+		try {
+			int answer = getInputStream().readInt();
+			
+			switch(answer) {
+			case ServerReceiveService.AnswerCodes.RECEIVED_VALID_MESSAGE:
+				Logger.debug(this.getServiceName(), "Server received valid message");
+				return true;
+			case ServerReceiveService.AnswerCodes.RECEIVED_INVALID_DATA:
+				Logger.error(this.getServiceName(), "Server received invalid data");
+				return false;
+			case ServerReceiveService.AnswerCodes.RECEIVED_INVALID_MESSAGE:
+				Logger.error(this.getServiceName(), "Server received message from/to unregistered user");
+				return false;
+			}
+		} catch (IOException e) {
+			Logger.error(this.getServiceName(), "Error while receiving answer from server");
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	/**
@@ -114,19 +115,18 @@ public class ClientSendService extends Service {
 	 * @param connectionToServer the connection to the receive server
 	 * @throws IOException
 	 */
-	private void sendMessage(Message m, Socket connectionToServer) throws IOException {
-		DataOutputStream out = new DataOutputStream(connectionToServer.getOutputStream());
+	private void sendMessage() throws IOException {
 		// Send message meta
-		out.writeInt(m.getEncryptedServerData().length);
-		out.write(m.getEncryptedServerData());
+		getOutputStream().writeInt(getMessage().getEncryptedServerData().length);
+		getOutputStream().write(getMessage().getEncryptedServerData());
 		
 		// Send message data
-		out.writeInt(m.getEncryptedProtectedData().length);
-		out.write(m.getEncryptedProtectedData());
-		
-		out.flush();
+		getOutputStream().writeInt(getMessage().getEncryptedProtectedData().length);
+		getOutputStream().write(getMessage().getEncryptedProtectedData());
+
+		getOutputStream().flush();
 			
-		Logger.debug(this.getClass().getSimpleName(), "Successfully sent message to the receive server: " + m.toString());
+		Logger.debug(this.getClass().getSimpleName(), "Successfully sent message to the receive server: " + getMessage().toString());
 	}
 	
 	/**
@@ -136,10 +136,17 @@ public class ClientSendService extends Service {
 	private void updateMessageState(Message m) {
 		Logger.debug(this.getClass().getSimpleName(), "Updating message state");
 		
-		
 		m.getLocalData().setSendState(SendState.SENT);
 		m.getLocalData().setUpdateRequested(true);
+		
 		ClientMessageManager.getInstance().manage(m);
 	}
 
+	private Message getMessage() {
+		return message;
+	}
+
+	private void setMessage(Message message) {
+		this.message = message;
+	}
 }

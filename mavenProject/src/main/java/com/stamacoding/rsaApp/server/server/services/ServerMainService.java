@@ -1,7 +1,7 @@
 package com.stamacoding.rsaApp.server.server.services;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.Service;
+import com.stamacoding.rsaApp.server.global.service.Service;
 import com.stamacoding.rsaApp.server.server.ServerConfig;
 
 /**

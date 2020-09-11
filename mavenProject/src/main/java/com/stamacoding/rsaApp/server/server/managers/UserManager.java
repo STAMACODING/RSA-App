@@ -3,7 +3,7 @@ package com.stamacoding.rsaApp.server.server.managers;
 import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.server.client.services.ClientReceiveService;
-import com.stamacoding.rsaApp.server.user.User;
+import com.stamacoding.rsaApp.server.global.user.User;
 
 public class UserManager {
 	/** The only instance of this class */

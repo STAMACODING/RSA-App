@@ -1,18 +1,18 @@
 package com.stamacoding.rsaApp.server.server.services;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.rsa.RSA;
+import com.stamacoding.rsaApp.server.global.user.User;
 import com.stamacoding.rsaApp.server.server.Server;
 import com.stamacoding.rsaApp.server.server.ServerConfig;
-import com.stamacoding.rsaApp.server.server.managers.UserManager;
-import com.stamacoding.rsaApp.server.user.User;
 
-public class LoginService extends ServerService{
+public class LoginService extends ServerSocketService{
+	public static class AnswerCodes{
+		public final static int WRONG_USERNAME_PASSWORD = -1;
+		public final static int INVALID_DATA_FROM_CLIENT = -2;
+	}
 	
 	/** The only instance of this class */
 	private volatile static LoginService singleton = new LoginService();
@@ -35,42 +35,34 @@ public class LoginService extends ServerService{
 	}
 	
 	@Override
-	public void onRepeat() {
-		super.onRepeat();
-
+	public void onAccept() {
 		try {
-			Socket connectionFromClient = getServerSocket().accept();
-			connectionFromClient.setSoTimeout(5000);
-			Logger.debug(getServiceName(), "Accepted connection from client");
 			
-			DataInputStream in = new DataInputStream(connectionFromClient.getInputStream());
-			
-			int length = in.readInt();
+			int length = getInputStream().readInt();
 			if(length > 0) {
 				Logger.debug(getServiceName(), "Decrypting client's request");
 				byte[] encryptedUser = new byte[length];
-				in.readFully(encryptedUser, 0, length);
+				getInputStream().readFully(encryptedUser, 0, length);
 				
 				User user = (User) RSA.decryptF(encryptedUser);
 				Logger.debug(getServiceName(), "Client wants to login as: " + user.toString());
 				
-				DataOutputStream out = new DataOutputStream(connectionFromClient.getOutputStream());
 				if(UserDatabaseService.getInstance().isPasswordCorrect(user.getName(), user.getPassword())) {
 					Logger.debug(getServiceName(), "User logged in (0): " + UserDatabaseService.getInstance().getUser(user.getName()).toString());
 					
-					// TODO: Session Service, Session Manager (...)
-					out.writeLong((long) (Math.random() * Long.MAX_VALUE));
+					// TODO store session id and mark user as logged in
+					long sessionId = (long) (Math.random() * Long.MAX_VALUE);
+					
+					getOutputStream().writeLong(sessionId);
 				}else {
-					Logger.debug(getServiceName(), "Invalid login data!");
-					out.writeLong(-1);
+					Logger.debug(getServiceName(), "Wrong username/password!");
+					getOutputStream().writeInt(AnswerCodes.WRONG_USERNAME_PASSWORD);
 				}
-				out.flush();
-				out.close();
+
 			}else {
 				Logger.error(this.getClass().getSimpleName(), new RuntimeException("Received invalid data"));
+				getOutputStream().writeInt(AnswerCodes.INVALID_DATA_FROM_CLIENT);
 			}
-			in.close();
-			connectionFromClient.close();
 		} catch (IOException e) {
 			Logger.error(this.getClass().getSimpleName(), "Connection error");
 		}

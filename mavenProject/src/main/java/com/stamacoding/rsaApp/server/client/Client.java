@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
-import com.stamacoding.rsaApp.server.TextUtils;
 import com.stamacoding.rsaApp.server.client.managers.ClientMessageManager;
 import com.stamacoding.rsaApp.server.client.services.ClientMainService;
-import com.stamacoding.rsaApp.server.message.Message;
-import com.stamacoding.rsaApp.server.message.data.LocalData;
-import com.stamacoding.rsaApp.server.message.data.ProtectedData;
-import com.stamacoding.rsaApp.server.message.data.SendState;
-import com.stamacoding.rsaApp.server.message.data.ServerData;
+import com.stamacoding.rsaApp.server.global.TextUtils;
+import com.stamacoding.rsaApp.server.global.message.Message;
+import com.stamacoding.rsaApp.server.global.message.data.LocalData;
+import com.stamacoding.rsaApp.server.global.message.data.ProtectedData;
+import com.stamacoding.rsaApp.server.global.message.data.SendState;
+import com.stamacoding.rsaApp.server.global.message.data.ServerData;
 
 /**
  * Tests the {@link ClientMainService} on the client-side.

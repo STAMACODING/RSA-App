@@ -1,9 +1,9 @@
 package com.stamacoding.rsaApp.server.client.services;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.Service;
 import com.stamacoding.rsaApp.server.client.ClientConfig;
-import com.stamacoding.rsaApp.server.session.LoginState;
+import com.stamacoding.rsaApp.server.global.service.Service;
+import com.stamacoding.rsaApp.server.global.session.LoginState;
 
 /**
  * <p>{@link Service} handling all client message transfers. Additionally this service stores all messages in a chat database.</p>

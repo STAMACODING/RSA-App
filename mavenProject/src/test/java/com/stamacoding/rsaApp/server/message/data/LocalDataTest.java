@@ -10,6 +10,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import com.stamacoding.rsaApp.server.global.message.data.LocalData;
+import com.stamacoding.rsaApp.server.global.message.data.SendState;
+
 class LocalDataTest {
 
 	@DisplayName("Test the local data's constructor")

@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.NetworkUtils;
-import com.stamacoding.rsaApp.server.TextUtils;
 import com.stamacoding.rsaApp.server.client.services.ClientMainService;
 import com.stamacoding.rsaApp.server.client.services.ClientReceiveService;
+import com.stamacoding.rsaApp.server.global.NetworkUtils;
+import com.stamacoding.rsaApp.server.global.TextUtils;
 
 /**
  * Configurations concerning the client

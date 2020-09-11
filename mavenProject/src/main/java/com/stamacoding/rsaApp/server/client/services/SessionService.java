@@ -7,11 +7,13 @@ import java.net.Socket;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
 import com.stamacoding.rsaApp.rsa.RSA;
-import com.stamacoding.rsaApp.server.Service;
 import com.stamacoding.rsaApp.server.client.ClientConfig;
-import com.stamacoding.rsaApp.server.session.LoginState;
-import com.stamacoding.rsaApp.server.user.User;
-import com.stamacoding.rsaApp.server.session.Session;
+import com.stamacoding.rsaApp.server.global.service.Service;
+import com.stamacoding.rsaApp.server.global.session.LoginState;
+import com.stamacoding.rsaApp.server.global.session.Session;
+import com.stamacoding.rsaApp.server.global.user.User;
+import com.stamacoding.rsaApp.server.server.services.LoginService;
+import com.stamacoding.rsaApp.server.server.services.SignUpService;
 
 // TODO ServerServices (Login, Signup, Ping) needed, documentation needed, Config should be edited
 public class SessionService extends Service{
@@ -127,11 +129,17 @@ public class SessionService extends Service{
 			in.close();
 			connectionToServer.close();
 			
-			if(answer == -1L) {
-				Logger.error(this.getClass().getSimpleName(), "Failed to sign up! Your username is already in use! (-1)");
+			switch(answer) {
+			case SignUpService.AnswerCodes.USERNAME_UNAVAILABLE:
+				Logger.error(this.getClass().getSimpleName(), "Failed to sign up! Your username is already in use!");
 				return LoginState.NONE;
-			}
-			return LoginState.SIGNED_IN;
+			case SignUpService.AnswerCodes.INVALID_DATA_FROM_CLIENT:
+				Logger.error(this.getClass().getSimpleName(), "Failed to sign up! Received invalid data from client!");
+				return LoginState.NONE;
+			case SignUpService.AnswerCodes.SIGNED_UP:
+				Logger.error(this.getClass().getSimpleName(), "Signed-up successfully!");
+				return LoginState.SIGNED_IN;
+			}	
 		} catch (IOException e) {
 			Logger.error(this.getClass().getSimpleName(), "Connection error");
 		}
@@ -163,13 +171,20 @@ public class SessionService extends Service{
 			in.close();
 			connectionToServer.close();
 			
-			if(answer == -1L) {
-				Logger.error(this.getClass().getSimpleName(), "Failed to log in! Invalid password or username.");
-				return LoginState.SIGNED_IN;
+			if(answer < 0) {
+				int answerCode = (int) answer;
+				switch(answerCode) {
+				case LoginService.AnswerCodes.INVALID_DATA_FROM_CLIENT:
+					Logger.error(this.getClass().getSimpleName(), "Failed to log in! Server received invalid data from client.");
+					return LoginState.SIGNED_IN;
+				case LoginService.AnswerCodes.WRONG_USERNAME_PASSWORD:
+					Logger.error(this.getClass().getSimpleName(), "Failed to log in! Invalid password or username.");
+					return LoginState.SIGNED_IN;
+				}
 			}else {
 				getSession().setId(answer);
+				return LoginState.LOGGED_IN;
 			}
-			return LoginState.LOGGED_IN;
 		} catch (IOException e) {
 			Logger.error(this.getClass().getSimpleName(), "Connection error");
 		}

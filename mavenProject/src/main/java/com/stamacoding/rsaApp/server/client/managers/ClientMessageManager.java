@@ -1,8 +1,8 @@
 package com.stamacoding.rsaApp.server.client.managers;
 
 import com.stamacoding.rsaApp.server.client.services.ClientReceiveService;
-import com.stamacoding.rsaApp.server.message.AbstractMessageManager;
-import com.stamacoding.rsaApp.server.message.Message;
+import com.stamacoding.rsaApp.server.global.message.AbstractMessageManager;
+import com.stamacoding.rsaApp.server.global.message.Message;
 
 /**
  * Manages all stored, received, sending and sent messages. Provides methods to filter messages by their attributes.

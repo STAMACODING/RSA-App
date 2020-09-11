@@ -8,16 +8,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.server.Service;
 import com.stamacoding.rsaApp.server.client.Client;
 import com.stamacoding.rsaApp.server.client.managers.ClientMessageManager;
-import com.stamacoding.rsaApp.server.client.services.database.DatabaseConfiguration;
-import com.stamacoding.rsaApp.server.client.services.database.DatabaseService;
-import com.stamacoding.rsaApp.server.message.Message;
-import com.stamacoding.rsaApp.server.message.data.LocalData;
-import com.stamacoding.rsaApp.server.message.data.ProtectedData;
-import com.stamacoding.rsaApp.server.message.data.SendState;
-import com.stamacoding.rsaApp.server.message.data.ServerData;
+import com.stamacoding.rsaApp.server.global.message.Message;
+import com.stamacoding.rsaApp.server.global.message.data.LocalData;
+import com.stamacoding.rsaApp.server.global.message.data.ProtectedData;
+import com.stamacoding.rsaApp.server.global.message.data.ServerData;
+import com.stamacoding.rsaApp.server.global.service.Service;
+import com.stamacoding.rsaApp.server.global.service.database.DatabaseConfiguration;
+import com.stamacoding.rsaApp.server.global.service.database.DatabaseService;
 
 /**
  * {@link Service} storing and updating messages in the chat database using the {@link ClientMessageManager}.
