@@ -79,11 +79,12 @@ public class ClientSendService extends ClientSocketService {
 			}else {
 				// 4. Re-add message to message manager
 				Logger.error(this.getServiceName(), "Failed to send message");
-				ClientMessageManager.getInstance().manage(getMessage());
+				ClientMessageManager.getInstance().manage(clonedMessage);
 			}
 		} catch (IOException e) {
 			// 2. -> When failing to send message
 			Logger.error(this.getClass().getSimpleName(), "Failed to send message");
+			ClientMessageManager.getInstance().manage(clonedMessage);
 		}
 	}
 	

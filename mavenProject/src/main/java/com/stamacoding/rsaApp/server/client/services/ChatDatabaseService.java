@@ -230,6 +230,42 @@ public class ChatDatabaseService extends DatabaseService{
 		}
 		return null;
 	}
+	
+	private ArrayList<Message> getPendingMessages() {
+		if(!isConnected()) {
+			Logger.error(this.getServiceName(), "Cannot get pending messages! You aren't connected to the chat database");
+			return null;
+		}
+		
+		try {
+			Statement stm = getConnection().createStatement();
+			ResultSet res = stm.executeQuery("SELECT "
+					+ "id, textMessage, "
+					+ "date, sendState, "
+					+ "sending, receiving "
+					+ "FROM Messages WHERE sendState = 0;");
+			
+			if(res != null) {
+				ArrayList<Message> messages = new ArrayList<Message>();
+				
+				while(res.next()) {
+					Message m = new Message(
+							new LocalData(res.getInt(1), LocalData.getIntAsSendState(res.getInt(4))), 
+							new ProtectedData(res.getString(2), res.getLong(3)), 
+							new ServerData(res.getString(5), res.getString(6)));
+					messages.add(m);
+				}
+				Logger.debug(this.getClass().getSimpleName(), "Got (" + messages.size() + ") pending messages");
+				return messages;
+			}
+			Logger.debug(this.getClass().getSimpleName(), "Got (0) pending messages");
+			return null;
+		} catch (SQLException e) {
+			Logger.error(this.getClass().getSimpleName(), "Failed to get pending messages (SQL exception)");
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	private ArrayList<Message> getMessages() {
 		if(!isConnected()) {
@@ -336,5 +372,7 @@ public class ChatDatabaseService extends DatabaseService{
 			e.printStackTrace();
 		}
 		Logger.debug(this.getServiceName(), "Logging chat database...\n" + this.toString());
+
+		ClientMessageManager.getInstance().manage((Message[]) getPendingMessages().toArray());
 	}
 }
