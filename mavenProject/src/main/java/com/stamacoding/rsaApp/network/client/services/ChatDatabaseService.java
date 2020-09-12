@@ -116,6 +116,7 @@ public class ChatDatabaseService extends DatabaseService{
 			Logger.debug(this.getClass().getSimpleName(), "Updated message: " + m.toString());
 			m.getLocalData().setUpdateRequested(false);
 			pst.close();
+			Logger.debug(this.getServiceName(), "Logging database content \n" + toString());
 			return true;
 		} catch (SQLException e) {
 			Logger.error(this.getClass().getSimpleName(), "Failed to update message (SQL exception)");
@@ -162,6 +163,8 @@ public class ChatDatabaseService extends DatabaseService{
 			Logger.debug(this.getClass().getSimpleName(), "Stored message: " + m.toString());
 			m.getLocalData().setUpdateRequested(false);
 			pst.close();
+
+			Logger.debug(this.getServiceName(), "Logging database content \n" + toString());
 			return true;
 		} catch (SQLException e) {
 			Logger.error(this.getClass().getSimpleName(), "Failed to store message (SQL exception)");
@@ -191,6 +194,7 @@ public class ChatDatabaseService extends DatabaseService{
 			pst.executeUpdate();
 			pst.close();
 			Logger.debug(this.getClass().getSimpleName(), "Deleted message using id(" + id + ")");
+			Logger.debug(this.getServiceName(), "Logging database content \n" + toString());
 			return true;
 		} catch (SQLException e) {
 			Logger.error(this.getClass().getSimpleName(), "Failed to delete message (SQL exception)");
@@ -314,6 +318,7 @@ public class ChatDatabaseService extends DatabaseService{
 			stm.executeUpdate("DELETE FROM Messages;");
 			stm.close();
 			Logger.debug(this.getClass().getSimpleName(), "Deleted messages!");
+			Logger.debug(this.getServiceName(), "Logging database content \n" + toString());
 			return true;
 		} catch (SQLException e) {
 			Logger.error(this.getClass().getSimpleName(), "Failed to delete messages (SQL exception)");

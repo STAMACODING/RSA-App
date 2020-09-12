@@ -39,7 +39,7 @@ public class ClientMessageManager extends AbstractMessageManager{
 			Message m = getCurrentlyManagedMessages().get(i);
 			if(m == null || m.getLocalData() == null) return null;
 			if(m.getLocalData().isToStore() || m.getLocalData().isToUpdate()) {
-				getCurrentlyManagedMessages().remove(m);
+				if(!m.getLocalData().isToSend()) getCurrentlyManagedMessages().remove(m);
 				return m;
 			}
 		}
@@ -57,7 +57,7 @@ public class ClientMessageManager extends AbstractMessageManager{
 			try {m = getCurrentlyManagedMessages().get(i);}catch(IndexOutOfBoundsException e){};
 			if(m == null || m.getLocalData() == null) return null;
 			if(m.getLocalData().isToSend()) {
-				getCurrentlyManagedMessages().remove(m);
+				if(!m.getLocalData().isToStore() && !m.getLocalData().isToUpdate()) getCurrentlyManagedMessages().remove(m);
 				return m;
 			}
 		}

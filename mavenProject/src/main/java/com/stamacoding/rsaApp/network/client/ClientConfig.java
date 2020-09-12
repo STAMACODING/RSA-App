@@ -124,7 +124,7 @@ public class ClientConfig {
 		
 		// Client Information
 		sb.append(TextUtils.fancyParameter("User name", String.valueOf(ClientConfig.USER_NAME)));
-		sb.append(TextUtils.fancyParameter("User password", String.valueOf(ClientConfig.USER_PASSWORD)));
+		sb.append(TextUtils.fancyParameter("User password", USER_PASSWORD == null ? null : String.valueOf(ClientConfig.USER_PASSWORD)));
 		
 		// Server IP
 		sb.append(TextUtils.fancyParameter("Server IP", ClientConfig.SERVER_IP));
@@ -180,7 +180,7 @@ public class ClientConfig {
 	    properties.put("PING_PORT", String.valueOf(PING_PORT));
 	    
 	    properties.put("USER_NAME", USER_NAME == null ? "" : USER_NAME);
-	    properties.put("USER_PASSWORD", USER_PASSWORD == null ? "" : USER_PASSWORD);
+	    properties.put("USER_PASSWORD", USER_PASSWORD == null ? "" : String.valueOf(USER_PASSWORD));
 	    
 	    properties.put("QUERY_MESSAGES_INTERVAL", String.valueOf(QUERY_MESSAGES_INTERVAL));
 	    properties.put("RETRY_SIGNUP_INTERVAL", String.valueOf(RETRY_SIGNUP_INTERVAL));
