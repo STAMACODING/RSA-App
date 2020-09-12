@@ -326,7 +326,7 @@ public class UserDatabaseService extends DatabaseService{
 					+ "id INTEGER PRIMARY KEY CHECK ((id > 0)), "
 					+ "name VARCHAR (15) NOT NULL UNIQUE CHECK (LENGTH(name) > 0), "
 					+ "password VARCHAR (" + Security.HASHED_PW_LENGTH + ") NOT NULL CHECK (LENGTH(password) = " + Security.HASHED_PW_LENGTH + " ),"
-					+ "salt VARCHAR (" + Security.SALT_LENGTH + ") NOT NULL CHECK (LENGTH(password) = " + Security.SALT_LENGTH + " ));");
+					+ "salt VARCHAR (" + Security.SALT_LENGTH + ") NOT NULL CHECK (LENGTH(salt) = " + Security.SALT_LENGTH + " ));");
 		} catch (SQLException e) {
 			Logger.error(this.getClass().getSimpleName(), "Failed to initialize database! (SQL Exception)");
 			e.printStackTrace();
