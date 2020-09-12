@@ -1,6 +1,9 @@
 package com.stamacoding.rsaApp.security;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -11,7 +14,6 @@ import com.stamacoding.rsaApp.security.rsa.RSA;
 
 public class Security {
 	public static final int SALT_LENGTH = generatePasswordSalt().length();
-	public static final int HASHED_PW_LENGTH = hashPassword("justATest", generatePasswordSalt()).length();
 	
 	public static byte[] encryptF(Object o) {
 		return Convert.serialize(o);
@@ -57,16 +59,15 @@ public class Security {
 		return o;
 	}
 
-	public static String hashPassword(String password, String salt) {
-		return BCrypt.hashpw(password, salt);
+	public static byte[] hashPassword(char[] password, String salt) {
+		return BCrypt.hashpw(String.valueOf(password), salt).getBytes(StandardCharsets.UTF_8);
 	}
 	
 	public static String generatePasswordSalt() {
 		return BCrypt.gensalt();
 	}
 	
-	public static boolean checkPassword(String clearPassword, String hashedPassword) {
-		return BCrypt.checkpw(clearPassword, hashedPassword);
+	public static boolean checkPassword(char[] clearPassword, byte[] hashedPassword) {
+		return BCrypt.checkpw(String.valueOf(clearPassword), new String(hashedPassword, StandardCharsets.UTF_8));
 	}
-
 }

@@ -116,7 +116,7 @@ public class User implements Serializable{
 		sb.append("] ( \"");
 		sb.append(getName());
 		sb.append("\" § ");
-		sb.append(getPassword());
+		sb.append(getPassword().toString());
 		sb.append(" ) [");
 		sb.append(isUpdateRequested());
 		sb.append("]");

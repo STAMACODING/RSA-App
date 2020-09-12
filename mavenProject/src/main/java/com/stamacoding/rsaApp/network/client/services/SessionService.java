@@ -45,15 +45,15 @@ public class SessionService extends Service{
 		super.onStart();
 		
 		while(getSession().getState() == LoginState.NONE) {
-			Logger.debug(this.getClass().getSimpleName(), "Trying to sign up (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
+			Logger.debug(this.getClass().getSimpleName(), "Trying to sign up (" + ClientConfig.USER_NAME + ", ************)");
 			getSession().setState(signup());
 			
 			if(getSession().getState() == LoginState.SIGNED_IN) {
-				Logger.debug(this.getClass().getSimpleName(), "Signed up successfull (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
+				Logger.debug(this.getClass().getSimpleName(), "Signed up successfull (" + ClientConfig.USER_NAME + ", ************)");
 				ClientConfig.REGISTERED = true;
 				ClientConfig.save();
 			}else {
-				Logger.warning(this.getClass().getSimpleName(), "Failed to sign up (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
+				Logger.warning(this.getClass().getSimpleName(), "Failed to sign up (" + ClientConfig.USER_NAME + ", ************)");
 				try {
 					Thread.sleep(ClientConfig.RETRY_SIGNUP_INTERVAL);
 				} catch (InterruptedException e) {
@@ -63,13 +63,13 @@ public class SessionService extends Service{
 		}
 		
 		while(getSession().getState() != LoginState.LOGGED_IN) {
-			Logger.debug(this.getClass().getSimpleName(), "Trying to log in (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
+			Logger.debug(this.getClass().getSimpleName(), "Trying to log in (" + ClientConfig.USER_NAME + ", ************)");
 			getSession().setState(login());
 			
 			if(getSession().getState() == LoginState.LOGGED_IN) {
-				Logger.debug(this.getClass().getSimpleName(), "Logged in successfull (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
+				Logger.debug(this.getClass().getSimpleName(), "Logged in successfull (" + ClientConfig.USER_NAME + ", ************)");
 			}else {
-				Logger.warning(this.getClass().getSimpleName(), "Failed to log in (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
+				Logger.warning(this.getClass().getSimpleName(), "Failed to log in (" + ClientConfig.USER_NAME + ", ************)");
 				try {
 					Thread.sleep(ClientConfig.RETRY_LOGIN_INTERVAL);
 				} catch (InterruptedException e) {
@@ -111,7 +111,7 @@ public class SessionService extends Service{
 			Socket connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.SIGNUP_PORT);
 			Logger.debug(this.getClass().getSimpleName(), "Connected to server successfully");
 			
-			Logger.debug(this.getClass().getSimpleName(), "Encrypting user information (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
+			Logger.debug(this.getClass().getSimpleName(), "Encrypting user information (" + ClientConfig.USER_NAME + ", ************)");
 			byte[] you = Security.encryptF(new User(ClientConfig.USER_NAME, new Password(ClientConfig.USER_PASSWORD)));
 			
 			DataOutputStream out = new DataOutputStream(connectionToServer.getOutputStream());
@@ -153,7 +153,7 @@ public class SessionService extends Service{
 			Socket connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.LOGIN_PORT);
 			Logger.debug(this.getClass().getSimpleName(), "Connected to server successfully");
 			
-			Logger.debug(this.getClass().getSimpleName(), "Encrypting user information (" + ClientConfig.USER_NAME + ", " + ClientConfig.USER_PASSWORD + ")");
+			Logger.debug(this.getClass().getSimpleName(), "Encrypting user information (" + ClientConfig.USER_NAME + ", ************)");
 			byte[] you = Security.encryptF(new User(ClientConfig.USER_NAME, new Password(ClientConfig.USER_PASSWORD)));
 			
 			DataOutputStream out = new DataOutputStream(connectionToServer.getOutputStream());

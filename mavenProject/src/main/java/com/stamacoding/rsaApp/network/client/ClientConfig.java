@@ -21,7 +21,7 @@ public class ClientConfig {
 	public static String USER_NAME = null;
 	
 	/** The user's password */
-	public static String USER_PASSWORD = null;
+	public static char[] USER_PASSWORD = null;
 	
 	// TODO doc
 	public static boolean REGISTERED = false;
@@ -62,7 +62,7 @@ public class ClientConfig {
 	 * @param receivePort the client's receive port
 	 * @param queryMessagesInterval The time the {@link ClientReceiveService} waits before querying new messages from the server
 	 */
-	public static void setup(String userName, String userPassword, String serverIP, int sendPort, int receivePort, int signupPort, int loginPort, int pingPort, long queryMessagesInterval, long retrySignUpInterval, long retryLoginInterval, long pingInterval, boolean registered) {
+	public static void setup(String userName, char[] userPassword, String serverIP, int sendPort, int receivePort, int signupPort, int loginPort, int pingPort, long queryMessagesInterval, long retrySignUpInterval, long retryLoginInterval, long pingInterval, boolean registered) {
 		USER_NAME = userName;
 		USER_PASSWORD = userPassword;
 		SERVER_IP = serverIP;
@@ -87,7 +87,7 @@ public class ClientConfig {
 	 * @return if the configurations are valid
 	 */
 	public static boolean isValid() {	
-		if(USER_PASSWORD == null || USER_PASSWORD.length() == 0) return false;
+		if(USER_PASSWORD == null || USER_PASSWORD.length == 0 || USER_PASSWORD.length > 30) return false;
 		if(USER_NAME == null || USER_NAME.length() == 0 || USER_NAME.length() > 15) return false;
 		if(!NetworkUtils.isValidInet4Address(SERVER_IP)) return false;
 		
@@ -205,7 +205,7 @@ public class ClientConfig {
 			
 			ClientConfig.setup(
 					properties.getProperty("USER_NAME").equals("") ? null : properties.getProperty("USER_NAME"), 
-					properties.getProperty("USER_PASSWORD").equals("") ? null : properties.getProperty("USER_PASSWORD"), 
+					properties.getProperty("USER_PASSWORD").equals("") ? null : properties.getProperty("USER_PASSWORD").toCharArray(), 
 					properties.getProperty("SERVER_IP").equals("") ? null : properties.getProperty("SERVER_IP"), 
 					Integer.valueOf(properties.getProperty("SEND_PORT")), 
 					Integer.valueOf(properties.getProperty("RECEIVE_PORT")), 

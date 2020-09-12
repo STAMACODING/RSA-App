@@ -337,6 +337,11 @@ public class ChatDatabaseService extends DatabaseService{
 
 		for(int i=0; i<127; i++) sb.append("#");
 		sb.append('\n');
+		
+		if(messages.size() == 0) {
+			sb.append("\t Database is empty!\n");
+		}
+		
 		for(int i=0; i<messages.size(); i++) {
 			Message m = messages.get(i);
 			sb.append(String.format("| %-18s | %-18s | %-18s | %-18s | %-18s | %-18s |\n", 

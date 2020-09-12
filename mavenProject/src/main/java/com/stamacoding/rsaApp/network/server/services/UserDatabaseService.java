@@ -94,7 +94,7 @@ public class UserDatabaseService extends DatabaseService{
 					+ "salt = ?, "
 					+ "WHERE id = ?;");
 			pst.setString(1, u.getName());
-			pst.setString(2, u.getPassword().getHashedPassword());
+			pst.setBytes(2, u.getPassword().getHashedPassword());
 			pst.setString(3, u.getPassword().getSalt());
 			pst.setLong(4, u.getId());
 			
@@ -137,7 +137,7 @@ public class UserDatabaseService extends DatabaseService{
 					+ "(name, password, salt) VALUES( "
 					+ "?, ?, ?);");
 			pst.setString(1, u.getName());
-			pst.setString(2, u.getPassword().getHashedPassword());
+			pst.setBytes(2, u.getPassword().getHashedPassword());
 			pst.setString(3, u.getPassword().getSalt());
 			
 			pst.executeUpdate();
@@ -174,7 +174,7 @@ public class UserDatabaseService extends DatabaseService{
 				ArrayList<User> users = new ArrayList<User>();
 				
 				while(res.next()) {
-					User u = new User(res.getLong(1), res.getString(2), new Password(res.getString(3), res.getString(4), true));
+					User u = new User(res.getLong(1), res.getString(2), new Password(res.getBytes(3), res.getString(4)));
 					users.add(u);
 				}
 				Logger.debug(this.getClass().getSimpleName(), "Got (" + users.size() + ") users");
@@ -205,7 +205,7 @@ public class UserDatabaseService extends DatabaseService{
 			ResultSet res = stm.executeQuery();
 			
 			if(res != null && res.next()) {
-				User u = new User(res.getLong(1), username, new Password(res.getString(3), res.getString(4), true));
+				User u = new User(res.getLong(1), username, new Password(res.getBytes(3), res.getString(4)));
 				return u;
 			}else {
 				Logger.warning(this.getClass().getSimpleName(), "Didn't find any user with the name \"" + username + "\"");
@@ -233,7 +233,7 @@ public class UserDatabaseService extends DatabaseService{
 			ResultSet res = stm.executeQuery();
 			
 			if(res != null && res.next()) {
-				User u = new User(id, res.getString(2), new Password(res.getString(3), res.getString(4), true));
+				User u = new User(id, res.getString(2), new Password(res.getBytes(3), res.getString(4)));
 				return u;
 			}else {
 				Logger.warning(this.getClass().getSimpleName(), "Didn't find any user with the id \"" + id + "\"");
@@ -261,12 +261,17 @@ public class UserDatabaseService extends DatabaseService{
 
 		for(int i=0; i<64; i++) sb.append("#");
 		sb.append('\n');
+		
+		if(users.size() == 0) {
+			sb.append("\t Database is empty!\n");
+		}
+		
 		for(int i=0; i<users.size(); i++) {
 			User u = users.get(i);
 			sb.append(String.format("| %-18s | %-18s | %-18s |\n", 
 					u.getId(),
 					u.getName(),
-					u.getPassword()));
+					u.getPassword().toString()));
 			if(i+1<users.size()) {
 				for(int j=0; j<64; j++) sb.append("-");
 				sb.append('\n');
@@ -325,7 +330,7 @@ public class UserDatabaseService extends DatabaseService{
 			statement.execute("CREATE TABLE IF NOT EXISTS Users ("
 					+ "id INTEGER PRIMARY KEY CHECK ((id > 0)), "
 					+ "name VARCHAR (15) NOT NULL UNIQUE CHECK (LENGTH(name) > 0), "
-					+ "password VARCHAR (" + Security.HASHED_PW_LENGTH + ") NOT NULL CHECK (LENGTH(password) = " + Security.HASHED_PW_LENGTH + " ),"
+					+ "password TINYBLOB NOT NULL, "
 					+ "salt VARCHAR (" + Security.SALT_LENGTH + ") NOT NULL CHECK (LENGTH(salt) = " + Security.SALT_LENGTH + " ));");
 		} catch (SQLException e) {
 			Logger.error(this.getClass().getSimpleName(), "Failed to initialize database! (SQL Exception)");

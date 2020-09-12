@@ -63,7 +63,7 @@ public class Client {
 			System.out.print(TextUtils.inputAfter());
 			
 			System.out.print(TextUtils.inputBefore("Your password"));
-			ClientConfig.USER_PASSWORD = s.next();
+			ClientConfig.USER_PASSWORD = s.next().toCharArray();
 			System.out.print(TextUtils.inputAfter());
 			
 			System.out.print(TextUtils.inputBefore("Are you a registered user? (y/n)"));
