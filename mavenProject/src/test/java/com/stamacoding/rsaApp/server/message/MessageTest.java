@@ -12,11 +12,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.stamacoding.rsaApp.rsa.RSA;
-import com.stamacoding.rsaApp.server.message.data.LocalData;
-import com.stamacoding.rsaApp.server.message.data.ProtectedData;
-import com.stamacoding.rsaApp.server.message.data.SendState;
-import com.stamacoding.rsaApp.server.message.data.ServerData;
+import com.stamacoding.rsaApp.network.global.message.Message;
+import com.stamacoding.rsaApp.network.global.message.data.LocalData;
+import com.stamacoding.rsaApp.network.global.message.data.ProtectedData;
+import com.stamacoding.rsaApp.network.global.message.data.SendState;
+import com.stamacoding.rsaApp.network.global.message.data.ServerData;
+import com.stamacoding.rsaApp.security.Security;
 
 class MessageTest {
 
@@ -45,7 +46,7 @@ class MessageTest {
 			});
 			
 			assertDoesNotThrow(() -> {
-				Message m = new Message(new LocalData(23, SendState.PENDING), RSA.encryptF(new ProtectedData("Hi Henri!", 2332L)), new ServerData("henri", "hendrik"));
+				Message m = new Message(new LocalData(23, SendState.PENDING), Security.encryptF(new ProtectedData("Hi Henri!", 2332L)), new ServerData("henri", "hendrik"));
 				assertNotNull(m.getLocalData());
 				assertNull(m.getProtectedData());
 				assertNotNull(m.getServerData());
@@ -53,7 +54,7 @@ class MessageTest {
 				assertNull(m.getEncryptedServerData());
 			});
 			assertDoesNotThrow(() -> {
-				Message m = new Message(new LocalData(2, SendState.SENT), RSA.encryptF(new ProtectedData("Testnachricht", 11L)), new ServerData("patrick", "bene"));
+				Message m = new Message(new LocalData(2, SendState.SENT), Security.encryptF(new ProtectedData("Testnachricht", 11L)), new ServerData("patrick", "bene"));
 				assertNotNull(m.getLocalData());
 				assertNull(m.getProtectedData());
 				assertNotNull(m.getServerData());
@@ -62,7 +63,7 @@ class MessageTest {
 			});
 			
 			assertDoesNotThrow(() -> {
-				Message m = new Message(new LocalData(23, SendState.PENDING), RSA.encryptF(new ProtectedData("Hi Henri!", 2332L)), RSA.encryptF(new ServerData("sami", "dave")));
+				Message m = new Message(new LocalData(23, SendState.PENDING), Security.encryptF(new ProtectedData("Hi Henri!", 2332L)), Security.encryptF(new ServerData("sami", "dave")));
 				assertNotNull(m.getLocalData());
 				assertNull(m.getProtectedData());
 				assertNull(m.getServerData());
@@ -70,7 +71,7 @@ class MessageTest {
 				assertNotNull(m.getEncryptedServerData());
 			});
 			assertDoesNotThrow(() -> {
-				Message m = new Message(new LocalData(2, SendState.SENT), RSA.encryptF(new ProtectedData("Testnachricht", 11L)), RSA.encryptF(new ServerData("josef", "günter")));
+				Message m = new Message(new LocalData(2, SendState.SENT), Security.encryptF(new ProtectedData("Testnachricht", 11L)), Security.encryptF(new ServerData("josef", "günter")));
 				assertNotNull(m.getLocalData());
 				assertNull(m.getProtectedData());
 				assertNull(m.getServerData());
@@ -86,11 +87,11 @@ class MessageTest {
 			assertThrows(IllegalArgumentException.class, () -> {new Message(null, new ProtectedData("Hi Henri!", 2332L), new ServerData("josef", "günter"));});
 			assertThrows(IllegalArgumentException.class, () -> {new Message(null, new ProtectedData("Hi Henri!", 2332L), null);});
 			
-			assertThrows(IllegalArgumentException.class, () -> {new Message(new LocalData(23, SendState.PENDING), null, RSA.encryptF(new ServerData("josef", "günter")));});
-			assertThrows(IllegalArgumentException.class, () -> {new Message(null, RSA.encryptF(new ProtectedData("Hi Henri!", 2332L)), RSA.encryptF(new ServerData("josef", "günter")));});
-			assertThrows(IllegalArgumentException.class, () -> {new Message(null, null, RSA.encryptF(new ServerData("josef", "günter")));});
+			assertThrows(IllegalArgumentException.class, () -> {new Message(new LocalData(23, SendState.PENDING), null, Security.encryptF(new ServerData("josef", "günter")));});
+			assertThrows(IllegalArgumentException.class, () -> {new Message(null, Security.encryptF(new ProtectedData("Hi Henri!", 2332L)), Security.encryptF(new ServerData("josef", "günter")));});
+			assertThrows(IllegalArgumentException.class, () -> {new Message(null, null, Security.encryptF(new ServerData("josef", "günter")));});
 			
-			assertThrows(IllegalArgumentException.class, () -> {new Message(null, RSA.encryptF(new ProtectedData("Hi Henri!", 2332L)), new ServerData("josef", "günter"));});
+			assertThrows(IllegalArgumentException.class, () -> {new Message(null, Security.encryptF(new ProtectedData("Hi Henri!", 2332L)), new ServerData("josef", "günter"));});
 		}
 		
 	}
@@ -114,7 +115,7 @@ class MessageTest {
 		@Test
 		void testDecryptProtectedData() {
 			ProtectedData p = new ProtectedData("Hi Henri!", 2332L);
-			Message m = new Message(new LocalData(23, SendState.PENDING), RSA.encryptF(p), new ServerData("josef", "günter"));
+			Message m = new Message(new LocalData(23, SendState.PENDING), Security.encryptF(p), new ServerData("josef", "günter"));
 			
 			assertDoesNotThrow(() -> {m.decryptProtectedData();});
 			
@@ -143,7 +144,7 @@ class MessageTest {
 		@Test
 		void testDecryptProtectedData() {
 			ServerData d = new ServerData("josef", "günter");
-			Message m = new Message(new LocalData(23, SendState.PENDING), RSA.encryptF(new ProtectedData("Hi Henri!", 2332L)), RSA.encryptF(d));
+			Message m = new Message(new LocalData(23, SendState.PENDING), Security.encryptF(new ProtectedData("Hi Henri!", 2332L)), Security.encryptF(d));
 			
 			assertDoesNotThrow(() -> {m.decryptServerData();});
 			
@@ -165,12 +166,12 @@ class MessageTest {
 			Message d2 = new Message(new LocalData(23, SendState.PENDING), new ProtectedData("Hi Henri!", 2332L), new ServerData("josef", "günter"));
 			assertTrue(d2.equals(d1));
 			
-			Message d3 = new Message(new LocalData(23, SendState.PENDING), RSA.encryptF(new ProtectedData("Hi Henri!", 2332L)), RSA.encryptF(new ServerData("tim", "günter")));
-			Message d4 = new Message(new LocalData(23, SendState.PENDING), RSA.encryptF(new ProtectedData("Hi Henri!", 2332L)), RSA.encryptF(new ServerData("tim", "günter")));
+			Message d3 = new Message(new LocalData(23, SendState.PENDING), Security.encryptF(new ProtectedData("Hi Henri!", 2332L)), Security.encryptF(new ServerData("tim", "günter")));
+			Message d4 = new Message(new LocalData(23, SendState.PENDING), Security.encryptF(new ProtectedData("Hi Henri!", 2332L)), Security.encryptF(new ServerData("tim", "günter")));
 			assertTrue(d3.equals(d4));
 			
-			Message d5 = new Message(new LocalData(23, SendState.PENDING), RSA.encryptF(new ProtectedData("Hi Henri!", 2332L)), new ServerData("anette", "we"));
-			Message d6 = new Message(new LocalData(23, SendState.PENDING), RSA.encryptF(new ProtectedData("Hi Henri!", 2332L)), new ServerData("anette", "we"));
+			Message d5 = new Message(new LocalData(23, SendState.PENDING), Security.encryptF(new ProtectedData("Hi Henri!", 2332L)), new ServerData("anette", "we"));
+			Message d6 = new Message(new LocalData(23, SendState.PENDING), Security.encryptF(new ProtectedData("Hi Henri!", 2332L)), new ServerData("anette", "we"));
 			assertTrue(d5.equals(d6));
 		}
 		
@@ -181,12 +182,12 @@ class MessageTest {
 			Message d2 = new Message(new LocalData(2, SendState.PENDING), new ProtectedData("Hi He22nri!", 2332L), new ServerData("günter", "josef"));
 			assertFalse(d2.equals(d1));
 			
-			Message d3 = new Message(new LocalData(13, SendState.SENT), RSA.encryptF(new ProtectedData("Hi Henri!", 2332L)), RSA.encryptF(new ServerData("a", "b")));
-			Message d4 = new Message(new LocalData(23, SendState.PENDING), RSA.encryptF(new ProtectedData("Hi Hesdfsdfnri!", 2332L)), RSA.encryptF(new ServerData("a", "b")));
+			Message d3 = new Message(new LocalData(13, SendState.SENT), Security.encryptF(new ProtectedData("Hi Henri!", 2332L)), Security.encryptF(new ServerData("a", "b")));
+			Message d4 = new Message(new LocalData(23, SendState.PENDING), Security.encryptF(new ProtectedData("Hi Hesdfsdfnri!", 2332L)), Security.encryptF(new ServerData("a", "b")));
 			assertFalse(d3.equals(d4));
 			
-			Message d5 = new Message(new LocalData(23, SendState.PENDING), RSA.encryptF(new ProtectedData("Hi dsfsf!", 232232L)), new ServerData("aa", "bb2"));
-			Message d6 = new Message(new LocalData(33, SendState.SENT), RSA.encryptF(new ProtectedData("Hi Hsdfsdfdfenri!", 211332L)), new ServerData("ssds2", "sd"));
+			Message d5 = new Message(new LocalData(23, SendState.PENDING), Security.encryptF(new ProtectedData("Hi dsfsf!", 232232L)), new ServerData("aa", "bb2"));
+			Message d6 = new Message(new LocalData(33, SendState.SENT), Security.encryptF(new ProtectedData("Hi Hsdfsdfdfenri!", 211332L)), new ServerData("ssds2", "sd"));
 			assertFalse(d5.equals(d6));
 		}
 	}

@@ -10,6 +10,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import com.stamacoding.rsaApp.network.global.message.data.ServerData;
+
 class ServerDataTest {
 
 	@DisplayName("Test the server data's constructor")
