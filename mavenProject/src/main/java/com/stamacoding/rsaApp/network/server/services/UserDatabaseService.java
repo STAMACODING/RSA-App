@@ -246,6 +246,39 @@ public class UserDatabaseService extends DatabaseService{
 		return null;
 	}
 	
+	
+	private boolean delteUser(User u) {
+		if(!u.isStored()) {
+		Logger.error(this.getClass().getSimpleName(), "Cannot delete an unstored user!");
+		return false;
+		}
+		
+	return deleteUser(u.getId());
+	}
+
+	private boolean deleteUser(long id){
+	if(!isConnected()) {
+		Logger.error(this.getServiceName(), "Cannot delete user! You aren't connected to the chat database");
+		return false;
+	}
+	
+	try {
+		int userId = (int) id;
+		PreparedStatement pst = getConnection().prepareStatement("DELETE FROM usersLoginData WHERE id = ?;");
+		pst.setLong(1, userId);
+		
+		pst.executeUpdate();
+		pst.close();
+		Logger.debug(this.getClass().getSimpleName(), "Deleted user using id(" + id + ")");
+		return true;
+	} catch (SQLException e) {
+		Logger.error(this.getClass().getSimpleName(), "Failed to delete user and suddenly nothing works as it should.)");
+		e.printStackTrace();
+	}
+	return false;
+	}
+	
+	
 	public String toString() {
 		if(!isConnected()) {
 			Logger.error(this.getServiceName(), "Cannot print database! You aren't connected to the user database");
