@@ -53,6 +53,9 @@ public class SessionService extends Service{
 			
 			if(getSession().getState() == LoginState.SIGNED_IN) {
 				Logger.debug(this.getClass().getSimpleName(), "Signed up successfull (" + ClientConfig.USER_NAME + ", ************)");
+				Logger.debug(this.getClass().getSimpleName(), "Try to create keys...");
+				createKey();
+				Logger.debug(this.getClass().getSimpleName(), "Keys created, private Key stored");
 				ClientConfig.REGISTERED = true;
 				ClientConfig.save();
 			}else {
@@ -68,13 +71,8 @@ public class SessionService extends Service{
 		while(getSession().getState() != LoginState.LOGGED_IN) {
 			Logger.debug(this.getClass().getSimpleName(), "Trying to log in (" + ClientConfig.USER_NAME + ", ************)");
 			getSession().setState(login());
-			
 			if(getSession().getState() == LoginState.LOGGED_IN) {
 				Logger.debug(this.getClass().getSimpleName(), "Logged in successfull (" + ClientConfig.USER_NAME + ", ************)");
-				Logger.debug(this.getClass().getSimpleName(), "Try to create keys...");
-				createKey();
-				Logger.debug(this.getClass().getSimpleName(), "Keys created, private Key stored");
-				
 			}else {
 				Logger.warning(this.getClass().getSimpleName(), "Failed to log in (" + ClientConfig.USER_NAME + ", ************)");
 				try {
