@@ -2,6 +2,8 @@ package com.stamacoding.rsaApp.network.client.services;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -15,6 +17,7 @@ import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.network.server.services.LoginService;
 import com.stamacoding.rsaApp.network.server.services.SignUpService;
 import com.stamacoding.rsaApp.security.Security;
+import com.stamacoding.rsaApp.security.rsa.KeyPair;
 
 // TODO ServerServices (Login, Signup, Ping) needed, documentation needed, Config should be edited
 public class SessionService extends Service{
@@ -68,6 +71,10 @@ public class SessionService extends Service{
 			
 			if(getSession().getState() == LoginState.LOGGED_IN) {
 				Logger.debug(this.getClass().getSimpleName(), "Logged in successfull (" + ClientConfig.USER_NAME + ", ************)");
+				Logger.debug(this.getClass().getSimpleName(), "Try to create keys...");
+				createKey();
+				Logger.debug(this.getClass().getSimpleName(), "Keys created, private Key stored");
+				
 			}else {
 				Logger.warning(this.getClass().getSimpleName(), "Failed to log in (" + ClientConfig.USER_NAME + ", ************)");
 				try {
@@ -196,5 +203,43 @@ public class SessionService extends Service{
 	public Session getSession() {
 		return session;
 	}
+	
+	/**
+	 * creates a RSA-KeyPair and stores the private key at /mavenProject/PrivateKey.txt
+	 */
+	private void createKey() {
+		KeyPair clientKey = new KeyPair();
+		File dest = new File("PrivateKey.txt");
+		if (!dest.exists())
+			try {
+				dest.createNewFile();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		FileWriter destWrit = null;
+		try {
+			destWrit = new FileWriter(dest);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		int exp = clientKey.getPrivateKey().getExp();
+		int mod = clientKey.getPrivateKey().getMod();
+		try {
+			destWrit.write("(" + exp + ", " + mod + ")");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			destWrit.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//public void getPrivateKey() {}
 }
 
