@@ -36,9 +36,12 @@ public class ServerMessageManager extends AbstractMessageManager{
 	public ArrayList<Message> poll(String username) {
 		ArrayList<Message> messagesToSend = new ArrayList<Message>();
 		for(int i=0; i<getCurrentlyManagedMessages().size(); i++) {
+			
 			if(getCurrentlyManagedMessages().get(i).getServerData().getReceiving().equals(username)) {
+				
 				messagesToSend.add(getCurrentlyManagedMessages().get(i));
 				Logger.debug(this.getClass().getSimpleName(), "Polling message: " + messagesToSend.get(i).toString());
+				
 				getCurrentlyManagedMessages().get(i).encrypt();
 			}
 		}
