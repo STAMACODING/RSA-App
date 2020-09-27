@@ -8,6 +8,7 @@ import java.nio.file.StandardOpenOption;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.logger.LogEntry;
+import com.stamacoding.rsaApp.logger.LoggerException;
 
 public class FileOutput {
 	private static String path = "";
@@ -25,8 +26,7 @@ public class FileOutput {
 				try {
 					f.createNewFile();
 				} catch (IOException e) {
-					e.printStackTrace();
-					System.exit(-1);
+					throw new LoggerException("Failed to create file: " + path);
 				}
 		}
 		
@@ -50,8 +50,7 @@ public class FileOutput {
 				path = "log/Logs.log";
 				new File(path).createNewFile();
 			} catch (IOException e) {
-				e.printStackTrace();
-				System.exit(-1);
+				throw new LoggerException("Failed to create file: " + path);
 			}
 		}
 		initialized = true;

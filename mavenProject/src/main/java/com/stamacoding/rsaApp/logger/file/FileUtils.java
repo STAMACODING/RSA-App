@@ -12,31 +12,31 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 
+import com.stamacoding.rsaApp.logger.LoggerException;
+
 public class FileUtils {
-	public static boolean deleteDirectory(String directory){
+	public static void deleteDirectory(String directory){
 		
 	    try {
 			Files.walk(Paths.get(directory))
 			  .sorted(Comparator.reverseOrder())
 			  .map(Path::toFile)
 			  .forEach(File::delete);
-			return true;
 		} catch (IOException e) {
-			return false;
+			throw new LoggerException("Failed to delete directory: " + directory);
 		}
 	}
-	public static boolean append(String path, String txt) {
+	public static void append(String path, String txt) {
 		try {
 			OutputStream o = Files.newOutputStream(Paths.get(path), StandardOpenOption.APPEND);
 			o.write(txt.getBytes());
 			o.close();
-			return true;
 		} catch (IOException e) {
-			return false;
+			throw new LoggerException("Failed to append string to file: " + path);
 		}
 	}
 
-	public static boolean deleteLines(String path, int startline, int numlines){
+	public static void deleteLines(String path, int startline, int numlines){
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(path));
  
@@ -58,10 +58,9 @@ public class FileUtils {
 			//Write entire string buffer into the file
 			fw.write(sb.toString());
 			fw.close();
-			return true;
 		}
 		catch (Exception e){
-			return false;
+			throw new LoggerException("Failed to delete lines from file: " + path);
 		}
 	}
 }

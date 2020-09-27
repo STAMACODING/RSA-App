@@ -8,7 +8,7 @@ public class L{
 	public static final LogConfig CONFIG = new LogConfig();
 	
 	public static void f(Class<?> c, String m, Exception e) {
-		if(e == null) throw new IllegalArgumentException("f(Class c, String m, Exception e): Exception is not allowed to be null!"); 
+		if(e == null) throw new LoggerException("Exception e cannot be null"); 
 		
 		log(System.currentTimeMillis(), Level.FATAL, c, m, e);
 		
@@ -22,7 +22,7 @@ public class L{
 	}
 	
 	public static void e(Class<?> c, String m, Exception e) {
-		if(e == null) throw new IllegalArgumentException("e(Class c, String m, Exception e): Exception is not allowed to be null!"); 
+		if(e == null) throw new LoggerException("Exception e cannot be null"); 
 		
 		log(System.currentTimeMillis(), Level.ERROR, c, m, e);
 	}
@@ -52,10 +52,10 @@ public class L{
 	}
 	
 	private static void log(long t, Level l, Class<?> c, String m, Exception e) {
-		if(t < 0) throw new IllegalArgumentException("Illegal log time!");
-		if(l == null) throw new IllegalArgumentException("Illegal log level!"); 
-		if(c == null) throw new IllegalArgumentException("Illegal class of origin!"); 
-		if(m == null) throw new IllegalArgumentException("Illegal log message!"); 
+		if(t < 0) throw new LoggerException("Invalid log time");
+		if(l == null) throw new LoggerException("Log level cannot be null"); 
+		if(c == null) throw new LoggerException("Class of origin cannot be null"); 
+		if(m == null) throw new LoggerException("Log message cannot be null"); 
 		
 		LogEntry entry = new LogEntry(t, l, c, m, e);
 		if(Level.asInt(l) >= Level.asInt(L.CONFIG.getFileLogLevel())) FileOutput.write(entry);

@@ -19,7 +19,7 @@ public class LogConfig {
 		return fileLogLevel;
 	}
 	public void setFileLogLevel(Level fileLogLevel) {
-		if(fileLogLevel == null) throw new IllegalArgumentException("The file log level cannot be null!");
+		if(fileLogLevel == null) throw new LoggerException("The file log level cannot be null");
 		
 		this.fileLogLevel = fileLogLevel;
 	}
@@ -27,7 +27,7 @@ public class LogConfig {
 		return consoleLogLevel;
 	}
 	public void setConsoleLogLevel(Level consoleLogLevel) {
-		if(consoleLogLevel == null) throw new IllegalArgumentException("The console log level cannot be null!");
+		if(consoleLogLevel == null) throw new LoggerException("The console log level cannot be null");
 		
 		this.consoleLogLevel = consoleLogLevel;
 	}
@@ -35,7 +35,7 @@ public class LogConfig {
 		return fileMode;
 	}
 	public void setFileMode(FileMode fileMode) {
-		if(fileMode == null) throw new IllegalArgumentException("The file mode cannot be null!");
+		if(fileMode == null) throw new LoggerException("The file mode cannot be null");
 		
 		this.fileMode = fileMode;
 	}
