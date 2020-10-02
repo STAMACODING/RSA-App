@@ -23,7 +23,7 @@ public class FileOutput {
 	/**
 	 * The path of the current log file
 	 */
-	private static String path = "";
+	private static File logFile = null;
 	
 	/**
 	 * Stores whether the file output got initialized
@@ -37,47 +37,37 @@ public class FileOutput {
 	 */
 	public static void write(LogEntry entry) {
 		if(!initialized) initialize();
-		File f = new File(path);
-		
-		if(L.Config.File.MODE == FileMode.ONE_PER_THREAD) {
-			path = "log/" + Thread.currentThread().getName() + ".log";
-			f = new File(path);
-			
-			if(!f.exists())
-				try {
-					f.createNewFile();
-				} catch (IOException e) {
-					e.printStackTrace();
-					throw new LoggerException("Failed to create file: " + path);
-				}
+
+		if(L.Config.File.MODE == FileMode.ONE_PER_THREAD) 
+			logFile = new File("log/" + Thread.currentThread().getName() + ".log");
+		else
+			logFile = new File("log/Logs.log");
+
+		if(!logFile.exists()) {
+			try {
+				logFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new LoggerException("Failed to create file: " + logFile.getPath());
+			}
 		}
 		
-		if(f.length() > L.Config.File.MAX_SIZE) {
-			deleteLines(path, 0, 10000);
+		if(logFile.length() > L.Config.File.MAX_SIZE) {
+			deleteLines(0, 10000);
 		}
 		
 		String output = entry.toString(L.Config.File.TAGGING_ENABLED);
 		if(entry.getException() != null) output += entry.getStackTrace();
 		
-		append(path, output);
+		append(output);
 	}
 
 	/**
 	 * Initializes the file output. E.g. the log directory is cleared.
 	 */
 	private static void initialize() {
-		deleteDirectory("log/");
+		deleteLogDirectory();
 		new File("log/").mkdirs();
-		
-		
-		if (L.Config.File.MODE == FileMode.SINGLE) {
-			try {
-				path = "log/Logs.log";
-				new File(path).createNewFile();
-			} catch (IOException e) {
-				throw new LoggerException("Failed to create file: " + path);
-			}
-		}
 		initialized = true;
 	}
 	
@@ -85,15 +75,16 @@ public class FileOutput {
 	 * Deletes a directory.
 	 * @param directory the directory to delete
 	 */
-	private static void deleteDirectory(String directory){
-		if(new File(directory).exists()) {
+	private static void deleteLogDirectory(){
+		if(new File("log/").exists()) {
 			 try {
-					Files.walk(Paths.get(directory))
+					Files.walk(Paths.get("log/"))
 					  .sorted(Comparator.reverseOrder())
 					  .map(Path::toFile)
 					  .forEach(File::delete);
 				} catch (IOException e) {
-					throw new LoggerException("Failed to delete directory: " + directory);
+					e.printStackTrace();
+					throw new LoggerException("Failed to delete log directory (log/)");
 				}
 		}
 	}
@@ -103,13 +94,13 @@ public class FileOutput {
 	 * @param path the file's path
 	 * @param txt the string to append
 	 */
-	private static void append(String path, String txt) {
+	private static void append(String txt) {
 		try {
-			OutputStream o = Files.newOutputStream(Paths.get(path), StandardOpenOption.APPEND);
+			OutputStream o = Files.newOutputStream(logFile.toPath(), StandardOpenOption.APPEND);
 			o.write(txt.getBytes());
 			o.close();
 		} catch (IOException e) {
-			throw new LoggerException("Failed to append string to file (" + path + ")! Did you close the file?");
+			throw new LoggerException("Failed to append string to log file (" + logFile.getPath() + ")! Did you close the file?");
 		}
 	}
 
@@ -119,9 +110,9 @@ public class FileOutput {
 	 * @param startline the line to start from
 	 * @param numlines the amount of lines to delete
 	 */
-	private static void deleteLines(String path, int startline, int numlines){
+	private static void deleteLines(int startline, int numlines){
 		try{
-			BufferedReader br = new BufferedReader(new FileReader(path));
+			BufferedReader br = new BufferedReader(new FileReader(logFile));
  
 			//String buffer to store contents of the file
 			StringBuffer sb=new StringBuffer("");
@@ -137,14 +128,14 @@ public class FileOutput {
 			}
 			br.close();
  
-			FileWriter fw=new FileWriter(new File(path));
+			FileWriter fw = new FileWriter(logFile);
 			
 			//Write entire string buffer into the file
 			fw.write(sb.toString());
 			fw.close();
 		}
 		catch (Exception e){
-			throw new LoggerException("Failed to delete lines from file: " + path);
+			throw new LoggerException("Failed to delete lines from log file: " + logFile.getPath());
 		}
 	}
 	
