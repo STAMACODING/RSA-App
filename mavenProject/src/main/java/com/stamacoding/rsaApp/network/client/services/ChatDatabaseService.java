@@ -371,7 +371,7 @@ public class ChatDatabaseService extends DatabaseService{
 					+ "id INTEGER PRIMARY KEY CHECK ((id > 0)), "
 					+ "textMessage TEXT NOT NULL CHECK (LENGTH(textMessage) > 0), "
 					+ "date INTEGER NOT NULL CHECK ((date > 0)), "
-					+ "sendState INT NOT NULL CHECK ((sendState = 0) OR (sendState = 1)), "
+					+ "sendState INT NOT NULL CHECK ((sendState = 0) OR (sendState = 1) OR (sendState = -1)), "
 					+ "sending VARCHAR (15) NOT NULL CHECK (LENGTH(sending) > 0), "
 					+ "receiving VARCHAR (15) NOT NULL CHECK (LENGTH(receiving) > 0));");
 		} catch (SQLException e) {
