@@ -74,11 +74,12 @@ public class ClientSendService extends ClientSocketService {
 			// 3. Receive answer
 			if(receiveAnswer()) {
 				// 4. Update message's state
-				updateMessageState(clonedMessage);
+				updateMessageState(clonedMessage, SendState.SENT);
 			}else {
-				// 4. Re-add message to message manager
+				// 4. Changes messages send state
 				L.e(this.getClass(), "Failed to send message: " + getMessage().toString());
-				ClientMessageManager.getInstance().manage(clonedMessage);
+				
+				updateMessageState(clonedMessage, SendState.FAILED);
 			}
 		} catch (IOException e) {
 			// 2. -> When failing to send message
@@ -132,12 +133,10 @@ public class ClientSendService extends ClientSocketService {
 	 * Update the message's send state
 	 * @param m the message to update
 	 */
-	private void updateMessageState(Message m) {
+	private void updateMessageState(Message m, SendState s) {
 		L.d(this.getClass(), "Updating message state");
-		
-		m.getLocalData().setSendState(SendState.SENT);
+		m.getLocalData().setSendState(s);
 		m.getLocalData().setUpdateRequested(true);
-		
 		ClientMessageManager.getInstance().manage(m);
 	}
 

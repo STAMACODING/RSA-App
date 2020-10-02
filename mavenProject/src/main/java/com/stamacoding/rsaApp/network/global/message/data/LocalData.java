@@ -119,26 +119,4 @@ public class LocalData implements Serializable{
 	public LocalData clone() {
 		return new LocalData(getId(), getSendState());
 	}
-	
-	public static int getSendStateAsInt(SendState sendState) {
-		switch(sendState) {
-		case PENDING:
-			return 0;
-		case SENT:
-			return 1;
-		default:
-			return -1;
-		}
-	}
-	
-	public static SendState getIntAsSendState(int sendState) {
-		switch(sendState) {
-		case 0:
-			return SendState.PENDING;
-		case 1:
-			return SendState.SENT;
-		default:
-			return null;
-		}
-	}
 }

@@ -14,6 +14,7 @@ import com.stamacoding.rsaApp.network.global.TextUtils;
 import com.stamacoding.rsaApp.network.global.message.Message;
 import com.stamacoding.rsaApp.network.global.message.data.LocalData;
 import com.stamacoding.rsaApp.network.global.message.data.ProtectedData;
+import com.stamacoding.rsaApp.network.global.message.data.SendState;
 import com.stamacoding.rsaApp.network.global.message.data.ServerData;
 import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.global.service.database.DatabaseConfiguration;
@@ -106,7 +107,7 @@ public class ChatDatabaseService extends DatabaseService{
 					+ "WHERE id = ?;");
 			pst.setString(1, m.getProtectedData().getTextMessage());
 			pst.setLong(2, m.getProtectedData().getDate());
-			pst.setInt(3, LocalData.getSendStateAsInt(m.getLocalData().getSendState()));
+			pst.setInt(3, SendState.asInt(m.getLocalData().getSendState()));
 			pst.setString(4, m.getServerData().getSending());
 			pst.setString(5, m.getServerData().getReceiving());
 			pst.setLong(6, m.getLocalData().getId());
@@ -148,7 +149,7 @@ public class ChatDatabaseService extends DatabaseService{
 					+ "?, ?, ?, ?, ?);");
 			pst.setString(1, m.getProtectedData().getTextMessage());
 			pst.setLong(2, m.getProtectedData().getDate());
-			pst.setInt(3, LocalData.getSendStateAsInt(m.getLocalData().getSendState()));
+			pst.setInt(3, SendState.asInt(m.getLocalData().getSendState()));
 			pst.setString(4, m.getServerData().getSending());
 			pst.setString(5, m.getServerData().getReceiving());
 			
@@ -216,7 +217,7 @@ public class ChatDatabaseService extends DatabaseService{
 					+ "FROM Messages WHERE id = " + id + ";");
 			if(res != null && res.next()) {
 				Message m = new Message(
-						new LocalData(res.getInt(1), LocalData.getIntAsSendState(res.getInt(4))), 
+						new LocalData(res.getInt(1), SendState.parseInt(res.getInt(4))), 
 						new ProtectedData(res.getString(2), res.getLong(3)), 
 						new ServerData(res.getString(5), res.getString(6)));
 				
@@ -231,7 +232,7 @@ public class ChatDatabaseService extends DatabaseService{
 		return null;
 	}
 	
-	private ArrayList<Message> getPendingMessages() {
+	private ArrayList<Message> getMessagesToSend() {
 		if(!isConnected()) {
 			L.e(this.getClass(), "Cannot get pending messages! You aren't connected to the chat database");
 			return null;
@@ -243,16 +244,18 @@ public class ChatDatabaseService extends DatabaseService{
 					+ "id, textMessage, "
 					+ "date, sendState, "
 					+ "sending, receiving "
-					+ "FROM Messages WHERE sendState = 0;");
+					+ "FROM Messages WHERE sendState = 0 OR sendState = -1;");
 			
 			if(res != null) {
 				ArrayList<Message> messages = new ArrayList<Message>();
 				
 				while(res.next()) {
+					SendState databaseSendState = SendState.parseInt(res.getInt(4));
 					Message m = new Message(
-							new LocalData(res.getInt(1), LocalData.getIntAsSendState(res.getInt(4))), 
+							new LocalData(res.getInt(1), SendState.PENDING), 
 							new ProtectedData(res.getString(2), res.getLong(3)), 
 							new ServerData(res.getString(5), res.getString(6)));
+					if(databaseSendState != SendState.PENDING) m.getLocalData().setUpdateRequested(true);
 					messages.add(m);
 				}
 				L.d(this.getClass(), "Got (" + messages.size() + ") pending messages");
@@ -285,7 +288,7 @@ public class ChatDatabaseService extends DatabaseService{
 				
 				while(res.next()) {
 					Message m = new Message(
-							new LocalData(res.getInt(1), LocalData.getIntAsSendState(res.getInt(4))), 
+							new LocalData(res.getInt(1), SendState.parseInt(res.getInt(4))), 
 							new ProtectedData(res.getString(2), res.getLong(3)), 
 							new ServerData(res.getString(5), res.getString(6)));
 					messages.add(m);
@@ -376,6 +379,6 @@ public class ChatDatabaseService extends DatabaseService{
 		}
 		L.d(this.getClass(), "Logging chat database...\n" + this.toString());
 
-		ClientMessageManager.getInstance().manage(getPendingMessages());
+		ClientMessageManager.getInstance().manage(getMessagesToSend());
 	}
 }

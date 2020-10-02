@@ -5,8 +5,9 @@ import java.io.Serializable;
 import com.stamacoding.rsaApp.logger.L;
 
 /**
- *  Stores server-relevant information about the message. Should get encrypted before sending. The
- *  server should be able to encrypt the message.
+ *  Stores server-relevant information about the message. At the moment this covers the <b>user names of the sender and receiver</b>. 
+ *  Should get encrypted before sending. The
+ *  <b>server should be able to encrypt</b> the message.
  */
 public class ServerData implements Serializable {
 	
