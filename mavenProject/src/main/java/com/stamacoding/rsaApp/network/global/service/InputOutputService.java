@@ -7,9 +7,7 @@ public abstract class InputOutputService extends Service{
 	private DataInputStream in;
 	private DataOutputStream out;
 
-	protected InputOutputService(String serviceName) {
-		super(serviceName);
-	}
+	protected InputOutputService() {}
 	
 	@Override
 	public void onStart() {

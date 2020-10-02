@@ -110,4 +110,11 @@ public class TextUtils {
 		sb.append(box("", 'O', ' ', DEFAULT_WIDTH, 0));
 		return sb.toString();
 	}
+	
+	public static String cut(String s, int length) {
+		if(s.length() > length) {
+			return s.substring(0, length-1-3) + "..."; 
+		}
+		return s;
+	}
 }

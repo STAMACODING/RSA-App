@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.services.ClientMainService;
 import com.stamacoding.rsaApp.network.client.services.ClientReceiveService;
 import com.stamacoding.rsaApp.network.global.NetworkUtils;
@@ -163,12 +163,12 @@ public class ClientConfig {
 		if(isValid()) sb.append(TextUtils.heading("VALID"));
 		else sb.append(TextUtils.heading("NOT VALID"));
 		
-		Logger.debug(ClientConfig.class.getSimpleName(), sb.toString());
+		L.i(ClientConfig.class, sb.toString());
 	}
 	
 	public static void save() {
 		if(!isValid()) {
-			Logger.warning(ClientConfig.class.getSimpleName(), "Storing invalid configuration");
+			L.w(ClientConfig.class, "Storing invalid configuration");
 		}
 		
 	    Properties properties = new Properties();
@@ -192,9 +192,9 @@ public class ClientConfig {
 	    try {
 			properties.storeToXML(new FileOutputStream(FILE_NAME), "Client Configurations");
 			
-		    Logger.debug(ClientConfig.class.getSimpleName(), "Stored preferences");
+		    L.i(ClientConfig.class, "Stored preferences");
 		} catch (IOException e) {
-			Logger.error(ClientConfig.class.getSimpleName(), "Failed to store preferences as .xml file");
+			L.e(ClientConfig.class, "Failed to store preferences as .xml file", e);
 		}
 	}
 	
@@ -218,9 +218,9 @@ public class ClientConfig {
 					Long.valueOf(properties.getProperty("PING_INTERVAL")),
 					Boolean.valueOf(properties.getProperty("REGISTERED"))
 					);
-			Logger.debug(ClientConfig.class.getSimpleName(), "Read preferences from .xml file");
+			L.i(ClientConfig.class, "Read preferences from .xml file");
 		} catch (IOException e) {
-			Logger.error(ClientConfig.class.getSimpleName(), "Failed to read preferences from .xml file");
+			L.e(ClientConfig.class, "Failed to read preferences from .xml file", e);
 			save();
 		}
 	}

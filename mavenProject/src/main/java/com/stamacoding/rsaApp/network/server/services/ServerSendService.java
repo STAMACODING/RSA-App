@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.message.Message;
 import com.stamacoding.rsaApp.network.server.Server;
 import com.stamacoding.rsaApp.network.server.ServerConfig;
@@ -26,7 +26,7 @@ public class ServerSendService extends ServerSocketService {
 	 *  The server's port is set to {@link Server#SEND_PORT}.
 	 */
 	private ServerSendService() {
-		super(ServerSendService.class.getSimpleName(), ServerConfig.SEND_PORT);
+		super(ServerConfig.SEND_PORT);
 	}
 	
 	/**
@@ -55,18 +55,18 @@ public class ServerSendService extends ServerSocketService {
 				String username = readUsername();
 
 				// 4. Search for messages concerning the requesting client
-				Logger.debug(this.getClass().getSimpleName(), "Searching for messages concerning the requesting client (" + username + ")");
+				L.d(this.getClass(), "Searching for messages concerning the requesting client (" + username + ")");
 				ArrayList<Message> messages = ServerMessageManager.getInstance().poll(username);
 				
 				// 5. Send messages to the client
 				sendMessages(username, messages);
 			}else {
 				// 2. If there are no messages
-				Logger.debug(this.getClass().getSimpleName(), "No messages available to send");
+				L.e(this.getClass(), "No messages available to send");
 			}
 		} catch (IOException e) {
 			// 1. -> If the server failed to accept the client's connection
-			Logger.error(this.getClass().getSimpleName(), "Failed to send message(s) to the client");
+			L.e(this.getClass(), "Failed to send message(s) to the client", e);
 		}
 	}
 	
@@ -78,7 +78,7 @@ public class ServerSendService extends ServerSocketService {
 	 */
 	private String readUsername() throws IOException {
 		String username = getInputStream().readUTF();
-		Logger.debug(this.getClass().getSimpleName(), "Client logged in as (" + username + ")");
+		L.d(this.getClass(), "Client logged in as (" + username + ")");
 		return username;
 	}
 	
@@ -94,14 +94,14 @@ public class ServerSendService extends ServerSocketService {
 		byte[] messagesToSend = Security.encryptF(messages);
 		
 		if(messageCount > 0) {
-			Logger.debug(this.getClass().getSimpleName(), "Found " + messageCount + " messages belonging to (" + username + ")");
+			L.d(this.getClass(), "Found " + messageCount + " messages belonging to (" + username + ")");
 			
 			getOutputStream().writeInt(messagesToSend.length);
 			getOutputStream().write(messagesToSend);
 			
-			Logger.debug(this.getClass().getSimpleName(), "Successfully sent " + messageCount + " message(s) to a client");
+			L.d(this.getClass(), "Successfully sent " + messageCount + " message(s) to a client");
 		}else{
-			Logger.debug(this.getClass().getSimpleName(), "Found no messages belongig to (" + username + ")");
+			L.d(this.getClass(), "Found no messages belongig to (" + username + ")");
 		}
 	}
 

@@ -2,7 +2,7 @@ package com.stamacoding.rsaApp.network.global.message.data;
 
 import java.io.Serializable;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.services.ChatDatabaseService;
 import com.stamacoding.rsaApp.network.client.services.ClientSendService;
 import com.stamacoding.rsaApp.network.server.services.ServerSendService;
@@ -53,7 +53,7 @@ public class LocalData implements Serializable{
 	 * @param id the message's unique id in the chat database
 	 */
 	public void setId(long id) {
-		if(id < -1) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("int id (" + id +  ") should be greater than -2 !"));
+		if(id < -1) L.f(this.getClass(), new IllegalArgumentException("int id (" + id +  ") should be greater than -2 !"));
 		this.id = id;
 	}
 	
@@ -86,7 +86,7 @@ public class LocalData implements Serializable{
 	 * @param sendState the message's send state
 	 */
 	public void setSendState(SendState sendState) {
-		if(sendState == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("SendState sendState is not allowed to be null!"));
+		if(sendState == null) L.f(this.getClass(), new IllegalArgumentException("SendState sendState is not allowed to be null!"));
 		
 		this.sendState = sendState;
 	}

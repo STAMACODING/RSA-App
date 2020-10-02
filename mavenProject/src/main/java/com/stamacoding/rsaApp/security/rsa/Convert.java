@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 
 public class Convert {
 	
@@ -18,8 +18,8 @@ public class Convert {
 	 */
 	public static byte[] serialize(Object o) {
 		if(!(o instanceof Serializable)) {
-			if(o != null) Logger.error(Convert.class.getSimpleName() + ":serialize", new IllegalArgumentException("Cannot serialize a not serializable object!"));
-			else Logger.error(Convert.class.getSimpleName() + ":serialize", new IllegalArgumentException("Cannot serialize a null reference!"));
+			if(o != null) L.f("Serialization", Convert.class, new IllegalArgumentException("Cannot serialize a not serializable object!"));
+			else L.f("Serialization", Convert.class, new IllegalArgumentException("Cannot serialize a null reference!"));
 		}
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream os = null;
@@ -27,14 +27,14 @@ public class Convert {
 			os = new ObjectOutputStream(out);
 			os.writeObject(o);
 		} catch (Exception e) {
-			Logger.error(Convert.class.getSimpleName() + ":serialize", new RuntimeException("Failed to serialize object!"));
+			L.f("Serialization", Convert.class, "Failed to serialize object!", e);
 			return null;
 		} finally {
 			try {
 				os.close();
 				out.close();
 			} catch (IOException e) {
-				Logger.error(Convert.class.getSimpleName(), "Failed to close output stream.");
+				L.f("Serialization", Convert.class, "Failed to close output stream.", e);
 			}
 		}
 		return out.toByteArray();
@@ -46,30 +46,30 @@ public class Convert {
 	 * @return the deserialized object
 	 */
 	public static Object deserialize(byte[] object) {
-		if(object == null) Logger.error(Convert.class.getSimpleName(), new IllegalArgumentException("byte[] object is not allowed to be null!"));
+		if(object == null) L.f("Deserialization", Convert.class, new IllegalArgumentException("byte[] object is not allowed to be null!"));
 		
 		ByteArrayInputStream in = new ByteArrayInputStream(object);
 		ObjectInputStream is = null;
 		try {
 			is = new ObjectInputStream(in);
 			Object o = is.readObject();
-			if( o == null ) Logger.error(Convert.class.getSimpleName() + ":deserialize", new RuntimeException("Failed to deserialize object!"));
+			if( o == null ) L.f("Deserialization", Convert.class, "Failed to deserialize object!");
 			return o;
 		} catch (Exception e) {
-			Logger.error(Convert.class.getSimpleName(), new RuntimeException("Failed to deserialize object!"));
+			L.f("Deserialization", Convert.class, "Failed to deserialize object", e);
 			return null;
 		} finally {
 			try {
 				is.close();
 				in.close();
 			} catch (IOException e) {
-				Logger.error(Convert.class.getSimpleName(), "Failed to close input stream.");
+				L.f("Deserialization", Convert.class, "Failed to close input stream.", e);
 			}
 		}
 	}
 	
 	public static long[] byteArrayToLongArray(byte[] array) {
-		if(array == null) Logger.error(Convert.class.getSimpleName(), new IllegalArgumentException("byte[] array is not allowed to be null!"));
+		if(array == null) L.f("Deserialization", Convert.class, new IllegalArgumentException("byte[] array is not allowed to be null!"));
 		
 		long[] longArray = new long[array.length];
 		
@@ -81,13 +81,13 @@ public class Convert {
 	}
 	
 	public static byte[] longArrayToByteArray(long[] array) {
-		if(array == null) Logger.error(Convert.class.getSimpleName(), new IllegalArgumentException("long[] array is not allowed to be null!"));
+		if(array == null) L.f("Conversion", Convert.class, new IllegalArgumentException("long[] array is not allowed to be null!"));
 		
 		byte[] byteArray = new byte[array.length];
 		
 		for(int i=0; i<byteArray.length; i++) {
 			if(array[i] > Byte.MAX_VALUE) {
-				throw new RuntimeException("Value is too large for byte-array!");
+				L.f("Conversion", Convert.class, "Value is too large for byte-array!");
 			}
 			byteArray[i] = (byte) array[i];
 		}

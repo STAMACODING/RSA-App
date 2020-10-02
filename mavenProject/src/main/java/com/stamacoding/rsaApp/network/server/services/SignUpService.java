@@ -2,7 +2,7 @@ package com.stamacoding.rsaApp.network.server.services;
 
 import java.io.IOException;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.network.server.Server;
 import com.stamacoding.rsaApp.network.server.ServerConfig;
@@ -25,7 +25,7 @@ public class SignUpService extends ServerSocketService {
 	 *  The server's port is set to {@link Server#SEND_PORT}.
 	 */
 	private SignUpService() {
-		super(SignUpService.class.getSimpleName(), ServerConfig.SIGNUP_PORT);
+		super(ServerConfig.SIGNUP_PORT);
 	}
 	
 	/**
@@ -41,12 +41,12 @@ public class SignUpService extends ServerSocketService {
 		try {
 			int length = getInputStream().readInt();
 			if(length > 0) {
-				Logger.debug(getServiceName(), "Decrypting client's request");
+				L.d(this.getClass(), "Decrypting client's request");
 				byte[] encryptedUser = new byte[length];
 				getInputStream().readFully(encryptedUser, 0, length);
 				
 				User unregisteredUser = (User) Security.decryptF(encryptedUser);
-				Logger.debug(getServiceName(), "Client wants to register as: " + unregisteredUser.toString());
+				L.d(this.getClass(), "Client wants to register as: " + unregisteredUser.toString());
 				
 				if(UserDatabaseService.getInstance().isUsernameAvailable(unregisteredUser.getName())) {
 					// Hash password
@@ -54,21 +54,21 @@ public class SignUpService extends ServerSocketService {
 					
 					UserManager.getInstance().add(unregisteredUser);
 
-					Logger.debug(getServiceName(), "Registered new user (0): " + unregisteredUser.toString());
-					Logger.debug(getServiceName(), "Currently registered users:\n" + UserDatabaseService.getInstance().toString());
+					L.d(this.getClass(), "Registered new user (0): " + unregisteredUser.toString());
+					L.d(this.getClass(), "Currently registered users:\n" + UserDatabaseService.getInstance().toString());
 					
 					getOutputStream().writeInt(AnswerCodes.SIGNED_UP);
 				}else {
-					Logger.debug(getServiceName(), "Username is already in use!");
+					L.d(this.getClass(), "Username is already in use!");
 					getOutputStream().writeInt(AnswerCodes.USERNAME_UNAVAILABLE);
 				}
 
 			}else {
-				Logger.error(this.getClass().getSimpleName(), new RuntimeException("Received invalid data"));
+				L.e(this.getClass(), "Received invalid data");
 				getOutputStream().writeInt(AnswerCodes.INVALID_DATA_FROM_CLIENT);
 			}
 		} catch (IOException e) {
-			Logger.error(this.getClass().getSimpleName(), "Connection error");
+			L.e(this.getClass(), "Connection error", e);
 		}
 
 	}

@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.TextUtils;
 import com.stamacoding.rsaApp.network.server.services.ServerMainService;
 
@@ -23,9 +23,19 @@ public class ServerConfig {
 	 */
 	public static int RECEIVE_PORT = -1;
 	
-	// TODO doc
+	/**
+	 * Using this port an user can sign-up.
+	 */
 	public static int SIGNUP_PORT = -1;
+	
+	/**
+	 * Using this port an user can login.
+	 */
 	public static int LOGIN_PORT = -1;
+	
+	/**
+	 * Using this port the activity of an user gets checked.
+	 */
 	public static int PING_PORT = -1;
 	
 	/**
@@ -64,7 +74,7 @@ public class ServerConfig {
 	}
 	
 	/**
-	 * Logs the server's configuration in a fancy way
+	 * Logs the server's configuration in a fancy way.
 	 */
 	public static void log() {
 		StringBuilder sb = new StringBuilder();
@@ -92,14 +102,16 @@ public class ServerConfig {
 		if(isValid()) sb.append(TextUtils.heading("VALID"));
 		else sb.append(TextUtils.heading("NOT VALID"));
 		
-		Logger.debug(ServerConfig.class.getSimpleName(), sb.toString());
+		L.d(ServerConfig.class, sb.toString());
 	}
 	
 	
-	
+	/**
+	 * Save the server's configuration to a .xml-file.
+	 */
 	public static void save() {
 		if(!isValid()) {
-			Logger.warning(ServerConfig.class.getSimpleName(), "Storing invalid configuration");
+			L.w(ServerConfig.class, "Storing invalid configuration");
 		}
 		
 	    Properties properties = new Properties();
@@ -112,12 +124,15 @@ public class ServerConfig {
 	    try {
 			properties.storeToXML(new FileOutputStream(FILE_NAME), "Server Configurations");
 			
-		    Logger.debug(ServerConfig.class.getSimpleName(), "Stored preferences");
+		    L.d(ServerConfig.class, "Stored preferences");
 		} catch (IOException e) {
-			Logger.error(ServerConfig.class.getSimpleName(), "Failed to store preferences as .xml file");
+			L.e(ServerConfig.class, "Failed to store preferences as .xml file", e);
 		}
 	}
 	
+	/**
+	 * Read the server's configuration from the server config file.
+	 */
 	public static void read() {
 		Properties properties = new Properties();
 		try {
@@ -130,9 +145,9 @@ public class ServerConfig {
 					Integer.valueOf(properties.getProperty("LOGIN_PORT")),   
 					Integer.valueOf(properties.getProperty("PING_PORT"))
 					);
-			Logger.debug(ServerConfig.class.getSimpleName(), "Read preferences from .xml file");
+			L.d(ServerConfig.class, "Read preferences from .xml file");
 		} catch (IOException e) {
-			Logger.error(ServerConfig.class.getSimpleName(), "Failed to read preferences from .xml file");
+			L.e(ServerConfig.class, "Failed to read preferences from .xml file", e);
 			save();
 		}
 	}

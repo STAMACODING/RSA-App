@@ -7,9 +7,10 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.Client;
 import com.stamacoding.rsaApp.network.client.managers.ClientMessageManager;
+import com.stamacoding.rsaApp.network.global.TextUtils;
 import com.stamacoding.rsaApp.network.global.message.Message;
 import com.stamacoding.rsaApp.network.global.message.data.LocalData;
 import com.stamacoding.rsaApp.network.global.message.data.ProtectedData;
@@ -31,8 +32,7 @@ public class ChatDatabaseService extends DatabaseService{
 	 *  only instance of this class.
 	 */
 	public ChatDatabaseService() {
-		super("ChatDatabaseService", 
-				new DatabaseConfiguration(
+		super(new DatabaseConfiguration(
 						"jdbc:sqlite:ClientDatabase.db",
 						"root",
 						"root"));
@@ -56,12 +56,12 @@ public class ChatDatabaseService extends DatabaseService{
 		Message m = ClientMessageManager.getInstance().pollToStoreOrUpdate();
 		
 		if(m != null) {
-			Logger.debug(this.getClass().getSimpleName(), "Got message to store/update: " + m.toString());
+			L.d(this.getClass(), "Got message to store/update: " + m.toString());
 			
 			// Update message if is is already stored in the chat database
 			if(m.getLocalData().isToUpdate()) {
 				if(!updateMessage(m) && m.getLocalData().isToUpdate()) {
-					Logger.warning(this.getClass().getSimpleName(), "Readding message to the message manager to get updated again");
+					L.w(this.getClass(), "Readding message to the message manager to get updated again");
 					m.getLocalData().setUpdateRequested(true);
 					ClientMessageManager.getInstance().manage(m);
 				}
@@ -70,7 +70,7 @@ public class ChatDatabaseService extends DatabaseService{
 			// Store new message
 			else{
 				if(!storeMessage(m) && !m.isStored()) {
-					Logger.warning(this.getClass().getSimpleName(), "Readding message to the message manager to get stored again");
+					L.w(this.getClass(), "Readding message to the message manager to get stored again");
 					ClientMessageManager.getInstance().manage(m);
 				}
 			}
@@ -84,15 +84,15 @@ public class ChatDatabaseService extends DatabaseService{
 	 */
 	private boolean updateMessage(Message m) {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot update message! You aren't connected to the chat database");
+			L.e(this.getClass(), "Cannot update message! You aren't connected to the chat database");
 			return false;
 		}
 		
 		if(!m.isStored()) {
-			Logger.error(this.getServiceName(), "Cannot update unstored message!");
+			L.e(this.getClass(), "Cannot update unstored message!");
 			return false;
 		}else if(m.isEncrypted()) {
-			Logger.error(this.getServiceName(), "Cannot update encrypted message!");
+			L.e(this.getClass(), "Cannot update encrypted message!");
 			return false;
 		}
 		
@@ -113,14 +113,13 @@ public class ChatDatabaseService extends DatabaseService{
 			
 			pst.executeUpdate();
 			
-			Logger.debug(this.getClass().getSimpleName(), "Updated message: " + m.toString());
+			L.d(this.getClass(), "Updated message: " + m.toString());
 			m.getLocalData().setUpdateRequested(false);
 			pst.close();
-			Logger.debug(this.getServiceName(), "Logging database content \n" + toString());
+			L.d(this.getClass(), "Logging database content \n" + toString());
 			return true;
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to update message (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to update message", e);
 		}
 		return false;
 	}
@@ -131,15 +130,15 @@ public class ChatDatabaseService extends DatabaseService{
 	 */
 	private boolean storeMessage(Message m) {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot store message! You aren't connected to the chat database");
+			L.e(this.getClass(), "Cannot store message! You aren't connected to the chat database");
 			return false;
 		}
 		
 		if(m.isStored()) {
-			Logger.error(this.getClass().getSimpleName(), "Cannot store already stored message!");
+			L.e(this.getClass(), "Cannot store already stored message!");
 			return false;
 		}else if(m.isEncrypted()) {
-			Logger.error(this.getClass().getSimpleName(), "Cannot store encrypted message!");
+			L.e(this.getClass(), "Cannot store encrypted message!");
 			return false;
 		}
 		
@@ -160,22 +159,21 @@ public class ChatDatabaseService extends DatabaseService{
 			long id = Long.parseLong(res.getString("LAST"));
 			m.getLocalData().setId(id);
 			
-			Logger.debug(this.getClass().getSimpleName(), "Stored message: " + m.toString());
+			L.d(this.getClass(), "Stored message: " + m.toString());
 			m.getLocalData().setUpdateRequested(false);
 			pst.close();
 
-			Logger.debug(this.getServiceName(), "Logging database content \n" + toString());
+			L.d(this.getClass(), "Logging database content \n" + toString());
 			return true;
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to store message (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to store message", e);
 		}
 		return false;
 	}
 	
 	private boolean deleteMessage(Message m) {
 		if(!m.isStored()) {
-			Logger.error(this.getClass().getSimpleName(), "Cannot delete an unstored message!");
+			L.e(this.getClass(), "Cannot delete an unstored message!");
 			return false;
 		}
 		return deleteMessage(m.getLocalData().getId());
@@ -183,7 +181,7 @@ public class ChatDatabaseService extends DatabaseService{
 	
 	private boolean deleteMessage(long id){
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot delete message! You aren't connected to the chat database");
+			L.e(this.getClass(), "Cannot delete message! You aren't connected to the chat database");
 			return false;
 		}
 		
@@ -193,12 +191,11 @@ public class ChatDatabaseService extends DatabaseService{
 			
 			pst.executeUpdate();
 			pst.close();
-			Logger.debug(this.getClass().getSimpleName(), "Deleted message using id(" + id + ")");
-			Logger.debug(this.getServiceName(), "Logging database content \n" + toString());
+			L.d(this.getClass(), "Deleted message using id(" + id + ")");
+			L.d(this.getClass(), "Logging database content \n" + toString());
 			return true;
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to delete message (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to delete message" , e);
 		}
 		return false;
 	}
@@ -206,7 +203,7 @@ public class ChatDatabaseService extends DatabaseService{
 	
 	private Message getMessage(long id) {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot get message! You aren't connected to the chat database");
+			L.e(this.getClass(), "Cannot get message! You aren't connected to the chat database");
 			return null;
 		}
 		
@@ -223,21 +220,20 @@ public class ChatDatabaseService extends DatabaseService{
 						new ProtectedData(res.getString(2), res.getLong(3)), 
 						new ServerData(res.getString(5), res.getString(6)));
 				
-				Logger.debug(this.getClass().getSimpleName(), "Got message: " + m.toString());
+				L.d(this.getClass(), "Got message: " + m.toString());
 				return m;
 			}
-			Logger.warning(this.getClass().getSimpleName(), "Didn't find any message with this id!");
+			L.w(this.getClass(), "Didn't find any message with this id!");
 			return null;
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to get message (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to get message", e);
 		}
 		return null;
 	}
 	
 	private ArrayList<Message> getPendingMessages() {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot get pending messages! You aren't connected to the chat database");
+			L.e(this.getClass(), "Cannot get pending messages! You aren't connected to the chat database");
 			return null;
 		}
 		
@@ -259,21 +255,20 @@ public class ChatDatabaseService extends DatabaseService{
 							new ServerData(res.getString(5), res.getString(6)));
 					messages.add(m);
 				}
-				Logger.debug(this.getClass().getSimpleName(), "Got (" + messages.size() + ") pending messages");
+				L.d(this.getClass(), "Got (" + messages.size() + ") pending messages");
 				return messages;
 			}
-			Logger.debug(this.getClass().getSimpleName(), "Got (0) pending messages");
+			L.d(this.getClass(), "Got (0) pending messages");
 			return null;
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to get pending messages (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to get pending messages", e);
 		}
 		return null;
 	}
 
 	private ArrayList<Message> getMessages() {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot get messages! You aren't connected to the chat database");
+			L.e(this.getClass(), "Cannot get messages! You aren't connected to the chat database");
 			return null;
 		}
 		
@@ -295,21 +290,20 @@ public class ChatDatabaseService extends DatabaseService{
 							new ServerData(res.getString(5), res.getString(6)));
 					messages.add(m);
 				}
-				Logger.debug(this.getClass().getSimpleName(), "Got (" + messages.size() + ") messages");
+				L.d(this.getClass(), "Got (" + messages.size() + ") messages");
 				return messages;
 			}
-			Logger.debug(this.getClass().getSimpleName(), "Got (0) messages");
+			L.d(this.getClass(), "Got (0) messages");
 			return null;
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to get messages (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to get messages", e);
 		}
 		return null;
 	}
 	
 	private boolean deleteMessages() {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot delete messages! You aren't connected to the chat database");
+			L.e(this.getClass(), "Cannot delete messages! You aren't connected to the chat database");
 			return false;
 		}
 		
@@ -317,30 +311,30 @@ public class ChatDatabaseService extends DatabaseService{
 			Statement stm = getConnection().createStatement();
 			stm.executeUpdate("DELETE FROM Messages;");
 			stm.close();
-			Logger.debug(this.getClass().getSimpleName(), "Deleted messages!");
-			Logger.debug(this.getServiceName(), "Logging database content \n" + toString());
+			L.d(this.getClass(), "Deleted messages!");
+			L.d(this.getClass(), "Logging database content \n" + toString());
 			return true;
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to delete messages (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to delete messages", e);
 		}
 		return false;
 	}
 	
 	public String toString() {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot print database! You aren't connected to the chat database");
+			L.e(this.getClass(), "Cannot print database! You aren't connected to the chat database");
 			return "[ NOT CONNECTED TO DATBASE ]";
 		}
 		ArrayList<Message> messages = getMessages();
 		
 		StringBuilder sb = new StringBuilder();
 		
-		for(int i=0; i<127; i++) sb.append("#");
+		int length = 137;
+		for(int i=0; i<length; i++) sb.append("#");
 		sb.append('\n');
-		sb.append(String.format("| %-18s | %-18s | %-18s | %-18s | %-18s | %-18s |\n", "id", "textMessage", "date", "sendState", "sending", "receiving"));
+		sb.append(String.format("| %-18s | %-28s | %-18s | %-18s | %-18s | %-18s |\n", "id", "textMessage", "date", "sendState", "sending", "receiving"));
 
-		for(int i=0; i<127; i++) sb.append("#");
+		for(int i=0; i<length; i++) sb.append("#");
 		sb.append('\n');
 		
 		if(messages.size() == 0) {
@@ -349,19 +343,19 @@ public class ChatDatabaseService extends DatabaseService{
 		
 		for(int i=0; i<messages.size(); i++) {
 			Message m = messages.get(i);
-			sb.append(String.format("| %-18s | %-18s | %-18s | %-18s | %-18s | %-18s |\n", 
+			sb.append(String.format("| %-18s | %-28s | %-18s | %-18s | %-18s | %-18s |\n", 
 					m.getLocalData().getId(),
-					m.getProtectedData().getTextMessage(),
+					TextUtils.cut(m.getProtectedData().getTextMessage(), 28),
 					new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(m.getProtectedData().getDate()),
 					m.getLocalData().getSendState(),
-					m.getServerData().getSending(),
-					m.getServerData().getReceiving()));
+					TextUtils.cut(m.getServerData().getSending(), 18),
+					TextUtils.cut(m.getServerData().getReceiving(), 18)));
 			if(i+1<messages.size()) {
-				for(int j=0; j<127; j++) sb.append("-");
+				for(int j=0; j<length; j++) sb.append("-");
 				sb.append('\n');
 			}
 		}
-		for(int i=0; i<127; i++) sb.append("#");
+		for(int i=0; i<length; i++) sb.append("#");
 		return sb.toString();
 	}
 
@@ -378,10 +372,9 @@ public class ChatDatabaseService extends DatabaseService{
 					+ "sending VARCHAR (15) NOT NULL CHECK (LENGTH(sending) > 0), "
 					+ "receiving VARCHAR (15) NOT NULL CHECK (LENGTH(receiving) > 0));");
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to initialize database! (SQL Exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to initialize database!", e);
 		}
-		Logger.debug(this.getServiceName(), "Logging chat database...\n" + this.toString());
+		L.d(this.getClass(), "Logging chat database...\n" + this.toString());
 
 		ClientMessageManager.getInstance().manage(getPendingMessages());
 	}

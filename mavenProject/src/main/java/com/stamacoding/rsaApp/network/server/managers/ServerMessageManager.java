@@ -2,7 +2,7 @@ package com.stamacoding.rsaApp.network.server.managers;
 
 import java.util.ArrayList;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.services.ClientReceiveService;
 import com.stamacoding.rsaApp.network.global.message.AbstractMessageManager;
 import com.stamacoding.rsaApp.network.global.message.Message;
@@ -40,7 +40,7 @@ public class ServerMessageManager extends AbstractMessageManager{
 			if(getCurrentlyManagedMessages().get(i).getServerData().getReceiving().equals(username)) {
 				
 				messagesToSend.add(getCurrentlyManagedMessages().get(i));
-				Logger.debug(this.getClass().getSimpleName(), "Polling message: " + messagesToSend.get(i).toString());
+				L.d(this.getClass(), "Polling message: " + messagesToSend.get(i).toString());
 				
 				getCurrentlyManagedMessages().get(i).encrypt();
 			}

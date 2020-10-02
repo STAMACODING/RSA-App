@@ -2,7 +2,7 @@ package com.stamacoding.rsaApp.network.server.services;
 
 import java.io.IOException;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.server.ServerConfig;
 
 public class PingService extends ServerSocketService{
@@ -16,7 +16,7 @@ public class PingService extends ServerSocketService{
 	 *  only instance of this class.
 	 */
 	private PingService() {
-		super(PingService.class.getSimpleName(), ServerConfig.PING_PORT);
+		super(ServerConfig.PING_PORT);
 	}
 	
 	/**
@@ -33,7 +33,7 @@ public class PingService extends ServerSocketService{
 			long sessionId = getInputStream().readLong();
 			// TODO process sessionId
 		} catch (IOException e) {
-			Logger.error(this.getClass().getSimpleName(), "Connection error");
+			L.e(this.getClass(), "Connection error", e);
 		}
 
 	}

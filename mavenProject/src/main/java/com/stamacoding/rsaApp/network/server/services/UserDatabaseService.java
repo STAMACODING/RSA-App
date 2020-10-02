@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.services.ChatDatabaseService;
 import com.stamacoding.rsaApp.network.global.service.database.DatabaseConfiguration;
 import com.stamacoding.rsaApp.network.global.service.database.DatabaseService;
@@ -24,7 +24,7 @@ public class UserDatabaseService extends DatabaseService{
 	 *  only instance of this class.
 	 */
 	private UserDatabaseService() {
-		super(UserDatabaseService.class.getSimpleName(), new DatabaseConfiguration(
+		super(new DatabaseConfiguration(
 				"jdbc:sqlite:ServerDatabase.db",
 				"root",
 				"root"));
@@ -50,7 +50,7 @@ public class UserDatabaseService extends DatabaseService{
 		User u = UserManager.getInstance().poll();
 		
 		if(u != null) {
-			Logger.debug(this.getClass().getSimpleName(), "Got user to store/update: " + u.toString());
+			L.d(this.getClass(), "Got user to store/update: " + u.toString());
 			
 			// Update message if is is already stored in the chat database
 			if(!u.isStored()) {
@@ -73,17 +73,17 @@ public class UserDatabaseService extends DatabaseService{
 	 */
 	private boolean updateUser(User u) {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot update User! You aren't connected to the user database");
+			L.e(this.getClass(), "Cannot update User! You aren't connected to the user database");
 			return false;
 		}
 		
 		if(!u.isStored()) {
-			Logger.error(this.getServiceName(), "Cannot update unstored user!");
+			L.e(this.getClass(), "Cannot update unstored user!");
 			return false;
 		}
 		
 		if(!u.getPassword().isHashed()) {
-			Logger.error(this.getClass().getSimpleName(), "Cannot store user with an unhashed password!");
+			L.e(this.getClass(), "Cannot store user with an unhashed password!");
 			return false;
 		}
 		
@@ -100,13 +100,12 @@ public class UserDatabaseService extends DatabaseService{
 			
 			pst.executeUpdate();
 			
-			Logger.debug(this.getClass().getSimpleName(), "Updated user: " + u.toString());
+			L.d(this.getClass(), "Updated user: " + u.toString());
 			u.setUpdateRequested(false);
 			pst.close();
 			return true;
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to update user (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to update user", e);
 		}
 		return false;
 	}
@@ -114,21 +113,21 @@ public class UserDatabaseService extends DatabaseService{
 	/**
 	 * stores a completely new user to the userLoginDB
 	 * @param u the Object of the new user
-	 * @return wheteher the storing proccess was executed corretly
+	 * @return whether the storing process was executed correctly
 	 */
 	private boolean storeUser(User u) {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot store user! You aren't connected to the chat database");
+			L.e(this.getClass(), "Cannot store user! You aren't connected to the chat database");
 			return false;
 		}
 		
 		if(u.isStored()) {
-			Logger.error(this.getClass().getSimpleName(), "Cannot store already stored user!");
+			L.e(this.getClass(), "Cannot store already stored user!");
 			return false;
 		}
 		
 		if(!u.getPassword().isHashed()) {
-			Logger.error(this.getClass().getSimpleName(), "Cannot store user with an unhashed password!");
+			L.e(this.getClass(), "Cannot store user with an unhashed password!");
 			return false;
 		}
 		
@@ -147,19 +146,18 @@ public class UserDatabaseService extends DatabaseService{
 			long id = Long.parseLong(res.getString("LAST"));
 			u.setId(id);
 			
-			Logger.debug(this.getClass().getSimpleName(), "Stored user: " + u.toString());
+			L.d(this.getClass(), "Stored user: " + u.toString());
 			pst.close();
 			return true;
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to store user (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to store user", e);
 		}
 		return false;
 	}
 	
 	private ArrayList<User> getUsers() {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot get users! You aren't connected to the user database");
+			L.e(this.getClass(), "Cannot get users! You aren't connected to the user database");
 			return null;
 		}
 		
@@ -177,22 +175,21 @@ public class UserDatabaseService extends DatabaseService{
 					User u = new User(res.getLong(1), res.getString(2), new Password(res.getBytes(3), res.getString(4)));
 					users.add(u);
 				}
-				Logger.debug(this.getClass().getSimpleName(), "Got (" + users.size() + ") users");
+				L.d(this.getClass(), "Got (" + users.size() + ") users");
 				return users;
 			}else {
-				Logger.debug(this.getClass().getSimpleName(), "Got (0) users");
+				L.d(this.getClass(), "Got (0) users");
 				return null;
 			}
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to get users (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to get users", e);
 		}
 		return null;
 	}
 	
 	public User getUser(String username) {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot get user! You aren't connected to the user database");
+			L.e(this.getClass(), "Cannot get user! You aren't connected to the user database");
 			return null;
 		}
 		try {
@@ -208,19 +205,18 @@ public class UserDatabaseService extends DatabaseService{
 				User u = new User(res.getLong(1), username, new Password(res.getBytes(3), res.getString(4)));
 				return u;
 			}else {
-				Logger.warning(this.getClass().getSimpleName(), "Didn't find any user with the name \"" + username + "\"");
+				L.w(this.getClass(), "Didn't find any user with the name \"" + username + "\"");
 				return null;
 			}
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to get user (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to get user", e);
 		}
 		return null;
 	}
 	
 	private User getUser(long id) {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot get user! You aren't connected to the user database");
+			L.e(this.getClass(), "Cannot get user! You aren't connected to the user database");
 			return null;
 		}
 		try {
@@ -236,52 +232,49 @@ public class UserDatabaseService extends DatabaseService{
 				User u = new User(id, res.getString(2), new Password(res.getBytes(3), res.getString(4)));
 				return u;
 			}else {
-				Logger.warning(this.getClass().getSimpleName(), "Didn't find any user with the id \"" + id + "\"");
+				L.w(this.getClass(), "Didn't find any user with the id \"" + id + "\"");
 				return null;
 			}
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to get user (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to get user by id", e);
 		}
 		return null;
 	}
 	
 	
-	private boolean delteUser(User u) {
+	private boolean deleteUser(User u) {
 		if(!u.isStored()) {
-		Logger.error(this.getClass().getSimpleName(), "Cannot delete an unstored user!");
-		return false;
+			L.w(this.getClass(), "Cannot delete an unstored user!");
+			return false;
 		}
-		
-	return deleteUser(u.getId());
+		return deleteUser(u.getId());
 	}
 
 	private boolean deleteUser(long id){
-	if(!isConnected()) {
-		Logger.error(this.getServiceName(), "Cannot delete user! You aren't connected to the chat database");
-		return false;
-	}
-	
-	try {
-		int userId = (int) id;
-		PreparedStatement pst = getConnection().prepareStatement("DELETE FROM usersLoginData WHERE id = ?;");
-		pst.setLong(1, userId);
+		if(!isConnected()) {
+			L.e(this.getClass(), "Cannot delete user! You aren't connected to the chat database");
+			return false;
+		}
 		
-		pst.executeUpdate();
-		pst.close();
-		Logger.debug(this.getClass().getSimpleName(), "Deleted user using id(" + id + ")");
-		return true;
-	} catch (SQLException e) {
-		Logger.error(this.getClass().getSimpleName(), "Failed to delete user and suddenly nothing works as it should.)");
-		e.printStackTrace();
-	}
-	return false;
+		try {
+			int userId = (int) id;
+			PreparedStatement pst = getConnection().prepareStatement("DELETE FROM Users WHERE id = ?;");
+			pst.setLong(1, userId);
+			
+			pst.executeUpdate();
+			pst.close();
+			L.d(this.getClass(), "Deleted user using id(" + id + ")");
+			return true;
+		} catch (SQLException e) {
+			L.e(this.getClass(), "Failed to delete user", e);
+		}
+		return false;
 	}
 	
 	
 	public String toString() {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot print database! You aren't connected to the user database");
+			L.e(this.getClass(), "Cannot print database! You aren't connected to the user database");
 			return "[ NOT CONNECTED TO DATABASE ]";
 		}
 		ArrayList<User> users = getUsers();
@@ -316,17 +309,17 @@ public class UserDatabaseService extends DatabaseService{
 	
 	public boolean isPasswordCorrect(User registeredUser) {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot check if username is available! You aren't connected to the user database");
+			L.e(this.getClass(), "Cannot check if username is available! You aren't connected to the user database");
 			return false;
 		}
 		if(registeredUser.getPassword().getClearPassword() == null) {
-			Logger.error(this.getServiceName(), "Users clear password is not allowed to be null!");
+			L.e(this.getClass(), "Users clear password is not allowed to be null!");
 			return false;
 		}
 		
 		User userFromDb = getUser(registeredUser.getName());
 		if(userFromDb == null) {
-			Logger.error(this.getServiceName(), "Coudn't find user with specified name (" + registeredUser.getName() + ")");
+			L.e(this.getClass(), "Coudn't find user with specified name (" + registeredUser.getName() + ")");
 			return false;
 		}
 		return userFromDb.getPassword().check(registeredUser.getPassword().getClearPassword());
@@ -334,7 +327,7 @@ public class UserDatabaseService extends DatabaseService{
 	
 	public boolean isUsernameAvailable(String username) {
 		if(!isConnected()) {
-			Logger.error(this.getServiceName(), "Cannot check if username is available! You aren't connected to the user database");
+			L.e(this.getClass(), "Cannot check if username is available! You aren't connected to the user database");
 			return false;
 		}
 		try {
@@ -344,14 +337,13 @@ public class UserDatabaseService extends DatabaseService{
 			ResultSet res = stm.executeQuery();
 			
 			if(res != null && res.next()) {
-				Logger.debug(this.getServiceName(), "Username is not available (" + username + ")");
+				L.d(this.getClass(), "Username is not available (" + username + ")");
 				return false;
 			}
-			Logger.debug(this.getServiceName(), "Username is available (" + username + ")");
+			L.d(this.getClass(), "Username is available (" + username + ")");
 			return true;
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to check if username is available (SQL exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to check if username is available", e);
 		}
 		return false;
 	}
@@ -366,10 +358,9 @@ public class UserDatabaseService extends DatabaseService{
 					+ "password TINYBLOB NOT NULL, "
 					+ "salt VARCHAR (" + Security.SALT_LENGTH + ") NOT NULL CHECK (LENGTH(salt) = " + Security.SALT_LENGTH + " ));");
 		} catch (SQLException e) {
-			Logger.error(this.getClass().getSimpleName(), "Failed to initialize database! (SQL Exception)");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to initialize database!", e);
 		}
-		Logger.debug(this.getServiceName(), "Logging user database...\n" + this.toString());
+		L.d(this.getClass(), "Logging user database...\n" + this.toString());
 	}
 	
 	public static void main(String[] args) {

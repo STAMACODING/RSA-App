@@ -47,6 +47,7 @@ public class FileOutput {
 				try {
 					f.createNewFile();
 				} catch (IOException e) {
+					e.printStackTrace();
 					throw new LoggerException("Failed to create file: " + path);
 				}
 		}
@@ -107,7 +108,7 @@ public class FileOutput {
 			o.write(txt.getBytes());
 			o.close();
 		} catch (IOException e) {
-			throw new LoggerException("Failed to append string to file: " + path);
+			throw new LoggerException("Failed to append string to file (" + path + ")! Did you close the file?");
 		}
 	}
 

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.Client;
 import com.stamacoding.rsaApp.network.client.ClientConfig;
 import com.stamacoding.rsaApp.network.client.managers.ClientMessageManager;
@@ -59,7 +59,7 @@ public class ClientReceiveService extends ClientSocketService{
 			
 			if(messages != null) {
 				// 4. The server responded -> there are new messages available
-				Logger.debug(this.getClass().getSimpleName(), "Successfully received " + messages.size() + " new message(s) from the send server");
+				L.d(this.getClass(), "Successfully received " + messages.size() + " new message(s) from the send server");
 				
 				// 5. Decrypt the received messages
 				decryptMessages(messages);
@@ -71,11 +71,11 @@ public class ClientReceiveService extends ClientSocketService{
 				ClientMessageManager.getInstance().manage(messages.toArray(new Message[messages.size()]));
 			}else {
 				// 4. -> When the message ArrayList is null the server didn't respond -> No new messages available
-				Logger.debug(this.getClass().getSimpleName(), "No new messages available");
+				L.d(this.getClass(), "No new messages available");
 			}
 		} catch (IOException e) {
 			// 1 -> When the client failed to connect to the server
-			Logger.error(this.getClass().getSimpleName(), "Failed to connect to the send server");
+			L.e(this.getClass(), "Failed to connect to the send server", e);
 		}
 		
 		waitForNextRequest();
@@ -87,7 +87,7 @@ public class ClientReceiveService extends ClientSocketService{
 	 * @throws IOException
 	 */
 	private void sendUsername() throws IOException {
-		Logger.debug(this.getClass().getSimpleName(), "Querying messages from the send server using the username (" + ClientConfig.USER_NAME + ")");
+		L.d(this.getClass(), "Querying messages from the send server using the username (" + ClientConfig.USER_NAME + ")");
 		getOutputStream().writeUTF(ClientConfig.USER_NAME);
 		getOutputStream().flush();
 	}
@@ -125,7 +125,7 @@ public class ClientReceiveService extends ClientSocketService{
 			
 	    	m.decrypt();
 		}
-		Logger.debug(this.getClass().getSimpleName(), "Decrypted " + messages.size() +  " message(s)");
+		L.d(this.getClass(), "Decrypted " + messages.size() +  " message(s)");
 	}
 	
 	/**
@@ -134,7 +134,7 @@ public class ClientReceiveService extends ClientSocketService{
 	 */
 	private void logMessages(ArrayList<Message> messages) {
 		for(int i=0; i<messages.size(); i++) {
-			Logger.debug(this.getClass().getSimpleName(), "Message " + i + ": " + messages.get(i).toString());
+			L.d(this.getClass(), "Message " + i + ": " + messages.get(i).toString());
 		}
 	}
 	
@@ -145,7 +145,7 @@ public class ClientReceiveService extends ClientSocketService{
 		try {
 			Thread.sleep(ClientConfig.QUERY_MESSAGES_INTERVAL);
 		} catch (InterruptedException e) {
-			Logger.error(this.getClass().getSimpleName(), "Thread failed to sleep");
+			L.e(this.getClass(), "Thread failed to sleep", e);
 			setServiceCrashed(true);
 		}
 	}

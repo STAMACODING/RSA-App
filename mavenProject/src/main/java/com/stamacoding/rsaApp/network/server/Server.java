@@ -12,6 +12,7 @@ import com.stamacoding.rsaApp.network.server.services.ServerMainService;
 public class Server {
 	
 	public static void main(String[] args) {
+		Thread.currentThread().setName("ServerStartThread");
 		
 		System.out.print(TextUtils.heading("RSA-App Server 1.0.0-alpha"));
 		System.out.print(TextUtils.box(""));

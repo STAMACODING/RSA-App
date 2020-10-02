@@ -1,6 +1,6 @@
 package com.stamacoding.rsaApp.network.client.services;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.ClientConfig;
 import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.global.session.LoginState;
@@ -24,7 +24,6 @@ public class ClientMainService extends Service{
 	 *  only instance of this class.
 	 */
 	private ClientMainService() {
-		super(ClientMainService.class.getSimpleName());
 	}
 	
 	/**
@@ -41,9 +40,9 @@ public class ClientMainService extends Service{
 	@Override
 	public void onStart() {
 		ClientConfig.log();
-		if(!ClientConfig.isValid()) Logger.error(this.getClass().getSimpleName(), new IllegalStateException("Invalid client configuration! Use ClientConfig.setup() to fix"));
+		if(!ClientConfig.isValid()) L.f(this.getClass(), new IllegalStateException("Invalid client configuration! Use ClientConfig.setup() to fix"));
 		
-		Logger.debug(this.getClass().getSimpleName(), "Launching subservices...");
+		L.d(this.getClass(), "Launching subservices...");
 
 		
 		ChatDatabaseService.getInstance().launch();

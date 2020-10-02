@@ -1,6 +1,6 @@
 package com.stamacoding.rsaApp.network.global.service;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 
 /**
  * <p>A service offers the ability to run some code structured and repeatedly on a different thread.
@@ -37,14 +37,15 @@ public abstract class Service{
 	/** Stores whether the service restart feature is enabled */
 	private volatile boolean restartingOnCrash = true;
 	
-	private final String serviceName;
-	
 	
 	/**
 	 * Creates an instance of a new service.
 	 */
-	protected Service(String serviceName) {
-		this.serviceName = serviceName;
+	protected Service() {}
+	
+	
+	protected Class<?> getServiceClass() {
+		return this.getClass();
 	}
 	
 	/**
@@ -52,28 +53,28 @@ public abstract class Service{
 	 */
 	public final synchronized void launch() {
 		if(getServicesThread() != null) {
-			Logger.error(getServiceName(), new RuntimeException("Service is already running. Use restart() to restart the service."));
+			L.e(getServiceClass(), "Service is already running. Use restart() to restart the service.");
 			return;
 		}
 		Thread servicesThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				Thread.currentThread().setName(getServiceName());
-				Logger.debug(getServiceName(), "Starting");
+				Thread.currentThread().setName(getServiceClass().getSimpleName());
+				L.d(getServiceClass(), "Starting");
 				onStart();
-				Logger.debug(getServiceName(), "Started");
+				L.d(getServiceClass(), "Started");
 				while(!isStopRequested() && !isServiceCrashed()) {
 					onRepeat();
 				}
 				if(isServiceCrashed()) {
-					Logger.debug(getServiceName(), "Crashing");
+					L.d(getServiceClass(), "Crashing");
 					onCrash();
-					Logger.debug(getServiceName(), "Crashed");
+					L.d(getServiceClass(), "Crashed");
 					if(isRestartingOnCrash()) {
 						restart();
 					}
 				}else {
-					Logger.debug(getServiceName(), "Stopping");
+					L.d(getServiceClass(), "Stopping");
 					onStop();
 				}
 			}
@@ -86,18 +87,18 @@ public abstract class Service{
 	 * Restarts the service.
 	 */
 	public final synchronized void restart() {
-		Logger.debug(getServiceName(), "Restarting");
+		L.d(getServiceClass(), "Restarting");
 		if(getServicesThread() != null) {
 			if(!getServicesThread().isInterrupted()) {
 				getServicesThread().interrupt();
-				Logger.debug(getServiceName(), "Interrupted service's thread to restart");
+				L.d(getServiceClass(), "Interrupted service's thread to restart");
 			}
 			setServicesThread(null);
 		}
 		setStopRequested(false);
 		setServiceCrashed(false);
 		onRestart();
-		Logger.debug(getServiceName(), "Launching service now...");
+		L.d(getServiceClass(), "Launching service now...");
 		launch();
 	}
 	
@@ -190,14 +191,6 @@ public abstract class Service{
 	 */
 	public void setRestartingOnCrash(boolean restartingOnCrash) {
 		this.restartingOnCrash = restartingOnCrash;
-	}
-
-	/**
-	 * Gets the service's name.
-	 * @return the service's name
-	 */
-	public String getServiceName() {
-		return serviceName;
 	}
 }
 

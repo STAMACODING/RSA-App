@@ -2,7 +2,7 @@ package com.stamacoding.rsaApp.network.global.message.data;
 
 import java.io.Serializable;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 
 /**
  *  Stores server-relevant information about the message. Should get encrypted before sending. The
@@ -26,8 +26,8 @@ public class ServerData implements Serializable {
 	 * @param receivingId the id of the client that received or will receive this message
 	 */
 	public ServerData(String sendingUser, String receivingUser) {
-		if(sendingUser == null || sendingUser.length() == 0 || sendingUser.length() > 15) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("Invalid username (sending)!"));
-		if(receivingUser == null || receivingUser.length() == 0 || receivingUser.length() > 15) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("Invalid username (receiving)!"));
+		if(sendingUser == null || sendingUser.length() == 0 || sendingUser.length() > 15) L.f(this.getClass(), new IllegalArgumentException("Invalid username (sending)!"));
+		if(receivingUser == null || receivingUser.length() == 0 || receivingUser.length() > 15) L.f(this.getClass(), new IllegalArgumentException("Invalid username (receiving)!"));
 		
 		this.sendingUser = sendingUser;
 		this.receivingUser = receivingUser;
@@ -66,7 +66,7 @@ public class ServerData implements Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (this.getClass() != obj.getClass())
 			return false;
 		ServerData other = (ServerData) obj;
 		if (receivingUser == null) {

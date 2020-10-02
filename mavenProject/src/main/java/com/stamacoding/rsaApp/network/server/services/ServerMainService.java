@@ -1,6 +1,6 @@
 package com.stamacoding.rsaApp.network.server.services;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.server.ServerConfig;
 
@@ -22,9 +22,7 @@ public class ServerMainService extends Service{
 	 *  Creates an instance of this class. Gets automatically called once at the start to define the service's {@link #singleton}. Use {@link MessageService#getInstance()} to get the
 	 *  only instance of this class.
 	 */
-	private ServerMainService() {
-		super(ServerMainService.class.getSimpleName());
-	}
+	private ServerMainService() {}
 	
 	/**
 	 * Gets the only instance of this class.
@@ -40,7 +38,7 @@ public class ServerMainService extends Service{
 	@Override
 	public void onStart() {
 		ServerConfig.log();
-		if(!ServerConfig.isValid()) Logger.error(this.getClass().getSimpleName(), new IllegalStateException("Invalid server configuration! Use ServerConfig.setup() to fix"));
+		if(!ServerConfig.isValid()) L.f(this.getClass(), "Invalid server configuration! Use ServerConfig.setup() to fix");
 		
 		UserDatabaseService.getInstance().launch();
 		ServerSendService.getInstance().launch();

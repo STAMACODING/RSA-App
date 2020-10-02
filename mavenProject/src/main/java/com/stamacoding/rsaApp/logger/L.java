@@ -46,13 +46,13 @@ public class L{
 			/**
 			 * The minimum log level that is printed to the console.
 			 */
-			public static Level LEVEL = Level.TRACE; 
+			public static Level LEVEL = Level.DEBUG; 
 			
 			/**
 			 * Whether the tag feature is enabled.
 			 * @see L
 			 */
-			public static boolean TAGGING_ENABLED = true;
+			public static boolean TAGGING_ENABLED = false;
 			
 			/**
 			 * Sets all console settings.
@@ -80,7 +80,7 @@ public class L{
 			/**
 			 * The minimum log level that gets written to the log file(s).
 			 */
-			public static Level LEVEL = Level.TRACE; 
+			public static Level LEVEL = Level.DEBUG; 
 			
 			/**
 			 * Whether the tag feature is enabled.
@@ -97,7 +97,7 @@ public class L{
 			 * The used file output mode.
 			 * @see FileMode
 			 */
-			public static FileMode MODE = FileMode.SINGLE;
+			public static FileMode MODE = FileMode.ONE_PER_THREAD;
 			
 			/**
 			 * Sets all file settings.

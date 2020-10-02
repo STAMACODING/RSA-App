@@ -1,7 +1,6 @@
 package com.stamacoding.rsaApp.network.client.managers;
 
-import java.util.ArrayList;
-
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.services.ClientReceiveService;
 import com.stamacoding.rsaApp.network.global.message.AbstractMessageManager;
 import com.stamacoding.rsaApp.network.global.message.Message;
@@ -35,14 +34,24 @@ public class ClientMessageManager extends AbstractMessageManager{
 	 * @return the message that should get stored or updated
 	 */
 	public Message pollToStoreOrUpdate() {
+		L.t(this.getClass(), "Polling message to store or update");
 		for(int i=0; i<getCurrentlyManagedMessages().size(); i++) {
-			Message m = getCurrentlyManagedMessages().get(i);
+			Message m = null;
+			try {m = getCurrentlyManagedMessages().get(i);}catch(IndexOutOfBoundsException e){};
+			
 			if(m == null || m.getLocalData() == null) return null;
 			if(m.getLocalData().isToStore() || m.getLocalData().isToUpdate()) {
-				if(!m.getLocalData().isToSend()) getCurrentlyManagedMessages().remove(m);
+				L.d(this.getClass(), "Found message to store or update: " + m.toString());
+				if(!m.getLocalData().isToSend()) {
+					getCurrentlyManagedMessages().remove(m);
+					L.t(this.getClass(), "Removed message from message manager");
+				}else {
+					L.t(this.getClass(), "Didn't remove message from message manager because it also has to get sent");
+				}
 				return m;
 			}
 		}
+		L.t(this.getClass(), "Didn't find any message to store or update");
 		return null;
 	}
 	
@@ -52,15 +61,23 @@ public class ClientMessageManager extends AbstractMessageManager{
 	 * @return the message that should get sent
 	 */
 	public Message pollToSend() {
+		L.t(this.getClass(), "Polling message to send");
 		for(int i=0; i<getCurrentlyManagedMessages().size(); i++) {
 			Message m = null;
 			try {m = getCurrentlyManagedMessages().get(i);}catch(IndexOutOfBoundsException e){};
-			if(m == null || m.getLocalData() == null) return null;
+			if(m == null || m.getLocalData() == null) continue;
 			if(m.getLocalData().isToSend()) {
-				if(!m.getLocalData().isToStore() && !m.getLocalData().isToUpdate()) getCurrentlyManagedMessages().remove(m);
+				L.d(this.getClass(), "Found message to send: " + m.toString());
+				if(!m.getLocalData().isToStore() && !m.getLocalData().isToUpdate()) {
+					getCurrentlyManagedMessages().remove(m);
+					L.t(this.getClass(), "Removed message from message manager");
+				}else {
+					L.t(this.getClass(), "Didn't remove message from message manager because it also has to be stored/updated");
+				}
 				return m;
 			}
 		}
+		L.t(this.getClass(), "Didn't find any message to send");
 		return null;
 	}
 }

@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.ClientConfig;
 import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.global.session.LoginState;
@@ -28,7 +28,6 @@ public class SessionService extends Service{
 	 *  only instance of this class.
 	 */
 	private SessionService() {
-		super(SessionService.class.getSimpleName());
 		if(ClientConfig.REGISTERED) getSession().setState(LoginState.SIGNED_IN);
 	}
 	
@@ -45,35 +44,35 @@ public class SessionService extends Service{
 		super.onStart();
 		
 		while(getSession().getState() == LoginState.NONE) {
-			Logger.debug(this.getClass().getSimpleName(), "Trying to sign up (" + ClientConfig.USER_NAME + ", ************)");
+			L.d(this.getClass(), "Trying to sign up (" + ClientConfig.USER_NAME + ", ************)");
 			getSession().setState(signup());
 			
 			if(getSession().getState() == LoginState.SIGNED_IN) {
-				Logger.debug(this.getClass().getSimpleName(), "Signed up successfull (" + ClientConfig.USER_NAME + ", ************)");
+				L.i(this.getClass(), "Signed up successfully (" + ClientConfig.USER_NAME + ", ************)");
 				ClientConfig.REGISTERED = true;
 				ClientConfig.save();
 			}else {
-				Logger.warning(this.getClass().getSimpleName(), "Failed to sign up (" + ClientConfig.USER_NAME + ", ************)");
+				L.w(this.getClass(), "Failed to sign up (" + ClientConfig.USER_NAME + ", ************)");
 				try {
 					Thread.sleep(ClientConfig.RETRY_SIGNUP_INTERVAL);
 				} catch (InterruptedException e) {
-					Logger.error(this.getClass().getSimpleName(), "Failed to wait for retrying to sign up. The used thread interrupted.");
+					L.e(this.getClass(), "Failed to wait for retrying to sign up. The used thread was interrupted.", e);
 				}
 			}
 		}
 		
 		while(getSession().getState() != LoginState.LOGGED_IN) {
-			Logger.debug(this.getClass().getSimpleName(), "Trying to log in (" + ClientConfig.USER_NAME + ", ************)");
+			L.d(this.getClass(), "Trying to log in (" + ClientConfig.USER_NAME + ", ************)");
 			getSession().setState(login());
 			
 			if(getSession().getState() == LoginState.LOGGED_IN) {
-				Logger.debug(this.getClass().getSimpleName(), "Logged in successfull (" + ClientConfig.USER_NAME + ", ************)");
+				L.i(this.getClass(), "Logged in successfull (" + ClientConfig.USER_NAME + ", ************)");
 			}else {
-				Logger.warning(this.getClass().getSimpleName(), "Failed to log in (" + ClientConfig.USER_NAME + ", ************)");
+				L.w(this.getClass(), "Failed to log in (" + ClientConfig.USER_NAME + ", ************)");
 				try {
 					Thread.sleep(ClientConfig.RETRY_LOGIN_INTERVAL);
 				} catch (InterruptedException e) {
-					Logger.error(this.getClass().getSimpleName(), "Failed to wait for retrying to sign up. The used thread interrupted.");
+					L.e(this.getClass(), "Failed to wait for retrying to sign up. The used thread was interrupted.", e);
 				}
 			}
 		}
@@ -89,7 +88,7 @@ public class SessionService extends Service{
 		try {
 			Socket connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.PING_PORT);
 			
-			Logger.debug(this.getClass().getSimpleName(), "Ping");
+			L.d(this.getClass(), "Ping");
 			DataOutputStream out = new DataOutputStream(connectionToServer.getOutputStream());
 			out.writeLong(getSession().getId());
 			out.close();
@@ -99,50 +98,50 @@ public class SessionService extends Service{
 			try {
 				Thread.sleep(ClientConfig.PING_INTERVAL);
 			} catch (InterruptedException e) {
-				Logger.error(this.getClass().getSimpleName(), "Failed to wait for pinging again.");
+				L.e(this.getClass(), "Failed to wait for pinging again.", e);
 			}
 		} catch (IOException e) {
-			Logger.error(this.getClass().getSimpleName(), "Connection error");
+			L.e(this.getClass(), "Connection error", e);
 		}
 	}
 
 	private LoginState signup() {
 		try {
 			Socket connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.SIGNUP_PORT);
-			Logger.debug(this.getClass().getSimpleName(), "Connected to server successfully");
+			L.d(this.getClass(), "Connected to server successfully");
 			
-			Logger.debug(this.getClass().getSimpleName(), "Encrypting user information (" + ClientConfig.USER_NAME + ", ************)");
+			L.d(this.getClass(), "Encrypting user information (" + ClientConfig.USER_NAME + ", ************)");
 			byte[] you = Security.encryptF(new User(ClientConfig.USER_NAME, new Password(ClientConfig.USER_PASSWORD)));
 			
 			DataOutputStream out = new DataOutputStream(connectionToServer.getOutputStream());
 			DataInputStream in = new DataInputStream(connectionToServer.getInputStream());
 			
-			Logger.debug(this.getClass().getSimpleName(), "Sending user information");
+			L.d(this.getClass(), "Sending user information");
 			out.writeInt(you.length);
 			out.write(you);
 			out.flush();
 			
-			Logger.debug(this.getClass().getSimpleName(), "Retrieving answer");
+			L.d(this.getClass(), "Retrieving answer");
 			int answer = in.readInt();
 			
-			Logger.debug(this.getClass().getSimpleName(), "Close connection to server");
+			L.d(this.getClass(), "Close connection to server");
 			out.close();
 			in.close();
 			connectionToServer.close();
 			
 			switch(answer) {
 			case SignUpService.AnswerCodes.USERNAME_UNAVAILABLE:
-				Logger.error(this.getClass().getSimpleName(), "Failed to sign up! Your username is already in use!");
+				L.e(this.getClass(), "Failed to sign up! Your username is already in use!");
 				return LoginState.NONE;
 			case SignUpService.AnswerCodes.INVALID_DATA_FROM_CLIENT:
-				Logger.error(this.getClass().getSimpleName(), "Failed to sign up! Received invalid data from client!");
+				L.e(this.getClass(), "Failed to sign up! Received invalid data from client!");
 				return LoginState.NONE;
 			case SignUpService.AnswerCodes.SIGNED_UP:
-				Logger.error(this.getClass().getSimpleName(), "Signed-up successfully!");
+				L.d(this.getClass(), "Signed-up successfully!");
 				return LoginState.SIGNED_IN;
 			}	
 		} catch (IOException e) {
-			Logger.error(this.getClass().getSimpleName(), "Connection error");
+			L.e(this.getClass(), "Connection error", e);
 		}
 		
 		return LoginState.NONE;
@@ -151,23 +150,23 @@ public class SessionService extends Service{
 	private LoginState login() {
 		try {
 			Socket connectionToServer = new Socket(ClientConfig.SERVER_IP, ClientConfig.LOGIN_PORT);
-			Logger.debug(this.getClass().getSimpleName(), "Connected to server successfully");
+			L.d(this.getClass(), "Connected to server successfully");
 			
-			Logger.debug(this.getClass().getSimpleName(), "Encrypting user information (" + ClientConfig.USER_NAME + ", ************)");
+			L.d(this.getClass(), "Encrypting user information (" + ClientConfig.USER_NAME + ", ************)");
 			byte[] you = Security.encryptF(new User(ClientConfig.USER_NAME, new Password(ClientConfig.USER_PASSWORD)));
 			
 			DataOutputStream out = new DataOutputStream(connectionToServer.getOutputStream());
 			DataInputStream in = new DataInputStream(connectionToServer.getInputStream());
 			
-			Logger.debug(this.getClass().getSimpleName(), "Sending user information");
+			L.d(this.getClass(), "Sending user information");
 			out.writeInt(you.length);
 			out.write(you);
 			out.flush();
 			
-			Logger.debug(this.getClass().getSimpleName(), "Retrieving answer");
+			L.d(this.getClass(), "Retrieving answer");
 			long answer = in.readLong();
 			
-			Logger.debug(this.getClass().getSimpleName(), "Close connection to server");
+			L.d(this.getClass(), "Close connection to server");
 			out.close();
 			in.close();
 			connectionToServer.close();
@@ -176,10 +175,10 @@ public class SessionService extends Service{
 				int answerCode = (int) answer;
 				switch(answerCode) {
 				case LoginService.AnswerCodes.INVALID_DATA_FROM_CLIENT:
-					Logger.error(this.getClass().getSimpleName(), "Failed to log in! Server received invalid data from client.");
+					L.e(this.getClass(), "Failed to log in! Server received invalid data from client.");
 					return LoginState.SIGNED_IN;
 				case LoginService.AnswerCodes.WRONG_USERNAME_PASSWORD:
-					Logger.error(this.getClass().getSimpleName(), "Failed to log in! Invalid password or username.");
+					L.e(this.getClass(), "Failed to log in! Invalid password or username.");
 					return LoginState.SIGNED_IN;
 				}
 			}else {
@@ -187,7 +186,7 @@ public class SessionService extends Service{
 				return LoginState.LOGGED_IN;
 			}
 		} catch (IOException e) {
-			Logger.error(this.getClass().getSimpleName(), "Connection error");
+			L.e(this.getClass(), "Connection error", e);
 		}
 		
 		return LoginState.SIGNED_IN;

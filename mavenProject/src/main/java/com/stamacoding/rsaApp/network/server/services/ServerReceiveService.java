@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.message.Message;
 import com.stamacoding.rsaApp.network.global.message.data.LocalData;
 import com.stamacoding.rsaApp.network.global.message.data.SendState;
@@ -35,7 +35,7 @@ public class ServerReceiveService extends ServerSocketService{
 	 *  The server's port is set to {@link Server#RECEIVE_PORT}.
 	 */
 	private ServerReceiveService() {
-		super(ServerReceiveService.class.getSimpleName(), ServerConfig.RECEIVE_PORT);
+		super(ServerConfig.RECEIVE_PORT);
 	}
 	
 	/**
@@ -66,11 +66,11 @@ public class ServerReceiveService extends ServerSocketService{
 				m.decryptServerData();
 				
 				// 4. Log the message
-				Logger.debug(this.getClass().getSimpleName(), "Received message: " + m.toString());
+				L.d(this.getClass(), "Received message: " + m.toString());
 				
 				if(UserDatabaseService.getInstance().isUsernameAvailable(m.getServerData().getReceiving())
 						|| UserDatabaseService.getInstance().isUsernameAvailable(m.getServerData().getSending())) {
-					Logger.error(this.getServiceName(), "Message's sending and/or receiving user isn't signed up!");
+					L.e(this.getClass(), "Message's sending and/or receiving user isn't signed up!");
 					
 					getOutputStream().writeInt(AnswerCodes.RECEIVED_INVALID_MESSAGE);
 					return;
@@ -83,12 +83,12 @@ public class ServerReceiveService extends ServerSocketService{
 				getOutputStream().writeInt(AnswerCodes.RECEIVED_VALID_MESSAGE);
 			}else {
 				// 3. -> If the server failed to receive the message
-				Logger.error(this.getClass().getSimpleName(), new RuntimeException("Received invalid data (failed to receive message)"));
+				L.e(this.getClass(), "Received invalid data (failed to receive message)");
 				getOutputStream().writeInt(AnswerCodes.RECEIVED_INVALID_DATA);
 			}
 		} catch (IOException e) {
 			// 1. -> If the server failed to accept the client's connection or couldn't get the socket's input stream
-			Logger.error(this.getClass().getSimpleName(), "Failed to receive a message from a client");
+			L.e(this.getClass(), "Failed to receive a message from a client", e);
 		}
 	}
 	
@@ -115,17 +115,17 @@ public class ServerReceiveService extends ServerSocketService{
 			    	encryptedProtectedData = new byte[protectedDataLength];
 			    	getInputStream().readFully(encryptedProtectedData, 0, protectedDataLength);
 			    }else {
-			    	Logger.error(this.getClass().getSimpleName(), new RuntimeException("Received invalid data"));
+			    	L.e(this.getClass(), "Received invalid data");
+			    	return null;
 			    }
 			    
-			    Logger.debug(this.getClass().getSimpleName(), "Successfully received message's meta and data");
+			    L.d(this.getClass(), "Successfully received message's meta and data");
 				
 			    // 3. Create message
 				return new Message(new LocalData(-1, SendState.PENDING), encryptedProtectedData, encryptedServerData);
 			}
 		} catch (IOException e) {
-			Logger.error(this.getClass().getSimpleName(), "Unexspected error while receiving a message");
-			e.printStackTrace();
+			L.e(this.getClass(), "Unexspected error while receiving a message", e);
 		}
 		return null;
 	}

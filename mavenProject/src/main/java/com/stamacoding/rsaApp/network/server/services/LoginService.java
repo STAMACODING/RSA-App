@@ -2,7 +2,7 @@ package com.stamacoding.rsaApp.network.server.services;
 
 import java.io.IOException;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.network.server.Server;
 import com.stamacoding.rsaApp.network.server.ServerConfig;
@@ -23,7 +23,7 @@ public class LoginService extends ServerSocketService{
 	 *  The server's port is set to {@link Server#SEND_PORT}.
 	 */
 	private LoginService() {
-		super(LoginService.class.getSimpleName(), ServerConfig.LOGIN_PORT);
+		super(ServerConfig.LOGIN_PORT);
 	}
 	
 	/**
@@ -40,31 +40,31 @@ public class LoginService extends ServerSocketService{
 			
 			int length = getInputStream().readInt();
 			if(length > 0) {
-				Logger.debug(getServiceName(), "Decrypting client's request");
+				L.d(this.getClass(), "Decrypting client's request");
 				byte[] encryptedUser = new byte[length];
 				getInputStream().readFully(encryptedUser, 0, length);
 				
 				User user = (User) Security.decryptF(encryptedUser);
-				Logger.debug(getServiceName(), "Client wants to login as: " + user.toString());
+				L.d(this.getClass(), "Client wants to login as: " + user.toString());
 				
 				if(UserDatabaseService.getInstance().isPasswordCorrect(user)) {
-					Logger.debug(getServiceName(), "User logged in (0): " + UserDatabaseService.getInstance().getUser(user.getName()).toString());
+					L.d(this.getClass(), "User logged in (0): " + UserDatabaseService.getInstance().getUser(user.getName()).toString());
 					
 					// TODO store session id and mark user as logged in
 					long sessionId = (long) (Math.random() * Long.MAX_VALUE);
 					
 					getOutputStream().writeLong(sessionId);
 				}else {
-					Logger.debug(getServiceName(), "Wrong username/password!");
+					L.d(this.getClass(), "Wrong username/password!");
 					getOutputStream().writeInt(AnswerCodes.WRONG_USERNAME_PASSWORD);
 				}
 
 			}else {
-				Logger.error(this.getClass().getSimpleName(), new RuntimeException("Received invalid data"));
+				L.e(this.getClass(), "Received invalid data");
 				getOutputStream().writeInt(AnswerCodes.INVALID_DATA_FROM_CLIENT);
 			}
 		} catch (IOException e) {
-			Logger.error(this.getClass().getSimpleName(), "Connection error");
+			L.e(this.getClass(), "Connection error", e);
 		}
 
 	}

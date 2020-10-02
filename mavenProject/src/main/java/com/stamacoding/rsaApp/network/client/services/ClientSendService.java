@@ -3,7 +3,7 @@ package com.stamacoding.rsaApp.network.client.services;
 import java.io.IOException;
 import java.net.Socket;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.Client;
 import com.stamacoding.rsaApp.network.client.ClientConfig;
 import com.stamacoding.rsaApp.network.client.managers.ClientMessageManager;
@@ -62,12 +62,12 @@ public class ClientSendService extends ClientSocketService {
 	protected void onAccept() {
 		Message clonedMessage = getMessage().clone();
 		
-		Logger.debug(this.getClass().getSimpleName(), "Got new message to send from MessageManager");
-		Logger.debug(this.getClass().getSimpleName(), "Message to send: " + getMessage().toString());
+		L.d(this.getClass(), "Got new message to send from MessageManager");
+		L.d(this.getClass(), "Message to send: " + getMessage().toString());
 		
 		// 1. Encrypt message
 		getMessage().encrypt();
-		Logger.debug(this.getClass().getSimpleName(), "Encrypted message");
+		L.d(this.getClass(), "Encrypted message");
 		try {
 			// 2. Send message
 			sendMessage();
@@ -78,12 +78,12 @@ public class ClientSendService extends ClientSocketService {
 				updateMessageState(clonedMessage);
 			}else {
 				// 4. Re-add message to message manager
-				Logger.error(this.getServiceName(), "Failed to send message");
+				L.e(this.getClass(), "Failed to send message");
 				ClientMessageManager.getInstance().manage(clonedMessage);
 			}
 		} catch (IOException e) {
 			// 2. -> When failing to send message
-			Logger.error(this.getClass().getSimpleName(), "Failed to send message");
+			L.e(this.getClass(), "Failed to send message", e);
 			ClientMessageManager.getInstance().manage(clonedMessage);
 		}
 	}
@@ -94,18 +94,17 @@ public class ClientSendService extends ClientSocketService {
 			
 			switch(answer) {
 			case ServerReceiveService.AnswerCodes.RECEIVED_VALID_MESSAGE:
-				Logger.debug(this.getServiceName(), "Server received valid message");
+				L.d(this.getClass(), "Server received valid message");
 				return true;
 			case ServerReceiveService.AnswerCodes.RECEIVED_INVALID_DATA:
-				Logger.error(this.getServiceName(), "Server received invalid data");
+				L.e(this.getClass(), "Server received invalid data");
 				return false;
 			case ServerReceiveService.AnswerCodes.RECEIVED_INVALID_MESSAGE:
-				Logger.error(this.getServiceName(), "Server received message from/to unregistered user");
+				L.e(this.getClass(), "Server received message from/to unregistered user");
 				return false;
 			}
 		} catch (IOException e) {
-			Logger.error(this.getServiceName(), "Error while receiving answer from server");
-			e.printStackTrace();
+			L.e(this.getClass(), "Error while receiving answer from server", e);
 		}
 		return false;
 	}
@@ -127,7 +126,7 @@ public class ClientSendService extends ClientSocketService {
 
 		getOutputStream().flush();
 			
-		Logger.debug(this.getClass().getSimpleName(), "Sent message to the receive server: " + getMessage().toString());
+		L.d(this.getClass(), "Sent message to the receive server: " + getMessage().toString());
 	}
 	
 	/**
@@ -135,7 +134,7 @@ public class ClientSendService extends ClientSocketService {
 	 * @param m the message to update
 	 */
 	private void updateMessageState(Message m) {
-		Logger.debug(this.getClass().getSimpleName(), "Updating message state");
+		L.d(this.getClass(), "Updating message state");
 		
 		m.getLocalData().setSendState(SendState.SENT);
 		m.getLocalData().setUpdateRequested(true);

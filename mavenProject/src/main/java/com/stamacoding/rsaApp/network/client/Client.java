@@ -20,6 +20,7 @@ import com.stamacoding.rsaApp.network.global.message.data.ServerData;
 public class Client {
 	
 	public static void main(String[] args) {
+		Thread.currentThread().setName("ClientStartThread");
 		
 		System.out.print(TextUtils.heading("RSA-App Client 1.0.0-alpha"));
 		System.out.print(TextUtils.box(""));

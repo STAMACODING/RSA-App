@@ -2,7 +2,7 @@ package com.stamacoding.rsaApp.network.global.message.data;
 
 import java.io.Serializable;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 
 /**
  *  Stores essential information about a message. Should get encrypted before sending. The server should not be
@@ -27,8 +27,8 @@ public class ProtectedData implements Serializable{
 	 * @param date the time the message was originally created
 	 */
 	public ProtectedData(String textMessage, long date) {
-		if(date < 0) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("long date (" + date +  ") should be greater than 0 !"));
-		if(textMessage == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("String textMessage is not allowed to be null!"));
+		if(date < 0) L.f(this.getClass(), new IllegalArgumentException("long date (" + date +  ") should be greater than 0 !"));
+		if(textMessage == null) L.f(this.getClass(), new IllegalArgumentException("String textMessage is not allowed to be null!"));
 		
 		this.date = date;
 		this.textMessage = textMessage;
@@ -67,7 +67,7 @@ public class ProtectedData implements Serializable{
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (this.getClass() != obj.getClass())
 			return false;
 		ProtectedData other = (ProtectedData) obj;
 		if (date != other.date)

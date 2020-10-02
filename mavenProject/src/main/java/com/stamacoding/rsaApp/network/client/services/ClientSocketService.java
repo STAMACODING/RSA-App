@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.NetworkUtils;
 import com.stamacoding.rsaApp.network.global.service.InputOutputService;
 
@@ -15,7 +15,6 @@ public abstract class ClientSocketService extends InputOutputService{
 	private String serverIp;
 
 	protected ClientSocketService(String serviceName, String serverIp, int port) {
-		super(serviceName);
 		setServerIp(serverIp);
 		setPort(port);
 	}
@@ -29,7 +28,7 @@ public abstract class ClientSocketService extends InputOutputService{
 			setOutputStream(new DataOutputStream(getSocketConnection().getOutputStream()));
 			setInputStream(new DataInputStream(getSocketConnection().getInputStream()));
 			
-			Logger.debug(this.getServiceName(), "Connected to server (" + getServerIp() + " : " + getPort() + ")");
+			L.d(this.getClass(), "Connected to server (" + getServerIp() + " : " + getPort() + ")");
 			
 			onAccept();
 			
@@ -38,10 +37,9 @@ public abstract class ClientSocketService extends InputOutputService{
 			getInputStream().close();
 			getSocketConnection().close();
 			
-			Logger.debug(this.getServiceName(), "Closed connection to server");
+			L.d(this.getClass(), "Closed connection to server");
 		} catch (IOException e) {
-			Logger.error(this.getServiceName(), "Failed to connect to server");
-			e.printStackTrace();
+			L.e(this.getClass(), "Failed to connect to server", e);
 		}
 	}
 
@@ -60,7 +58,7 @@ public abstract class ClientSocketService extends InputOutputService{
 	}
 
 	private void setPort(int port) {
-		if(port <= 0) throw new IllegalArgumentException("The port is not allowed to be smaller than 0!");
+		if(port <= 0) L.f(this.getClass(), new IllegalArgumentException("The port is not allowed to be smaller than 0!"));
 		this.port = port;
 	}
 
@@ -69,7 +67,7 @@ public abstract class ClientSocketService extends InputOutputService{
 	}
 
 	private void setServerIp(String serverIp) {
-		if(!NetworkUtils.isValidInet4Address(serverIp)) throw new IllegalArgumentException("Invalid server ip!");
+		if(!NetworkUtils.isValidInet4Address(serverIp)) L.f(this.getClass(), new IllegalArgumentException("Invalid server ip!"));
 		this.serverIp = serverIp;
 	}
 

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.service.InputOutputService;
 import com.stamacoding.rsaApp.network.global.service.Service;
 
@@ -28,8 +28,7 @@ public abstract class ServerSocketService extends InputOutputService{
 	 * Creates an instance of this class.
 	 * @param port the {@link #serverSocket}'s port 
 	 */
-	protected ServerSocketService(String serviceName, int port) {
-		super(serviceName);
+	protected ServerSocketService(int port) {
 		setPort(port);
 	}
 
@@ -41,9 +40,9 @@ public abstract class ServerSocketService extends InputOutputService{
 	public final void onStart() {
 		try {
 			setServerSocket(new ServerSocket(getPort()));
-			Logger.debug(getServiceName(), "Successfully set server socket");
+			L.d(getServiceClass(), "Successfully set server socket");
 		} catch (IOException e) {
-			Logger.error(getServiceName(), "Could not set server socket");
+			L.e(getServiceClass(), "Could not set server socket", e);
 			setServiceCrashed(true);
 		}
 	}
@@ -56,7 +55,7 @@ public abstract class ServerSocketService extends InputOutputService{
 			getClientSocket().setSoTimeout(5000);
 			setInputStream(new DataInputStream(getClientSocket().getInputStream()));
 			setOutputStream(new DataOutputStream(getClientSocket().getOutputStream()));
-			Logger.debug(this.getServiceName(), "Accepted client connection");
+			L.d(getServiceClass(), "Accepted client connection");
 			
 			onAccept();
 			
@@ -64,10 +63,9 @@ public abstract class ServerSocketService extends InputOutputService{
 			getInputStream().close();
 			getOutputStream().close();
 			getClientSocket().close();
-			Logger.debug(this.getServiceName(), "Closed client connection");
+			L.d(getServiceClass(), "Closed client connection");
 		} catch (IOException e) {
-			Logger.error(this.getServiceName(), "Failed to accept connection from client");
-			e.printStackTrace();
+			L.e(getServiceClass(), "Failed to accept connection from client", e);
 		}
 	}
 
@@ -81,9 +79,9 @@ public abstract class ServerSocketService extends InputOutputService{
 	public final void onStop() {
 		try {
 			if(getServerSocket() != null) getServerSocket().close();
-			Logger.debug(getServiceName(), "Closed server socket");
+			L.d(getServiceClass(), "Closed server socket");
 		} catch (IOException e) {
-			Logger.error(getServiceName(), "Could not close server socket");
+			L.e(getServiceClass(), "Could not close server socket", e);
 		}
 	}
 
@@ -95,9 +93,9 @@ public abstract class ServerSocketService extends InputOutputService{
 	public final void onCrash() {
 		try {
 			if(getServerSocket() != null) getServerSocket().close();
-			Logger.debug(getServiceName(), "Closed server socket");
+			L.d(getServiceClass(), "Closed server socket");
 		} catch (IOException e) {
-			Logger.error(getServiceName(), "Could not close server socket");
+			L.e(getServiceClass(), "Could not close server socket", e);
 		}
 	}
 
