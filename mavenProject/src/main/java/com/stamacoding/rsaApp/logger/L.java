@@ -41,18 +41,18 @@ public class L{
 			/**
 			 * Whether the console output is enabled.
 			 */
-			public static boolean OUTPUT_ENABLED = true;
+			public static volatile boolean OUTPUT_ENABLED = true;
 			
 			/**
 			 * The minimum log level that is printed to the console.
 			 */
-			public static Level LEVEL = Level.DEBUG; 
+			public static volatile Level LEVEL = Level.DEBUG; 
 			
 			/**
 			 * Whether the tag feature is enabled.
 			 * @see L
 			 */
-			public static boolean TAGGING_ENABLED = false;
+			public static volatile boolean TAGGING_ENABLED = false;
 			
 			/**
 			 * Sets all console settings.
@@ -75,29 +75,29 @@ public class L{
 			/**
 			 * Whether the file output is enabled.
 			 */
-			public static boolean OUTPUT_ENABLED = true;
+			public static volatile boolean OUTPUT_ENABLED = true;
 			
 			/**
 			 * The minimum log level that gets written to the log file(s).
 			 */
-			public static Level LEVEL = Level.DEBUG; 
+			public static volatile Level LEVEL = Level.DEBUG; 
 			
 			/**
 			 * Whether the tag feature is enabled.
 			 * @see L
 			 */
-			public static boolean TAGGING_ENABLED = true;
+			public static volatile boolean TAGGING_ENABLED = true;
 			
 			/**
 			 * The maximum file size of a log file (in bytes).
 			 */
-			public static long MAX_SIZE = 2 * 1024 * 1024;
+			public static volatile long MAX_SIZE = 2 * 1024 * 1024;
 			
 			/**
 			 * The used file output mode.
 			 * @see FileMode
 			 */
-			public static FileMode MODE = FileMode.ONE_PER_THREAD;
+			public static volatile FileMode MODE = FileMode.ONE_PER_THREAD;
 			
 			/**
 			 * Sets all file settings.

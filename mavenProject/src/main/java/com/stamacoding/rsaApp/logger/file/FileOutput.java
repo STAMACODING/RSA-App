@@ -23,13 +23,13 @@ public class FileOutput {
 	/**
 	 * The path of the current log file
 	 */
-	private static File logFile = null;
+	private static ThreadLocal<File> logFile = ThreadLocal.withInitial(()-> null);;
 	
 	/**
 	 * Stores whether the file output got initialized
 	 * @see #initialize()
 	 */
-	private static boolean initialized = false;
+	private static volatile boolean initialized = false;
 	
 	/**
 	 * Writes a log entry to the current log file.
@@ -39,20 +39,20 @@ public class FileOutput {
 		if(!initialized) initialize();
 
 		if(L.Config.File.MODE == FileMode.ONE_PER_THREAD) 
-			logFile = new File("log/" + Thread.currentThread().getName() + ".log");
+			logFile.set(new File("log/" + Thread.currentThread().getName() + ".log"));
 		else
-			logFile = new File("log/Logs.log");
+			logFile.set(new File("log/Logs.log"));
 
-		if(!logFile.exists()) {
+		if(!logFile.get().exists()) {
 			try {
-				logFile.createNewFile();
+				logFile.get().createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
-				throw new LoggerException("Failed to create file: " + logFile.getPath());
+				throw new LoggerException("Failed to create file: " + logFile.get().getPath());
 			}
 		}
 		
-		if(logFile.length() > L.Config.File.MAX_SIZE) {
+		if(logFile.get().length() > L.Config.File.MAX_SIZE) {
 			deleteLines(0, 10000);
 		}
 		
@@ -96,11 +96,11 @@ public class FileOutput {
 	 */
 	private static void append(String txt) {
 		try {
-			OutputStream o = Files.newOutputStream(logFile.toPath(), StandardOpenOption.APPEND);
+			OutputStream o = Files.newOutputStream(logFile.get().toPath(), StandardOpenOption.APPEND);
 			o.write(txt.getBytes());
 			o.close();
 		} catch (IOException e) {
-			throw new LoggerException("Failed to append string to log file (" + logFile.getPath() + ")! Did you close the file?");
+			throw new LoggerException("Failed to append string to log file (" + logFile.get().getPath() + ")! Did you close the file?");
 		}
 	}
 
@@ -112,7 +112,7 @@ public class FileOutput {
 	 */
 	private static void deleteLines(int startline, int numlines){
 		try{
-			BufferedReader br = new BufferedReader(new FileReader(logFile));
+			BufferedReader br = new BufferedReader(new FileReader(logFile.get()));
  
 			//String buffer to store contents of the file
 			StringBuffer sb=new StringBuffer("");
@@ -128,14 +128,14 @@ public class FileOutput {
 			}
 			br.close();
  
-			FileWriter fw = new FileWriter(logFile);
+			FileWriter fw = new FileWriter(logFile.get());
 			
 			//Write entire string buffer into the file
 			fw.write(sb.toString());
 			fw.close();
 		}
 		catch (Exception e){
-			throw new LoggerException("Failed to delete lines from log file: " + logFile.getPath());
+			throw new LoggerException("Failed to delete lines from log file: " + logFile.get().getPath());
 		}
 	}
 	
