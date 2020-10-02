@@ -20,7 +20,9 @@ public abstract class DatabaseService extends Service{
 	public void onStart() {
 		super.onStart();
 		if(!connect()) setServiceCrashed(true);
+		L.t(getServiceClass(), "Initializing...");
 		initialize();
+		L.d(getServiceClass(), "Initialized!");
 	}
 
 	protected abstract void initialize();

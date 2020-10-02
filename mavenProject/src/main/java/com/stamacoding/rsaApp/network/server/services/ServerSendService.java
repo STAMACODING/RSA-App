@@ -62,7 +62,7 @@ public class ServerSendService extends ServerSocketService {
 				sendMessages(username, messages);
 			}else {
 				// 2. If there are no messages
-				L.e(this.getClass(), "No messages available to send");
+				L.d(this.getClass(), "No messages available to send");
 			}
 		} catch (IOException e) {
 			// 1. -> If the server failed to accept the client's connection
@@ -77,8 +77,9 @@ public class ServerSendService extends ServerSocketService {
 	 * @throws IOException
 	 */
 	private String readUsername() throws IOException {
+		L.t(getClass(), "Reading clients user name");
 		String username = getInputStream().readUTF();
-		L.d(this.getClass(), "Client logged in as (" + username + ")");
+		L.d(this.getClass(), username + " is requesting his/her messages!");
 		return username;
 	}
 	
@@ -91,15 +92,18 @@ public class ServerSendService extends ServerSocketService {
 	 */
 	private void sendMessages(String username, ArrayList<Message> messages) throws IOException {
 		int messageCount = messages.size();
-		byte[] messagesToSend = Security.encryptF(messages);
 		
 		if(messageCount > 0) {
+			L.t(getClass(), "Encrypting messages before sending to " + username);
+			byte[] messagesToSend = Security.encryptF(messages);
+			
 			L.d(this.getClass(), "Found " + messageCount + " messages belonging to (" + username + ")");
 			
+			L.t(getClass(), "Sending messages to client...");
 			getOutputStream().writeInt(messagesToSend.length);
 			getOutputStream().write(messagesToSend);
 			
-			L.d(this.getClass(), "Successfully sent " + messageCount + " message(s) to a client");
+			L.i(this.getClass(), "Successfully sent " + messageCount + " message(s) to \"" + username + "\"");
 		}else{
 			L.d(this.getClass(), "Found no messages belongig to (" + username + ")");
 		}

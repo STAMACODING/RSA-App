@@ -62,29 +62,36 @@ public class ServerReceiveService extends ServerSocketService{
 			Message m = receiveMessage();
 			
 			if(m != null) {
-				// 3. If the message has been received successfully decrypt its server data
+				L.t(getClass(), "Decrypting message's server data...");
 				m.decryptServerData();
+				L.t(getClass(), "Decrypted message's server data!");
 				
 				// 4. Log the message
-				L.d(this.getClass(), "Received message: " + m.toString());
+				L.i(this.getClass(), "Received message: " + m.toString());
 				
 				if(UserDatabaseService.getInstance().isUsernameAvailable(m.getServerData().getReceiving())
 						|| UserDatabaseService.getInstance().isUsernameAvailable(m.getServerData().getSending())) {
 					L.e(this.getClass(), "Message's sending and/or receiving user isn't signed up!");
 					
+					L.t(getClass(), "Sending error code to client...");
 					getOutputStream().writeInt(AnswerCodes.RECEIVED_INVALID_MESSAGE);
+					L.t(getClass(), "Sent error code to client!");
 					return;
 				}
 				
+				L.t(this.getClass(), "Adding message to the message manager to forward it...");
 				// 5. Add the message to the message manager to forward it
 				ServerMessageManager.getInstance().manage(m);
 				
 				// 6. Answer client
+				L.t(getClass(), "Sending success code to client...");
 				getOutputStream().writeInt(AnswerCodes.RECEIVED_VALID_MESSAGE);
+				L.t(getClass(), "Sent success code to client!");
 			}else {
 				// 3. -> If the server failed to receive the message
-				L.e(this.getClass(), "Received invalid data (failed to receive message)");
+				L.e(this.getClass(), "Received invalid data (failed to receive message), sending error code to client...");
 				getOutputStream().writeInt(AnswerCodes.RECEIVED_INVALID_DATA);
+				L.t(getClass(), "Sent error code to client!");
 			}
 		} catch (IOException e) {
 			// 1. -> If the server failed to accept the client's connection or couldn't get the socket's input stream
@@ -98,7 +105,7 @@ public class ServerReceiveService extends ServerSocketService{
 	 * @return the received message (if there is any)
 	 */
 	private Message receiveMessage() {
-		// 1. Read encrypted server data
+		L.t(getClass(), "Reading encrypted server data...");
 		int serverDataLength;
 		try {
 			serverDataLength = getInputStream().readInt();
@@ -106,20 +113,20 @@ public class ServerReceiveService extends ServerSocketService{
 			if(serverDataLength>0) {
 				encryptedServerData = new byte[serverDataLength];
 			    getInputStream().readFully(encryptedServerData, 0, serverDataLength);
+			    L.d(getClass(), "Read encrypted server data successfully!");
 			    
 			    
-			    
-			    // 2. Read encrypted protected data
+			    L.t(getClass(), "Reading encrypted protected data...");
 			    int protectedDataLength = getInputStream().readInt();
 			    if(protectedDataLength > 0) {
 			    	encryptedProtectedData = new byte[protectedDataLength];
 			    	getInputStream().readFully(encryptedProtectedData, 0, protectedDataLength);
+				    L.d(getClass(), "Read encrypted protected data successfully!");
 			    }else {
 			    	L.e(this.getClass(), "Received invalid data");
 			    	return null;
 			    }
-			    
-			    L.d(this.getClass(), "Successfully received message's meta and data");
+			    L.d(this.getClass(), "Successfully received message's meta and server data");
 				
 			    // 3. Create message
 				return new Message(new LocalData(-1, SendState.PENDING), encryptedProtectedData, encryptedServerData);

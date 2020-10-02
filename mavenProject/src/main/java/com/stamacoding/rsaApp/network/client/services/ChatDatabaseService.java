@@ -61,7 +61,7 @@ public class ChatDatabaseService extends DatabaseService{
 			// Update message if is is already stored in the chat database
 			if(m.getLocalData().isToUpdate()) {
 				if(!updateMessage(m) && m.getLocalData().isToUpdate()) {
-					L.w(this.getClass(), "Readding message to the message manager to get updated again");
+					L.w(this.getClass(), "Readding message to the message manager to try to update again");
 					m.getLocalData().setUpdateRequested(true);
 					ClientMessageManager.getInstance().manage(m);
 				}
@@ -70,7 +70,7 @@ public class ChatDatabaseService extends DatabaseService{
 			// Store new message
 			else{
 				if(!storeMessage(m) && !m.isStored()) {
-					L.w(this.getClass(), "Readding message to the message manager to get stored again");
+					L.w(this.getClass(), "Readding message to the message manager to try to store again");
 					ClientMessageManager.getInstance().manage(m);
 				}
 			}
@@ -113,10 +113,10 @@ public class ChatDatabaseService extends DatabaseService{
 			
 			pst.executeUpdate();
 			
-			L.d(this.getClass(), "Updated message: " + m.toString());
+			L.i(this.getClass(), "Updated message: " + m.toString());
 			m.getLocalData().setUpdateRequested(false);
 			pst.close();
-			L.d(this.getClass(), "Logging database content \n" + toString());
+			L.i(this.getClass(), "Logging database content \n" + toString());
 			return true;
 		} catch (SQLException e) {
 			L.e(this.getClass(), "Failed to update message", e);
@@ -159,11 +159,11 @@ public class ChatDatabaseService extends DatabaseService{
 			long id = Long.parseLong(res.getString("LAST"));
 			m.getLocalData().setId(id);
 			
-			L.d(this.getClass(), "Stored message: " + m.toString());
+			L.i(this.getClass(), "Stored message: " + m.toString());
 			m.getLocalData().setUpdateRequested(false);
 			pst.close();
 
-			L.d(this.getClass(), "Logging database content \n" + toString());
+			L.i(this.getClass(), "Logging database content \n" + toString());
 			return true;
 		} catch (SQLException e) {
 			L.e(this.getClass(), "Failed to store message", e);
@@ -191,8 +191,8 @@ public class ChatDatabaseService extends DatabaseService{
 			
 			pst.executeUpdate();
 			pst.close();
-			L.d(this.getClass(), "Deleted message using id(" + id + ")");
-			L.d(this.getClass(), "Logging database content \n" + toString());
+			L.i(this.getClass(), "Deleted message using id(" + id + ")");
+			L.i(this.getClass(), "Logging database content \n" + toString());
 			return true;
 		} catch (SQLException e) {
 			L.e(this.getClass(), "Failed to delete message" , e);
@@ -311,8 +311,8 @@ public class ChatDatabaseService extends DatabaseService{
 			Statement stm = getConnection().createStatement();
 			stm.executeUpdate("DELETE FROM Messages;");
 			stm.close();
-			L.d(this.getClass(), "Deleted messages!");
-			L.d(this.getClass(), "Logging database content \n" + toString());
+			L.i(this.getClass(), "Deleted messages!");
+			L.i(this.getClass(), "Logging database content \n" + toString());
 			return true;
 		} catch (SQLException e) {
 			L.e(this.getClass(), "Failed to delete messages", e);

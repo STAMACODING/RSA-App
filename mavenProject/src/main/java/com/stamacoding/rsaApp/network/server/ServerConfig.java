@@ -102,7 +102,7 @@ public class ServerConfig {
 		if(isValid()) sb.append(TextUtils.heading("VALID"));
 		else sb.append(TextUtils.heading("NOT VALID"));
 		
-		L.d(ServerConfig.class, sb.toString());
+		L.i(ServerConfig.class, sb.toString());
 	}
 	
 	
@@ -124,7 +124,7 @@ public class ServerConfig {
 	    try {
 			properties.storeToXML(new FileOutputStream(FILE_NAME), "Server Configurations");
 			
-		    L.d(ServerConfig.class, "Stored preferences");
+		    L.i(ServerConfig.class, "Stored preferences");
 		} catch (IOException e) {
 			L.e(ServerConfig.class, "Failed to store preferences as .xml file", e);
 		}
@@ -145,7 +145,7 @@ public class ServerConfig {
 					Integer.valueOf(properties.getProperty("LOGIN_PORT")),   
 					Integer.valueOf(properties.getProperty("PING_PORT"))
 					);
-			L.d(ServerConfig.class, "Read preferences from .xml file");
+			L.i(ServerConfig.class, "Read preferences from .xml file");
 		} catch (IOException e) {
 			L.e(ServerConfig.class, "Failed to read preferences from .xml file", e);
 			save();

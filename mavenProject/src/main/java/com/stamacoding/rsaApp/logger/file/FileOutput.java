@@ -86,14 +86,15 @@ public class FileOutput {
 	 * @param directory the directory to delete
 	 */
 	private static void deleteDirectory(String directory){
-		
-	    try {
-			Files.walk(Paths.get(directory))
-			  .sorted(Comparator.reverseOrder())
-			  .map(Path::toFile)
-			  .forEach(File::delete);
-		} catch (IOException e) {
-			throw new LoggerException("Failed to delete directory: " + directory);
+		if(new File(directory).exists()) {
+			 try {
+					Files.walk(Paths.get(directory))
+					  .sorted(Comparator.reverseOrder())
+					  .map(Path::toFile)
+					  .forEach(File::delete);
+				} catch (IOException e) {
+					throw new LoggerException("Failed to delete directory: " + directory);
+				}
 		}
 	}
 	

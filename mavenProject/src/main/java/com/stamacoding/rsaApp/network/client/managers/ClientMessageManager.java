@@ -34,7 +34,6 @@ public class ClientMessageManager extends AbstractMessageManager{
 	 * @return the message that should get stored or updated
 	 */
 	public Message pollToStoreOrUpdate() {
-		L.t(this.getClass(), "Polling message to store or update");
 		for(int i=0; i<getCurrentlyManagedMessages().size(); i++) {
 			Message m = null;
 			try {m = getCurrentlyManagedMessages().get(i);}catch(IndexOutOfBoundsException e){};
@@ -51,7 +50,6 @@ public class ClientMessageManager extends AbstractMessageManager{
 				return m;
 			}
 		}
-		L.t(this.getClass(), "Didn't find any message to store or update");
 		return null;
 	}
 	
@@ -61,7 +59,6 @@ public class ClientMessageManager extends AbstractMessageManager{
 	 * @return the message that should get sent
 	 */
 	public Message pollToSend() {
-		L.t(this.getClass(), "Polling message to send");
 		for(int i=0; i<getCurrentlyManagedMessages().size(); i++) {
 			Message m = null;
 			try {m = getCurrentlyManagedMessages().get(i);}catch(IndexOutOfBoundsException e){};
@@ -77,7 +74,6 @@ public class ClientMessageManager extends AbstractMessageManager{
 				return m;
 			}
 		}
-		L.t(this.getClass(), "Didn't find any message to send");
 		return null;
 	}
 }

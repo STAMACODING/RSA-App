@@ -37,7 +37,7 @@ public abstract class AbstractMessageManager {
 				continue;
 			}
 			getCurrentlyManagedMessages().add(messages[i]);
-			L.d(this.getClass(), "Added new message to MessageManager: " + messages[i].toString());
+			L.t(this.getClass(), "Added new message to MessageManager: " + messages[i].toString());
 		}
 	}
 	
@@ -53,7 +53,7 @@ public abstract class AbstractMessageManager {
 				continue;
 			}
 			getCurrentlyManagedMessages().add(pendingMessages.get(i));
-			L.d(this.getClass(), "Added new message to MessageManager: " + pendingMessages.get(i).toString());
+			L.t(this.getClass(), "Added new message to MessageManager: " + pendingMessages.get(i).toString());
 		}
 	}
 }

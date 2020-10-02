@@ -62,20 +62,21 @@ public abstract class Service{
 				Thread.currentThread().setName(getServiceClass().getSimpleName());
 				L.d(getServiceClass(), "Starting");
 				onStart();
-				L.d(getServiceClass(), "Started");
+				L.i(getServiceClass(), "Started");
 				while(!isStopRequested() && !isServiceCrashed()) {
 					onRepeat();
 				}
 				if(isServiceCrashed()) {
 					L.d(getServiceClass(), "Crashing");
 					onCrash();
-					L.d(getServiceClass(), "Crashed");
+					L.e(getServiceClass(), "Crashed");
 					if(isRestartingOnCrash()) {
 						restart();
 					}
 				}else {
 					L.d(getServiceClass(), "Stopping");
 					onStop();
+					L.i(getServiceClass(), "Stopped");
 				}
 			}
 			
@@ -98,7 +99,7 @@ public abstract class Service{
 		setStopRequested(false);
 		setServiceCrashed(false);
 		onRestart();
-		L.d(getServiceClass(), "Launching service now...");
+		L.i(getServiceClass(), "Relaunching service now...");
 		launch();
 	}
 	

@@ -31,6 +31,8 @@ public class PingService extends ServerSocketService{
 	public void onAccept() {
 		try {
 			long sessionId = getInputStream().readLong();
+
+			L.t(getClass(), "Received session id from client (" + sessionId + ")");
 			// TODO process sessionId
 		} catch (IOException e) {
 			L.e(this.getClass(), "Connection error", e);

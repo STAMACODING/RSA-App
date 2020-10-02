@@ -40,6 +40,8 @@ public class ServerMainService extends Service{
 		ServerConfig.log();
 		if(!ServerConfig.isValid()) L.f(this.getClass(), "Invalid server configuration! Use ServerConfig.setup() to fix");
 		
+		L.i(getClass(), "Launching subservices...");
+		
 		UserDatabaseService.getInstance().launch();
 		ServerSendService.getInstance().launch();
 		ServerReceiveService.getInstance().launch();

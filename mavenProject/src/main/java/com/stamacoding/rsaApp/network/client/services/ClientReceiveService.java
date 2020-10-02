@@ -77,7 +77,6 @@ public class ClientReceiveService extends ClientSocketService{
 			// 1 -> When the client failed to connect to the server
 			L.e(this.getClass(), "Failed to connect to the send server", e);
 		}
-		
 		waitForNextRequest();
 	}
 	
@@ -134,7 +133,7 @@ public class ClientReceiveService extends ClientSocketService{
 	 */
 	private void logMessages(ArrayList<Message> messages) {
 		for(int i=0; i<messages.size(); i++) {
-			L.d(this.getClass(), "Message " + i + ": " + messages.get(i).toString());
+			L.i(this.getClass(), "Received message: " + messages.get(i).toString());
 		}
 	}
 	
@@ -143,6 +142,7 @@ public class ClientReceiveService extends ClientSocketService{
 	 */
 	private void waitForNextRequest() {
 		try {
+			L.d(getClass(), "Waiting for next request...");
 			Thread.sleep(ClientConfig.QUERY_MESSAGES_INTERVAL);
 		} catch (InterruptedException e) {
 			L.e(this.getClass(), "Thread failed to sleep", e);

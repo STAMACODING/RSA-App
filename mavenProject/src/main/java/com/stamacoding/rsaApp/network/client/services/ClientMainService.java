@@ -42,7 +42,7 @@ public class ClientMainService extends Service{
 		ClientConfig.log();
 		if(!ClientConfig.isValid()) L.f(this.getClass(), new IllegalStateException("Invalid client configuration! Use ClientConfig.setup() to fix"));
 		
-		L.d(this.getClass(), "Launching subservices...");
+		L.i(this.getClass(), "Launching subservices...");
 
 		
 		ChatDatabaseService.getInstance().launch();
@@ -54,13 +54,15 @@ public class ClientMainService extends Service{
 
 		ClientReceiveService.getInstance().launch();
 		ClientSendService.getInstance().launch();
+		
+		L.i(this.getClass(), "Launched subservices!");
 	}
 	
 	/**
 	 * Stops all services.
 	 */
 	@Override
-	public void onStop() {
+	public void onStop() {		
 		ChatDatabaseService.getInstance().setStopRequested(true);
 		ClientReceiveService.getInstance().setStopRequested(true);
 		ClientSendService.getInstance().setStopRequested(true);

@@ -62,12 +62,11 @@ public class ClientSendService extends ClientSocketService {
 	protected void onAccept() {
 		Message clonedMessage = getMessage().clone();
 		
-		L.d(this.getClass(), "Got new message to send from MessageManager");
-		L.d(this.getClass(), "Message to send: " + getMessage().toString());
+		L.d(this.getClass(), "Got new message to send: " + getMessage().toString());
 		
 		// 1. Encrypt message
 		getMessage().encrypt();
-		L.d(this.getClass(), "Encrypted message");
+		L.d(this.getClass(), "Encrypted message: " + getMessage().toString());
 		try {
 			// 2. Send message
 			sendMessage();
@@ -78,12 +77,12 @@ public class ClientSendService extends ClientSocketService {
 				updateMessageState(clonedMessage);
 			}else {
 				// 4. Re-add message to message manager
-				L.e(this.getClass(), "Failed to send message");
+				L.e(this.getClass(), "Failed to send message: " + getMessage().toString());
 				ClientMessageManager.getInstance().manage(clonedMessage);
 			}
 		} catch (IOException e) {
 			// 2. -> When failing to send message
-			L.e(this.getClass(), "Failed to send message", e);
+			L.e(this.getClass(), "Failed to send message: " + getMessage().toString(), e);
 			ClientMessageManager.getInstance().manage(clonedMessage);
 		}
 	}
@@ -94,13 +93,13 @@ public class ClientSendService extends ClientSocketService {
 			
 			switch(answer) {
 			case ServerReceiveService.AnswerCodes.RECEIVED_VALID_MESSAGE:
-				L.d(this.getClass(), "Server received valid message");
+				L.i(this.getClass(), "Successfully sent message to the server: " + getMessage().toString());
 				return true;
 			case ServerReceiveService.AnswerCodes.RECEIVED_INVALID_DATA:
-				L.e(this.getClass(), "Server received invalid data");
+				L.e(this.getClass(), "Server received invalid data (failed to send message)");
 				return false;
 			case ServerReceiveService.AnswerCodes.RECEIVED_INVALID_MESSAGE:
-				L.e(this.getClass(), "Server received message from/to unregistered user");
+				L.e(this.getClass(), "Server received message from/to unregistered user (failed to send message)");
 				return false;
 			}
 		} catch (IOException e) {
@@ -126,7 +125,7 @@ public class ClientSendService extends ClientSocketService {
 
 		getOutputStream().flush();
 			
-		L.d(this.getClass(), "Sent message to the receive server: " + getMessage().toString());
+		L.d(this.getClass(), "Sending message to the receive server: " + getMessage().toString());
 	}
 	
 	/**

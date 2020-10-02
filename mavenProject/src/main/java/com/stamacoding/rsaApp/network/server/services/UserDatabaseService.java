@@ -73,7 +73,7 @@ public class UserDatabaseService extends DatabaseService{
 	 */
 	private boolean updateUser(User u) {
 		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot update User! You aren't connected to the user database");
+			L.e(this.getClass(), "Cannot update user! You aren't connected to the user database");
 			return false;
 		}
 		
@@ -100,7 +100,7 @@ public class UserDatabaseService extends DatabaseService{
 			
 			pst.executeUpdate();
 			
-			L.d(this.getClass(), "Updated user: " + u.toString());
+			L.i(this.getClass(), "Updated user: " + u.toString());
 			u.setUpdateRequested(false);
 			pst.close();
 			return true;
@@ -146,7 +146,7 @@ public class UserDatabaseService extends DatabaseService{
 			long id = Long.parseLong(res.getString("LAST"));
 			u.setId(id);
 			
-			L.d(this.getClass(), "Stored user: " + u.toString());
+			L.i(this.getClass(), "Stored user: " + u.toString());
 			pst.close();
 			return true;
 		} catch (SQLException e) {
@@ -263,7 +263,7 @@ public class UserDatabaseService extends DatabaseService{
 			
 			pst.executeUpdate();
 			pst.close();
-			L.d(this.getClass(), "Deleted user using id(" + id + ")");
+			L.i(this.getClass(), "Deleted user using id(" + id + ")");
 			return true;
 		} catch (SQLException e) {
 			L.e(this.getClass(), "Failed to delete user", e);

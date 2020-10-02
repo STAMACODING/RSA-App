@@ -39,13 +39,16 @@ public class SignUpService extends ServerSocketService {
 	@Override
 	public void onAccept() {
 		try {
+			L.t(getClass(), "Reading encrypted user data...");
 			int length = getInputStream().readInt();
 			if(length > 0) {
-				L.d(this.getClass(), "Decrypting client's request");
+				
 				byte[] encryptedUser = new byte[length];
 				getInputStream().readFully(encryptedUser, 0, length);
-				
+
+				L.t(this.getClass(), "Decrypting client's user data...");
 				User unregisteredUser = (User) Security.decryptF(encryptedUser);
+				
 				L.d(this.getClass(), "Client wants to register as: " + unregisteredUser.toString());
 				
 				if(UserDatabaseService.getInstance().isUsernameAvailable(unregisteredUser.getName())) {
@@ -54,18 +57,24 @@ public class SignUpService extends ServerSocketService {
 					
 					UserManager.getInstance().add(unregisteredUser);
 
-					L.d(this.getClass(), "Registered new user (0): " + unregisteredUser.toString());
+					L.i(this.getClass(), "Registered new user (0): " + unregisteredUser.toString());
 					L.d(this.getClass(), "Currently registered users:\n" + UserDatabaseService.getInstance().toString());
 					
 					getOutputStream().writeInt(AnswerCodes.SIGNED_UP);
 				}else {
 					L.d(this.getClass(), "Username is already in use!");
+					
+					L.t(getClass(), "Sending error code to client...");
 					getOutputStream().writeInt(AnswerCodes.USERNAME_UNAVAILABLE);
+					L.t(getClass(), "Sent error code to client!");
 				}
 
 			}else {
 				L.e(this.getClass(), "Received invalid data");
+				
+				L.t(getClass(), "Sending error code to client...");
 				getOutputStream().writeInt(AnswerCodes.INVALID_DATA_FROM_CLIENT);
+				L.t(getClass(), "Sent error code to client!");
 			}
 		} catch (IOException e) {
 			L.e(this.getClass(), "Connection error", e);

@@ -48,14 +48,17 @@ public class LoginService extends ServerSocketService{
 				L.d(this.getClass(), "Client wants to login as: " + user.toString());
 				
 				if(UserDatabaseService.getInstance().isPasswordCorrect(user)) {
-					L.d(this.getClass(), "User logged in (0): " + UserDatabaseService.getInstance().getUser(user.getName()).toString());
+					User loggedIn = UserDatabaseService.getInstance().getUser(user.getName());
+					L.i(this.getClass(), "User successfully logged in: " + loggedIn.toString());
 					
 					// TODO store session id and mark user as logged in
 					long sessionId = (long) (Math.random() * Long.MAX_VALUE);
 					
+					L.t(this.getClass(), "Sending session id to user: " + loggedIn.toString());
 					getOutputStream().writeLong(sessionId);
+					L.t(this.getClass(), "Sent session id to user: " + loggedIn.toString());
 				}else {
-					L.d(this.getClass(), "Wrong username/password!");
+					L.w(this.getClass(), "Wrong username/password!: " + user.toString());
 					getOutputStream().writeInt(AnswerCodes.WRONG_USERNAME_PASSWORD);
 				}
 

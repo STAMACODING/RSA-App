@@ -40,13 +40,15 @@ public class ServerMessageManager extends AbstractMessageManager{
 			if(getCurrentlyManagedMessages().get(i).getServerData().getReceiving().equals(username)) {
 				
 				messagesToSend.add(getCurrentlyManagedMessages().get(i));
-				L.d(this.getClass(), "Polling message: " + messagesToSend.get(i).toString());
+				L.d(this.getClass(), "Found message to send: " + messagesToSend.get(messagesToSend.size()-1));
 				
 				getCurrentlyManagedMessages().get(i).encrypt();
+				L.t(this.getClass(), "Encrypted message:" + messagesToSend.get(messagesToSend.size()-1));
 			}
 		}
 		for(int i=0; i<messagesToSend.size(); i++) {
 			getCurrentlyManagedMessages().remove(messagesToSend.get(i));
+			L.t(this.getClass(), "Removed message:" + messagesToSend.get(i));
 		}
 		return messagesToSend;
 	}
