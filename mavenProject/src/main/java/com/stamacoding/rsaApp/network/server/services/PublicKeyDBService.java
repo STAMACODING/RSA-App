@@ -47,16 +47,15 @@ public class PublicKeyDBService extends DatabaseService{
 		try {
 			Statement statement = getConnection().createStatement();
 			statement.execute("CREATE TABLE IF NOT EXISTS publicKeys ("
-					+ "userId INTEGER PRIMARY KEY CHECK ((userId > 0)), "
-					+ "publicKey INTEGER NOT NULL UNIQUE )"); // check max key length 
+					+ "userId INTEGER PRIMARY KEY CHECK (userId > 0), "
+					+ "exponent INT NOT NULL CHECK (exponent>1),"
+					+ "mod INT NOT NULL CHECK (mod>1) )"); // check max length 
 		} catch (SQLException e) {
 			Logger.error(this.getClass().getSimpleName(), "Failed to initialize database! (SQL Exception)");
 			e.printStackTrace();
 		}
 		Logger.debug(this.getServiceName(), "Logging user database...\n" + this.toString());
-	}
-	
-	
+	}	
 	
 	public static void main(String[] args) {
 		PublicKeyDBService.getInstance().launch();
@@ -69,7 +68,7 @@ public class PublicKeyDBService extends DatabaseService{
 	 * @param pubKey
 	 * @return whether Key and userId were stored successfully
 	 */
-	public boolean storePublicKey(long uID, long pubKey) {
+	public boolean storePublicKey(long uID, int exponent, int mod) {
 		if(!isConnected()) {
 			Logger.error(this.getServiceName(), "Cannot store Key! You aren't connected to the user database");
 			return false;
@@ -77,10 +76,11 @@ public class PublicKeyDBService extends DatabaseService{
 		
 		try {
 			PreparedStatement pst = getConnection().prepareStatement("Insert into publicKeys "
-					+ "(userId, publicKey)" + 
-					"Values(?,?)");
+					+ "(userId, exponent, mod)" 
+					+ "Values(?, ?, ?)");
 			pst.setString(1, Long.toString(uID));
-			pst.setString(2, Long.toString(pubKey));
+			pst.setString(2, String.valueOf( exponent));
+			pst.setString(3, String.valueOf( mod));
 		
 			pst.executeUpdate();
 			
@@ -102,7 +102,7 @@ public class PublicKeyDBService extends DatabaseService{
 	 * @param pubKey
 	 * @return whether the update was successful
 	 */
-	public boolean updatePublicKey(long uID, long pubKey) {
+	public boolean updatePublicKey(long uID, int exponent, int mod) {
 		if(!isConnected()) {
 			Logger.error(this.getServiceName(), "Cannot update Key! You aren't connected to the user database");
 			return false;
@@ -110,11 +110,14 @@ public class PublicKeyDBService extends DatabaseService{
 		
 		try {
 			PreparedStatement pst = getConnection().prepareStatement("Update publicKeys  Set"
-					+ "publicKey = ?" + 
-					" where userId = ?");
+					+ "exponent = ?"
+					+ "mod = ?"
+					+ "where userId = ?");
 			
-			pst.setString(1, Long.toString(pubKey));
-			pst.setString(2, Long.toString(uID));
+			
+			pst.setString(1,String.valueOf(exponent));
+			pst.setString(2, String.valueOf(mod));
+			pst.setString(3, Long.toString(uID));
 		
 			pst.executeUpdate();
 			
@@ -134,15 +137,16 @@ public class PublicKeyDBService extends DatabaseService{
 	 * @param userId
 	 * @return the long of the public Key
 	 */
-	public long getPublicKey(long userId) {
+	public Key getPublicKey(long userId) {
 		
 		if(!isConnected()) {
 			Logger.error(this.getServiceName(), "Cannot get Key! You aren't connected to the user database");
-			return 0;
+			return null;
 		}
 		
+		
 		try {
-			PreparedStatement stm = getConnection().prepareStatement("SELECT publicKey from publicKeys "
+			PreparedStatement stm = getConnection().prepareStatement("SELECT exponent, mod from publicKeys "
 					+ "where userId = ?");
 			
 			stm.setString(1, Long.toString(userId));
@@ -153,20 +157,24 @@ public class PublicKeyDBService extends DatabaseService{
 			
 			stm.close();
 			
-			long publicKey;
-			
 			if(res != null && res.next()) {
-				publicKey = res.getLong(1);
+				
+				int exponent = res.getInt(1);
+				int mod = res.getInt(2);
+				
+				Key publicKey = new Key(exponent, mod);
+				
+				Logger.debug(this.getClass().getSimpleName(), "Returns Public Key" + publicKey.toString()  + " for userId: " + Long.toString(userId) + "" );
 				return publicKey;
 			}else {
 				Logger.warning(this.getClass().getSimpleName(), "Didn't find any key for userID \"" + Long.toString(userId) + "\"");
-				return 0;
+				return null;
 			}
 		} catch (SQLException e) {
 			Logger.error(this.getClass().getSimpleName(), "Failed to get key from DB(SQL exception)");
 			e.printStackTrace();
 		}
-		return 0;
+		return null;
 	}
 	
 	/**
