@@ -1,0 +1,95 @@
+package com.stamacoding.rsaApp.network.client.service.user;
+
+import java.io.IOException;
+
+import com.stamacoding.rsaApp.logger.L;
+import com.stamacoding.rsaApp.network.client.Config;
+import com.stamacoding.rsaApp.network.global.answerCodes.AnswerCodes;
+import com.stamacoding.rsaApp.network.global.service.ClientSocketService;
+import com.stamacoding.rsaApp.network.global.session.LoginState;
+import com.stamacoding.rsaApp.network.global.user.Password;
+import com.stamacoding.rsaApp.network.global.user.User;
+import com.stamacoding.rsaApp.security.Security;
+
+public class SignUpService extends ClientSocketService{
+	/** The only instance of this class */
+	private volatile static SignUpService singleton = new SignUpService();
+	
+	/**
+	 * Gets the only instance of this class.
+	 * @return the only instance of this class
+	 */
+	public static SignUpService getInstance() {
+		return singleton;
+	}
+	
+	private LoginState loginState;
+
+	protected SignUpService() {
+		super(Config.SERVER_IP, Config.SIGNUP_PORT);
+	}
+
+	@Override
+	protected void onAccept() {
+		L.d(this.getClass(), "Trying to sign up (" + Config.USER_NAME + ", ************)");
+		setLoginState(signup());
+		
+		if(getLoginState() == LoginState.SIGNED_IN) {
+			L.i(this.getClass(), "Signed up successfully (" + Config.USER_NAME + ", ************)");
+			Config.REGISTERED = true;
+			Config.save();
+			
+			L.d(getClass(), "Launching LoginService...");
+			LoginService.getInstance().launch();
+		}else {
+			L.w(this.getClass(), "Failed to sign up (" + Config.USER_NAME + ", ************)");
+			try {
+				Thread.sleep(Config.RETRY_SIGNUP_INTERVAL);
+			} catch (InterruptedException e) {
+				L.e(this.getClass(), "Failed to wait for retrying to sign up. The used thread was interrupted.", e);
+			}
+		}
+	}
+	
+	private LoginState signup() {
+		try {
+			L.d(this.getClass(), "Connected to server successfully");
+			
+			L.d(this.getClass(), "Encrypting user information (" + Config.USER_NAME + ", ************)");
+			byte[] you = Security.encryptF(new User(Config.USER_NAME, new Password(Config.USER_PASSWORD)));
+			
+			L.d(this.getClass(), "Sending user information");
+			getOutputStream().writeInt(you.length);
+			getOutputStream().write(you);
+			getOutputStream().flush();
+			
+			L.d(this.getClass(), "Retrieving answer");
+			int answer = getInputStream().readInt();
+			
+			switch(answer) {
+			case AnswerCodes.SignUp.USERNAME_UNAVAILABLE:
+				L.e(this.getClass(), "Failed to sign up! Your username is already in use!");
+				return LoginState.NONE;
+			case AnswerCodes.SignUp.INVALID_DATA_FROM_CLIENT:
+				L.e(this.getClass(), "Failed to sign up! Received invalid data from client!");
+				return LoginState.NONE;
+			case AnswerCodes.SignUp.SIGNED_UP:
+				L.d(this.getClass(), "Signed-up successfully!");
+				return LoginState.SIGNED_IN;
+			}	
+		} catch (IOException e) {
+			L.e(this.getClass(), "Connection error", e);
+		}
+		
+		return LoginState.NONE;
+	}
+
+	public LoginState getLoginState() {
+		return loginState;
+	}
+
+	public void setLoginState(LoginState loginState) {
+		this.loginState = loginState;
+	}
+
+}

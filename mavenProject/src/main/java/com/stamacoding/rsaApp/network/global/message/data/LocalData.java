@@ -3,9 +3,8 @@ package com.stamacoding.rsaApp.network.global.message.data;
 import java.io.Serializable;
 
 import com.stamacoding.rsaApp.logger.L;
-import com.stamacoding.rsaApp.network.client.services.ChatDatabaseService;
-import com.stamacoding.rsaApp.network.client.services.ClientSendService;
-import com.stamacoding.rsaApp.network.server.services.ServerSendService;
+import com.stamacoding.rsaApp.network.client.service.message.ChatDatabaseService;
+import com.stamacoding.rsaApp.network.client.service.message.SendService;
 
 /**
  * Stores information about a message that is relevant to the client only. This information is not sent to the server and is also not encrypted.
@@ -108,8 +107,8 @@ public class LocalData implements Serializable{
 	}
 
 	/**
-	 * Checks whether the message should be send using the {@link ClientSendService}/{@link ServerSendService}.
-	 * @return whether the message should be send using the {@link ClientSendService}/{@link ServerSendService}
+	 * Checks whether the message should be sent using the client's or server's send service.
+	 * @return whether the message should be sent using the client's or server's send service
 	 */
 	public boolean isToSend() {
 		return getSendState().equals(SendState.PENDING);
