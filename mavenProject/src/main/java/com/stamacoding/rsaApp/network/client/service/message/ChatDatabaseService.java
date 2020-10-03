@@ -62,17 +62,14 @@ public class ChatDatabaseService extends DatabaseService{
 			// Update message if is is already stored in the chat database
 			if(m.getLocalData().isToUpdate()) {
 				if(!updateMessage(m) && m.getLocalData().isToUpdate()) {
-					L.w(this.getClass(), "Readding message to the message manager to try to update again");
-					m.getLocalData().setUpdateRequested(true);
-					MessageManager.getInstance().manage(m);
+					L.e(this.getClass(), "Failed to update message : " + m.toString());
 				}
 			}
 			
 			// Store new message
 			else{
 				if(!storeMessage(m) && !m.isStored()) {
-					L.w(this.getClass(), "Readding message to the message manager to try to store again");
-					MessageManager.getInstance().manage(m);
+					L.e(this.getClass(), "Failed to store message : " + m.toString());
 				}
 			}
 			

@@ -60,32 +60,31 @@ public class SendService extends ClientSocketService {
 	}
 	
 	@Override
-	protected void onAccept() {
-		Message clonedMessage = getMessage().clone();
-		
+	protected void onAccept() {		
 		L.d(this.getClass(), "Got new message to send: " + getMessage().toString());
+		Message messageToSend = getMessage().clone();
 		
 		// 1. Encrypt message
-		getMessage().encrypt();
-		L.d(this.getClass(), "Encrypted message: " + getMessage().toString());
+		messageToSend.encrypt();
+		L.d(this.getClass(), "Encrypted message: " + messageToSend.toString());
 		try {
 			// 2. Send message
-			sendMessage();
+			sendMessage(messageToSend);
 			
 			// 3. Receive answer
 			if(receiveAnswer()) {
 				// 4. Update message's state
-				updateMessageState(clonedMessage, SendState.SENT);
+				updateMessageState(getMessage(), SendState.SENT);
 			}else {
 				// 4. Changes messages send state
 				L.e(this.getClass(), "Failed to send message: " + getMessage().toString());
 				
-				updateMessageState(clonedMessage, SendState.FAILED);
+				updateMessageState(getMessage(), SendState.FAILED);
 			}
 		} catch (IOException e) {
 			// 2. -> When failing to send message
 			L.e(this.getClass(), "Failed to send message: " + getMessage().toString(), e);
-			MessageManager.getInstance().manage(clonedMessage);
+			MessageManager.getInstance().manage(getMessage());
 		}
 	}
 	
@@ -116,18 +115,18 @@ public class SendService extends ClientSocketService {
 	 * @param connectionToServer the connection to the receive server
 	 * @throws IOException
 	 */
-	private void sendMessage() throws IOException {
+	private void sendMessage(Message messageToSend) throws IOException {
 		// Send message meta
-		getOutputStream().writeInt(getMessage().getEncryptedServerData().length);
-		getOutputStream().write(getMessage().getEncryptedServerData());
+		getOutputStream().writeInt(messageToSend.getEncryptedServerData().length);
+		getOutputStream().write(messageToSend.getEncryptedServerData());
 		
 		// Send message data
-		getOutputStream().writeInt(getMessage().getEncryptedProtectedData().length);
-		getOutputStream().write(getMessage().getEncryptedProtectedData());
+		getOutputStream().writeInt(messageToSend.getEncryptedProtectedData().length);
+		getOutputStream().write(messageToSend.getEncryptedProtectedData());
 
 		getOutputStream().flush();
 			
-		L.d(this.getClass(), "Sending message to the receive server: " + getMessage().toString());
+		L.d(this.getClass(), "Sending message to the receive server: " + messageToSend.toString());
 	}
 	
 	/**
@@ -138,7 +137,7 @@ public class SendService extends ClientSocketService {
 		L.d(this.getClass(), "Updating message state");
 		m.getLocalData().setSendState(s);
 		m.getLocalData().setUpdateRequested(true);
-		MessageManager.getInstance().manage(m);
+		if(MessageManager.getInstance().getCurrentlyManagedMessages().indexOf(m) < 0) MessageManager.getInstance().manage(m);
 	}
 
 	private Message getMessage() {

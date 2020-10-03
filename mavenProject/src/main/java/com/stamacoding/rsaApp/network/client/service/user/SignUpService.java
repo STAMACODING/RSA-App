@@ -23,7 +23,7 @@ public class SignUpService extends ClientSocketService{
 		return singleton;
 	}
 	
-	private LoginState loginState;
+	private volatile LoginState loginState;
 
 	protected SignUpService() {
 		super(Config.SERVER_IP, Config.SIGNUP_PORT);

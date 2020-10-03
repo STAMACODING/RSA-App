@@ -10,6 +10,7 @@ public class Session {
 	
 	public Session(long id, LoginState state) {
 		setId(id);
+		setState(state);
 	}
 
 	public long getId() {

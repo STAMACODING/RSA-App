@@ -29,7 +29,7 @@ public class SessionService extends ClientSocketService{
 		return singleton;
 	}
 	
-	private Session session = null;
+	private volatile Session session = null;
 	
 	@Override
 	public void onAccept() {

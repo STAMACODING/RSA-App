@@ -32,7 +32,7 @@ public class LoginService extends ClientSocketService{
 		super(Config.SERVER_IP, Config.LOGIN_PORT);
 	}
 	
-	private LoginState loginState;
+	private volatile LoginState loginState;
 
 	@Override
 	protected void onAccept() {
