@@ -68,7 +68,7 @@ Um unsere Projektdateien auf deinen Computer zu ziehen, musst du unser Repositor
 
 ## 4. Oracle JDK 8 installieren
 
-Damit wir alle mit dem selben Java arbeiten solltest du das JDK 8 auf deinem Rechner installieren. Die Installationsdatei habe ich [hier](https://mega.nz/file/pCoAhCYS#G5ymoaixoI5s3uC3KHeTLD-XAr09amvPe9JeMHhFCHU) hinterlegt. Downloade einfach die _.exe_-Datei und führe den Installer aus.
+Damit wir alle mit dem selben Java arbeiten solltest du das JDK 8 auf deinem Rechner installieren. Die Installationsdatei habe ich [hier](https://mega.nz/file/BLIUmLzA#4h9a8CrRtnb_A6u43egoM19EwXZkH9XsDRJaZHNSPPw) hinterlegt. Downloade einfach die _.exe_-Datei und führe den Installer aus.
 
 Falls du schon ein anderes JDK installiert hast ist das kein Problem. Man kann problemlos mehrere JDKs gleichzeitig haben.
 
