@@ -5,7 +5,9 @@ import com.stamacoding.rsaApp.network.client.Config;
 import com.stamacoding.rsaApp.network.client.service.message.ChatDatabaseService;
 import com.stamacoding.rsaApp.network.client.service.message.ReceiveService;
 import com.stamacoding.rsaApp.network.client.service.message.SendService;
+import com.stamacoding.rsaApp.network.client.service.user.LoginService;
 import com.stamacoding.rsaApp.network.client.service.user.SessionService;
+import com.stamacoding.rsaApp.network.client.service.user.SignUpService;
 import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.global.session.LoginState;
 
@@ -50,11 +52,10 @@ public class MainService extends Service{
 
 		
 		ChatDatabaseService.getInstance().launch();
-		SessionService.getInstance().launch();
-		// Waiting for being online
-		while(SessionService.getInstance().getSession().getState() != LoginState.LOGGED_IN) {
-			if(isStopRequested() || isServiceCrashed()) return;
-		}
+		
+		if(Config.REGISTERED) LoginService.getInstance().launch();
+		else SignUpService.getInstance().launch();
+
 
 		ReceiveService.getInstance().launch();
 		SendService.getInstance().launch();

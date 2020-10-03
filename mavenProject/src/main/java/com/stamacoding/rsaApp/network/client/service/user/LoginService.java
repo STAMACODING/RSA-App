@@ -43,6 +43,8 @@ public class LoginService extends ClientSocketService{
 			L.i(this.getClass(), "Logged in successfull (" + Config.USER_NAME + ", ************)");
 			L.d(getClass(), "Launching Session service...");
 			SessionService.getInstance().launch();
+			
+			this.setStopRequested(true);
 		}else {
 			L.w(this.getClass(), "Failed to log in (" + Config.USER_NAME + ", ************)");
 			try {

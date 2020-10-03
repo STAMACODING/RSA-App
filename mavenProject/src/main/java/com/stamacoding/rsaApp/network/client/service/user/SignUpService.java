@@ -41,6 +41,8 @@ public class SignUpService extends ClientSocketService{
 			
 			L.d(getClass(), "Launching LoginService...");
 			LoginService.getInstance().launch();
+			
+			this.setStopRequested(true);
 		}else {
 			L.w(this.getClass(), "Failed to sign up (" + Config.USER_NAME + ", ************)");
 			try {
