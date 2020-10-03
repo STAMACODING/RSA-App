@@ -2,8 +2,7 @@ package com.stamacoding.rsaApp.network.global.user;
 
 import java.io.Serializable;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.security.Security;
+import com.stamacoding.rsaApp.logger.L;
 
 public class User implements Serializable{
 	/**
@@ -37,7 +36,7 @@ public class User implements Serializable{
 	}
 
 	public void setName(String name) {
-		if(name == null || name.length() == 0) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("String name is not allowed to be null!"));
+		if(name == null || name.length() == 0) L.f(this.getClass(), new IllegalArgumentException("String name is not allowed to be null!"));
 		
 		this.name = name;
 	}
@@ -47,14 +46,14 @@ public class User implements Serializable{
 	}
 
 	public void setPassword(Password password) {
-		if(password == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("Password password is not allowed to be null!"));
+		if(password == null) L.f(this.getClass(), new IllegalArgumentException("Password password is not allowed to be null!"));
 		
 		this.password = password;
 	}
 
 	public void setId(long id) {
-		if(id == -1) Logger.debug(this.getClass().getSimpleName(), "User is set as unstored (id == -1)");
-		if(id < -1) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("int userId (" + id +  ") should be greater than -2 !"));
+		if(id == -1) L.d(this.getClass(), "User is set as unstored (id == -1)");
+		if(id < -1) L.f(this.getClass(), new IllegalArgumentException("int userId (" + id +  ") should be greater than -2 !"));
 		
 		this.id = id;
 	}
@@ -84,7 +83,7 @@ public class User implements Serializable{
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (this.getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
 		if (id != other.id)

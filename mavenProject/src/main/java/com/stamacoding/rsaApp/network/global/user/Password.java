@@ -3,6 +3,7 @@ package com.stamacoding.rsaApp.network.global.user;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.security.Security;
 import com.stamacoding.rsaApp.security.rsa.Convert;
 
@@ -47,7 +48,7 @@ public class Password implements Serializable{
 
 	private final void setClearPassword(char[] clearPassword) {
 		if(clearPassword == null || clearPassword.length == 0 || clearPassword.length > 30) {
-			throw new IllegalArgumentException("Password cannot be null and it's length should be between 1 and 30!");
+			L.f(this.getClass(), new IllegalArgumentException("Password cannot be null and it's length should be between 1 and 30!"));
 		}
 		this.clearPassword = clearPassword;
 	}
@@ -57,7 +58,7 @@ public class Password implements Serializable{
 	}
 
 	private final void setHashedPassword(byte[] hashedPassword) {
-		if(hashedPassword == null) throw new IllegalArgumentException("HashedPassword is not allowed to get set to null!");
+		if(hashedPassword == null) L.f(this.getClass(), new IllegalArgumentException("HashedPassword is not allowed to get set to null!"));
 		this.hashedPassword = hashedPassword;
 	}
 
@@ -66,8 +67,9 @@ public class Password implements Serializable{
 	}
 	
 	public final boolean check(char[] clearPassword) {
-		if(getHashedPassword() == null) throw new IllegalStateException("Cannot check password. Password is not hashed!");
-		else return Security.checkPassword(clearPassword, getHashedPassword());
+		if(getHashedPassword() == null) L.f(this.getClass(), new IllegalStateException("Cannot check password. Password is not hashed!"));
+		
+		return Security.checkPassword(clearPassword, getHashedPassword());
 	}
 
 	@Override
@@ -86,7 +88,7 @@ public class Password implements Serializable{
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (this.getClass() != obj.getClass())
 			return false;
 		Password other = (Password) obj;
 		if (!Arrays.equals(clearPassword, other.clearPassword))

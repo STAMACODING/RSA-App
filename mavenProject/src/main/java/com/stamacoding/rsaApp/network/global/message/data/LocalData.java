@@ -2,10 +2,8 @@ package com.stamacoding.rsaApp.network.global.message.data;
 
 import java.io.Serializable;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
-import com.stamacoding.rsaApp.network.client.services.ChatDatabaseService;
-import com.stamacoding.rsaApp.network.client.services.ClientSendService;
-import com.stamacoding.rsaApp.network.server.services.ServerSendService;
+import com.stamacoding.rsaApp.logger.L;
+import com.stamacoding.rsaApp.network.client.service.message.ChatDatabaseService;
 
 /**
  * Stores information about a message that is relevant to the client only. This information is not sent to the server and is also not encrypted.
@@ -53,7 +51,7 @@ public class LocalData implements Serializable{
 	 * @param id the message's unique id in the chat database
 	 */
 	public void setId(long id) {
-		if(id < -1) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("int id (" + id +  ") should be greater than -2 !"));
+		if(id < -1) L.f(this.getClass(), new IllegalArgumentException("int id (" + id +  ") should be greater than -2 !"));
 		this.id = id;
 	}
 	
@@ -86,7 +84,7 @@ public class LocalData implements Serializable{
 	 * @param sendState the message's send state
 	 */
 	public void setSendState(SendState sendState) {
-		if(sendState == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("SendState sendState is not allowed to be null!"));
+		if(sendState == null) L.f(this.getClass(), new IllegalArgumentException("SendState sendState is not allowed to be null!"));
 		
 		this.sendState = sendState;
 	}
@@ -108,8 +106,8 @@ public class LocalData implements Serializable{
 	}
 
 	/**
-	 * Checks whether the message should be send using the {@link ClientSendService}/{@link ServerSendService}.
-	 * @return whether the message should be send using the {@link ClientSendService}/{@link ServerSendService}
+	 * Checks whether the message should be sent using the client's or server's send service.
+	 * @return whether the message should be sent using the client's or server's send service
 	 */
 	public boolean isToSend() {
 		return getSendState().equals(SendState.PENDING);
@@ -118,27 +116,5 @@ public class LocalData implements Serializable{
 	@Override
 	public LocalData clone() {
 		return new LocalData(getId(), getSendState());
-	}
-	
-	public static int getSendStateAsInt(SendState sendState) {
-		switch(sendState) {
-		case PENDING:
-			return 0;
-		case SENT:
-			return 1;
-		default:
-			return -1;
-		}
-	}
-	
-	public static SendState getIntAsSendState(int sendState) {
-		switch(sendState) {
-		case 0:
-			return SendState.PENDING;
-		case 1:
-			return SendState.SENT;
-		default:
-			return null;
-		}
 	}
 }

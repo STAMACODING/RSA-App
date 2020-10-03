@@ -1,12 +1,11 @@
 package com.stamacoding.rsaApp.security.rsa;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 
 /**
  * Represents a RSA key pair consisting of a public and a fitting private key. Invoking the constructor {@link #KeyPair()} automatically generates the both keys.
  */
 public class KeyPair {
-	public static final boolean PRINT_EXTRA_INFORMATION = false;
 	
 	public static final int N_MAXIMUM = 65536;
 	public static final int N_MINIMUM = 1000;
@@ -41,7 +40,7 @@ public class KeyPair {
 	}
 	
 	private void setPrivateKey(Key privateKey) {
-		if(privateKey == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("Key privateKey is not allowed to be null!"));
+		if(privateKey == null) L.f("RSA", this.getClass(), new IllegalArgumentException("The private key is not allowed to be null!"));
 		
 		this.privateKey = privateKey;
 	}
@@ -51,7 +50,7 @@ public class KeyPair {
 	}
 	
 	private void setPublicKey(Key publicKey) {
-		if(publicKey == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("Key publicKey is not allowed to be null!"));
+		if(publicKey == null) L.f("RSA", this.getClass(), new IllegalArgumentException("The public key is not allowed to be null!"));
 		
 		this.publicKey = publicKey;
 	}
@@ -75,21 +74,19 @@ public class KeyPair {
 			d = KeyMathUtils.modularInverse(e, phi);
 		}while(d == -1 || d == e);
 		
-		if(PRINT_EXTRA_INFORMATION) {
-			Logger.debug(this.getClass().getSimpleName(), "p\t=>\t" + p);
-			Logger.debug(this.getClass().getSimpleName(), "q\t=>\t" + q);
-			Logger.debug(this.getClass().getSimpleName(), "n\t=>\t" + n + " = " + p + " * " + q);
-			Logger.debug(this.getClass().getSimpleName(), "phi\t=>\t" + phi + " = (" + p + " - 1) * (" + q + " - 1) = " + (p-1) + " * " + (q-1));
-			Logger.debug(this.getClass().getSimpleName(), "e\t=>\t" + e);
-			Logger.debug(this.getClass().getSimpleName(), "d\t=>\t" + d);
-		}
+		L.t("RSA", this.getClass(), "p\t=>\t" + p);
+		L.t("RSA", this.getClass(), "q\t=>\t" + q);
+		L.t("RSA", this.getClass(), "n\t=>\t" + n + " = " + p + " * " + q);
+		L.t("RSA", this.getClass(), "phi\t=>\t" + phi + " = (" + p + " - 1) * (" + q + " - 1) = " + (p-1) + " * " + (q-1));
+		L.t("RSA", this.getClass(), "e\t=>\t" + e);
+		L.t("RSA", this.getClass(), "d\t=>\t" + d);
 		
 		Key privateKey = new Key(d, n);
 		Key publicKey = new Key(e, n);
 		setPrivateKey(privateKey);
 		setPublicKey(publicKey);
 		
-		if(PRINT_EXTRA_INFORMATION) Logger.debug(this.getClass().getSimpleName(), this.toString());
+		L.t("RSA", this.getClass(), this.toString());
 	}
 	
 	

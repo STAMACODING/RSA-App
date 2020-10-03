@@ -4,16 +4,15 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.service.Service;
 
 public abstract class DatabaseService extends Service{
 	private volatile Connection connection;
 	private final DatabaseConfiguration configuration;
 	
-	public DatabaseService(String serviceName, DatabaseConfiguration configuration) {
-		super(serviceName);
-		if(configuration == null) throw new IllegalArgumentException("DatabaseConfiguration configuration is not allowed to be null!");
+	public DatabaseService(DatabaseConfiguration configuration) {
+		if(configuration == null) L.f(getServiceClass(), new IllegalArgumentException("DatabaseConfiguration configuration is not allowed to be null!"));
 		this.configuration = configuration;
 	}
 	
@@ -21,7 +20,9 @@ public abstract class DatabaseService extends Service{
 	public void onStart() {
 		super.onStart();
 		if(!connect()) setServiceCrashed(true);
+		L.t(getServiceClass(), "Initializing...");
 		initialize();
+		L.d(getServiceClass(), "Initialized!");
 	}
 
 	protected abstract void initialize();
@@ -35,11 +36,11 @@ public abstract class DatabaseService extends Service{
 					getConfiguration().getPassword()));
 			
 			if (getConnection() != null) {
-				Logger.debug(this.getClass().getSimpleName(), "Connected to database");
+				L.d(getServiceClass(), "Connected to database");
 				return true;
 			}
 		} catch (SQLException | ClassNotFoundException e) {
-			Logger.error(this.getServiceName(), "Failed to connect to database");
+			L.e(getServiceClass(), "Failed to connect to database", e);
 		}
 		return false;
 	}

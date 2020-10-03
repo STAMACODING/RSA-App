@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.message.data.LocalData;
 import com.stamacoding.rsaApp.network.global.message.data.ProtectedData;
 import com.stamacoding.rsaApp.network.global.message.data.SendState;
@@ -87,7 +87,7 @@ public class Message implements Serializable{
 	 * @param serverData the message's {@link ProtectedData}
 	 */
 	private void setProtectedData(ProtectedData protectedData) {
-		if(protectedData == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("ProtectedData protectedData is not allowed to be null!"));
+		if(protectedData == null) L.f(this.getClass(), new IllegalArgumentException("ProtectedData protectedData is not allowed to be null!"));
 		
 		this.protectedData = protectedData;
 	}
@@ -107,7 +107,7 @@ public class Message implements Serializable{
 	 * @param serverData the message's {@link ServerData}
 	 */
 	private void setServerData(ServerData serverData) {
-		if(serverData == null) Logger.error(this.getClass().getSimpleName(),  new IllegalArgumentException("ServerData serverData is not allowed to be null!"));
+		if(serverData == null) L.f(this.getClass(),  new IllegalArgumentException("ServerData serverData is not allowed to be null!"));
 		
 		this.serverData = serverData;
 	}
@@ -134,7 +134,7 @@ public class Message implements Serializable{
 	 * @param encryptedProtectedData the message's encrypted byte array that represents the {@link #protectedData}
 	 */
 	private void setEncryptedProtectedData(byte[] encryptedProtectedData) {
-		if(encryptedProtectedData == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("byte[] encryptedProtectedData is not allowed to be null!"));
+		if(encryptedProtectedData == null) L.f(this.getClass(), new IllegalArgumentException("byte[] encryptedProtectedData is not allowed to be null!"));
 		
 		this.encryptedProtectedData = encryptedProtectedData;
 	}
@@ -152,7 +152,7 @@ public class Message implements Serializable{
 	 * @param encryptedServerData the message's encrypted byte array that represents the {@link #serverData}
 	 */
 	private void setEncryptedServerData(byte[] encryptedServerData) {
-		if(encryptedServerData == null) Logger.error(this.getClass().getSimpleName(), new IllegalArgumentException("byte[] encryptedServerData is not allowed to be null!"));
+		if(encryptedServerData == null) L.f(this.getClass(), new IllegalArgumentException("byte[] encryptedServerData is not allowed to be null!"));
 		
 		this.encryptedServerData = encryptedServerData;
 	}
@@ -163,7 +163,7 @@ public class Message implements Serializable{
 	 */
 	public void encryptServerData() {
 		if(getServerData() == null) {
-			Logger.warning(this.getClass().getSimpleName(), "ServerData is already encrypted!");
+			L.w(this.getClass(), "ServerData is already encrypted!");
 			return;
 		}
 		
@@ -177,7 +177,7 @@ public class Message implements Serializable{
 	 */
 	public void decryptServerData() {
 		if(getServerData() != null) {
-			Logger.warning(this.getClass().getSimpleName(), "ServerData is already decrypted!");
+			L.w(this.getClass(), "ServerData is already decrypted!");
 			return;
 		}
 		
@@ -191,7 +191,7 @@ public class Message implements Serializable{
 	 */
 	public void encryptProtectedData() {
 		if(getProtectedData() == null) {
-			Logger.warning(this.getClass().getSimpleName(), "ProtectedData is already encrypted!");
+			L.w(this.getClass(), "ProtectedData is already encrypted!");
 			return;
 		}
 		
@@ -205,7 +205,7 @@ public class Message implements Serializable{
 	 */
 	public void decryptProtectedData() {
 		if(getProtectedData() != null) {
-			Logger.warning(this.getClass().getSimpleName(), "ProtectedData is already decrypted!");
+			L.w(this.getClass(), "ProtectedData is already decrypted!");
 			return;
 		}
 		
@@ -246,7 +246,7 @@ public class Message implements Serializable{
 	}
 
 	private void setLocalData(LocalData localData) {
-		if(localData == null) Logger.error(this.getClass().getSimpleName(),  new IllegalArgumentException("LocalData localData is not allowed to be null!"));
+		if(localData == null) L.f(this.getClass(),  new IllegalArgumentException("LocalData localData is not allowed to be null!"));
 		
 		this.localData = localData;
 	}
@@ -268,7 +268,7 @@ public class Message implements Serializable{
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (this.getClass() != obj.getClass())
 			return false;
 		Message other = (Message) obj;
 		if (!Arrays.equals(encryptedProtectedData, other.encryptedProtectedData))

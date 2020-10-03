@@ -2,7 +2,7 @@ package com.stamacoding.rsaApp.network.global.message;
 
 import java.util.ArrayList;
 
-import com.stamacoding.rsaApp.log.logger.Logger;
+import com.stamacoding.rsaApp.logger.L;
 
 /**
  * Manages all stored, received, sending and sent messages. Provides methods to filter messages by their attributes.
@@ -29,15 +29,15 @@ public abstract class AbstractMessageManager {
 	public void manage(Message...messages) {
 		for(int i=0; i<messages.length; i++) {
 			if(messages[i] == null) {
-				Logger.warning(this.getClass().getSimpleName(), "Tried to add null message");
+				L.w(this.getClass(), "Tried to add null message");
 				continue;
 			}
 			if(getCurrentlyManagedMessages().indexOf(messages[i]) != -1) {
-				Logger.warning(this.getClass().getSimpleName(), "Tried to add already added message: " + messages[i].toString());
+				L.w(this.getClass(), "Tried to add already added message: " + messages[i].toString());
 				continue;
 			}
 			getCurrentlyManagedMessages().add(messages[i]);
-			Logger.debug(this.getClass().getSimpleName(), "Added new message to MessageManager: " + messages[i].toString());
+			L.t(this.getClass(), "Added new message to MessageManager: " + messages[i].toString());
 		}
 	}
 	
@@ -45,15 +45,15 @@ public abstract class AbstractMessageManager {
 	public void manage(ArrayList<Message> pendingMessages) {
 		for(int i=0; i<pendingMessages.size(); i++) {
 			if(pendingMessages.get(i) == null) {
-				Logger.warning(this.getClass().getSimpleName(), "Tried to add null message");
+				L.w(this.getClass(), "Tried to add null message");
 				continue;
 			}
 			if(getCurrentlyManagedMessages().indexOf(pendingMessages.get(i)) != -1) {
-				Logger.warning(this.getClass().getSimpleName(), "Tried to add already added message: " + pendingMessages.get(i).toString());
+				L.w(this.getClass(), "Tried to add already added message: " + pendingMessages.get(i).toString());
 				continue;
 			}
 			getCurrentlyManagedMessages().add(pendingMessages.get(i));
-			Logger.debug(this.getClass().getSimpleName(), "Added new message to MessageManager: " + pendingMessages.get(i).toString());
+			L.t(this.getClass(), "Added new message to MessageManager: " + pendingMessages.get(i).toString());
 		}
 	}
 }
