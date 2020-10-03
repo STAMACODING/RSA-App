@@ -207,12 +207,12 @@ public class SessionService extends Service{
 	 */
 	private void createKey() {
 		KeyPair clientKey = new KeyPair();
+		Logger.debug(this.getClass().getSimpleName(), "Writing private key of client in 'PrivateKey.txt'");
 		File dest = new File("PrivateKey.txt");
 		if (!dest.exists())
 			try {
 				dest.createNewFile();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		FileWriter destWrit = null;
@@ -236,6 +236,11 @@ public class SessionService extends Service{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		Logger.debug(this.getClass().getSimpleName(), "Transferring public key of client to server.");
+		KeyTransferService.getInstance().setPublicKey(clientKey.getPublicKey());
+		KeyTransferService.getInstance().launch();
+		
 	}
 	
 	//public void getPrivateKey() {}

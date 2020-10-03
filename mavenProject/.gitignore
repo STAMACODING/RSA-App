@@ -5,5 +5,4 @@
 .settings/
 !*.jar
 /bin/
-/target/
 PrivateKey.txt

@@ -1,8 +1,15 @@
 package com.stamacoding.rsaApp.security.rsa;
+
+import java.io.Serializable;
+
 /**
  * object represents a key, depending on the incoming values for exponent and module
  */
-public class Key {
+public class Key implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6419692290127189035L;
 	/**
 	 * holds the exponent in a modulo operation
 	 */
