@@ -55,10 +55,6 @@ public class MainService extends Service{
 		
 		if(Config.REGISTERED) LoginService.getInstance().launch();
 		else SignUpService.getInstance().launch();
-
-
-		ReceiveService.getInstance().launch();
-		SendService.getInstance().launch();
 		
 		L.i(this.getClass(), "Launched subservices!");
 	}

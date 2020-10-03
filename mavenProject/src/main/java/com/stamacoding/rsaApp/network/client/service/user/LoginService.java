@@ -7,6 +7,8 @@ import java.net.Socket;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.Config;
+import com.stamacoding.rsaApp.network.client.service.message.ReceiveService;
+import com.stamacoding.rsaApp.network.client.service.message.SendService;
 import com.stamacoding.rsaApp.network.global.answerCodes.AnswerCodes;
 import com.stamacoding.rsaApp.network.global.service.ClientSocketService;
 import com.stamacoding.rsaApp.network.global.session.LoginState;
@@ -41,8 +43,10 @@ public class LoginService extends ClientSocketService{
 		
 		if(getLoginState() == LoginState.LOGGED_IN) {
 			L.i(this.getClass(), "Logged in successfull (" + Config.USER_NAME + ", ************)");
-			L.d(getClass(), "Launching Session service...");
+			L.d(getClass(), "Launching session, send and receive service...");
 			SessionService.getInstance().launch();
+			ReceiveService.getInstance().launch();
+			SendService.getInstance().launch();
 			
 			this.setStopRequested(true);
 		}else {
