@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 public class IndexedMap<K, V>{
 	private final ArrayList<K> keys = new ArrayList<>();
 	private final ArrayList<V> values = new ArrayList<>();
+	private int size = 0;
 	
 	private ArrayList<K> getKeys() {
 		return keys;
@@ -20,8 +21,9 @@ public class IndexedMap<K, V>{
 		if(index != -1) {
 			getValues().set(index, value);
 		}else {
-			getKeys().add(key);
 			getValues().add(value);
+			getKeys().add(key);
+			size++;
 		}
 	}
 
@@ -36,6 +38,7 @@ public class IndexedMap<K, V>{
 	public void remove(K key) {
 		int index = getKeys().indexOf(key);
 		if(index != -1) {
+			size--;
 			getKeys().remove(index);
 			getValues().remove(index);
 		}else {
@@ -45,6 +48,7 @@ public class IndexedMap<K, V>{
 	
 	public void remove(int i) {
 		if(i >= 0 && i < size()) {
+			size--;
 			getKeys().remove(i);
 			getValues().remove(i);
 		}else {
@@ -53,7 +57,7 @@ public class IndexedMap<K, V>{
 	}
 	
 	public int size() {
-		return getKeys().size();
+		return size;
 	}
 	
 	public K getKey(int i) {

@@ -47,7 +47,6 @@ public class ReceiveService extends ServerService{
 		return singleton;
 	}
 
-	// TODO SERVER ANSWER
 	/**
 	 * <ol>
 	 * 	<li>If a clients wants to connect to the server using a {@link Socket}, the server will accept the connection.</li>
@@ -106,7 +105,6 @@ public class ReceiveService extends ServerService{
 				
 				L.t(this.getClass(), "Adding message to the message manager to forward it...");
 				// 5. Add the message to the message manager to forward it
-				// TODO FORWARD USING SEND SERVICE
 				MessageManager.getInstance().manage(m);
 				
 				// 6. Answer client
