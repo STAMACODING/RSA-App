@@ -14,8 +14,6 @@ import com.stamacoding.rsaApp.network.global.user.Password;
 import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.security.rsa.RSA;
 
-import javafx.scene.AmbientLight;
-
 public class LoginService extends ClientService{
 
 	/** The only instance of this class */
@@ -85,12 +83,23 @@ public class LoginService extends ClientService{
 				L.e(this.getClass(), "Failed to log in! There is already someone logged in with your username!");
 				return LoginState.SIGNED_IN;
 			case AnswerCodes.LogIn.LOGGED_IN:
-				String sessionID = getInputStream().readUTF();
-				
-				Session s = new Session(sessionID, LoginState.LOGGED_IN);
-				L.d(getClass(), "Setting session service's session : " + s.toString());
-				SessionService.getInstance().setSession(s);
-				return LoginState.LOGGED_IN;
+				int encryptedSessionIdSize = getInputStream().readInt();
+				if(encryptedSessionIdSize > 0) {
+					byte[] encryptedSessionId = new byte[encryptedSessionIdSize];
+					getInputStream().readFully(encryptedSessionId, 0, encryptedSessionIdSize);
+					
+					String sessionID = (String) RSA.decryptF(encryptedSessionId);
+					L.t(getClass(), "Received and decrypted session id : " + sessionID);
+		
+					Session s = new Session(sessionID, LoginState.LOGGED_IN);
+					L.d(getClass(), "Setting session service's session : " + s.toString());
+					SessionService.getInstance().setSession(s);
+					return LoginState.LOGGED_IN;
+				}else {
+					L.e(getClass(), "Received invalid data! Failed to receive session id!");
+					return LoginState.SIGNED_IN;
+				}
+
 			}
 		} catch (IOException e) {
 			L.e(this.getClass(), "Connection error", e);

@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.Config;
+import com.stamacoding.rsaApp.network.client.service.user.SessionService;
 import com.stamacoding.rsaApp.network.global.answerCodes.AnswerCodes;
 import com.stamacoding.rsaApp.network.global.message.Message;
 import com.stamacoding.rsaApp.network.global.message.data.SendState;
@@ -12,6 +13,7 @@ import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.global.service.executor.ClientExecutorService;
 import com.stamacoding.rsaApp.network.server.manager.MessageManager;
 import com.stamacoding.rsaApp.network.server.service.message.ReceiveService;
+import com.stamacoding.rsaApp.security.rsa.RSA;
 
 
 /**
@@ -46,14 +48,19 @@ public class SendService extends ClientExecutorService {
 		encryptedClone.encrypt();
 		L.d(this.getClass(), "Encrypted message: " + encryptedClone.toString());
 		try {
-			transferMessage(encryptedClone);
+			if(sendSessionId()) {
+				transferMessage(encryptedClone);
 
-			if(receiveAnswer(encryptedClone)) {
-				updateMessageState(m, SendState.SENT);
-				return true;
+				if(receiveAnswer(encryptedClone)) {
+					updateMessageState(m, SendState.SENT);
+					return true;
+				}else {
+					L.e(this.getClass(), "Failed to send message: " + m.toString());
+					updateMessageState(m, SendState.FAILED);
+					return false;
+				}
 			}else {
-				L.e(this.getClass(), "Failed to send message: " + m.toString());
-				updateMessageState(m, SendState.FAILED);
+				L.e(this.getClass(), "Couln't send message!");
 				return false;
 			}
 		} catch (IOException e) {
@@ -63,6 +70,25 @@ public class SendService extends ClientExecutorService {
 		}
 	}
 	
+	private boolean sendSessionId() {
+		String id = SessionService.getInstance().getSession().getId();
+		if(id == null) L.f(getClass(), new IllegalStateException("Cannot send message! You aren't logged in!"));
+		
+		try {
+			L.t(getClass(), "Encrypting session id...");
+			byte[] encryptedId = RSA.encryptF(id);
+			L.t(getClass(), "Sending session id...");
+			getOutputStream().writeInt(encryptedId.length);
+			getOutputStream().write(encryptedId);
+			getOutputStream().flush();
+			L.d(getClass(), "Sent encrypted session id!");
+			return true;
+		} catch (IOException e) {
+			L.e(getClass(), "Failed to send session id to server");
+			return false;
+		}
+	}
+
 	/**
 	 * Sends the message to the receive server by sending two byte arrays containing message's server data and protected data.
 	 * @param m the message to send

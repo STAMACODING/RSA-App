@@ -13,7 +13,6 @@ import com.stamacoding.rsaApp.network.server.manager.SessionManager;
 import com.stamacoding.rsaApp.network.server.service.database.UserDatabaseService;
 import com.stamacoding.rsaApp.network.server.service.message.SendService;
 import com.stamacoding.rsaApp.security.rsa.RSA;
-import com.stamacoding.rsaApp.security.sessionId.SessionId;
 
 public class LoginService extends ServerService{
 	
@@ -68,9 +67,12 @@ public class LoginService extends ServerService{
 						getOutputStream().writeInt(AnswerCodes.LogIn.LOGGED_IN);
 						L.t(this.getClass(), "Sent success answer code to user: " + user.getName());
 						
-						L.t(this.getClass(), "Sending session id(" + sessionId + ") to user: " + user.getName());
-						getOutputStream().writeUTF(sessionId);
-						L.t(this.getClass(), "Sent session id to user: " + user.getName());
+						byte[] encryptedSessionId = RSA.encryptF(sessionId);
+						L.t(this.getClass(), "Sending encrypted session id(" + sessionId + ") to user: " + user.getName());
+						getOutputStream().writeInt(encryptedSessionId.length);
+						getOutputStream().write(encryptedSessionId);
+						getOutputStream().flush();
+						L.t(this.getClass(), "Sent encrypted session id to user: " + user.getName());
 					}else {
 						L.i(this.getClass(), "Already logged in: " + user.getName());
 					}

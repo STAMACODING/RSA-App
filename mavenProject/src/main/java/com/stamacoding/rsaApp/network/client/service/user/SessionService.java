@@ -9,6 +9,7 @@ import com.stamacoding.rsaApp.network.global.answerCodes.AnswerCodes;
 import com.stamacoding.rsaApp.network.global.service.ClientService;
 import com.stamacoding.rsaApp.network.global.session.LoginState;
 import com.stamacoding.rsaApp.network.global.session.Session;
+import com.stamacoding.rsaApp.security.rsa.RSA;
 
 public class SessionService extends ClientService{
 	/** The only instance of this class */
@@ -39,8 +40,13 @@ public class SessionService extends ClientService{
 		}else {
 			try {
 				L.d(this.getClass(), "Active session: " + getSession().toString());
-				getOutputStream().writeUTF(getSession().getId());
+				
+				L.t(getClass(), "Encrypting session id...");
+				byte[] encryptedSessionId = RSA.encryptF(getSession().getId());
+				getOutputStream().writeInt(encryptedSessionId.length);
+				getOutputStream().write(encryptedSessionId);
 				getOutputStream().flush();
+				L.t(getClass(), "Sent encrypted session id!");
 				
 				int answer = getInputStream().readInt();
 				switch(answer) {

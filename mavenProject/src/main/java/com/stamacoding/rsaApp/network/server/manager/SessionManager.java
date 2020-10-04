@@ -79,6 +79,10 @@ public class SessionManager {
 		return getLoggedInUsers().contains(username);
 	}
 	
+	public boolean isValidId(String sessionId) {
+		return getLoggedInUsers().containsValue(new TimedSessionId(sessionId, 0));
+	}
+	
 	public String getInactiveUser() {
 		for(int i=0; i<getLoggedInUsers().size(); i++) {
 			if(getLoggedInUsers().getValue(i).getInactivityTime() > MAX_INACTIVITY_TIME) return getLoggedInUsers().getKey(i);

@@ -18,6 +18,7 @@ public class AnswerCodes {
 		public final static int RECEIVED_VALID_MESSAGE = 0;
 		public final static int RECEIVED_INVALID_MESSAGE = -1;
 		public final static int RECEIVED_INVALID_DATA = -2;
+		public final static int SESSION_ID_ERROR = -3;
 	}
 	public static class Ping{
 		public final static int STILL_LOGGED_IN = 0;

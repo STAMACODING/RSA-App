@@ -17,7 +17,9 @@ import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.Server;
 import com.stamacoding.rsaApp.network.server.manager.MessageManager;
+import com.stamacoding.rsaApp.network.server.manager.SessionManager;
 import com.stamacoding.rsaApp.network.server.service.database.UserDatabaseService;
+import com.stamacoding.rsaApp.security.rsa.RSA;
 
 /**
  *  {@link ServerService} receiving messages from clients using a {@link ServerSocket}. After receiving a message
@@ -58,6 +60,22 @@ public class ReceiveService extends ServerService{
 	@Override
 	public void onAccept() {
 		try {
+			String sessionId = receiveSessionId();
+			if(sessionId == null) {
+				L.e(getClass(), "Cannot receive message! Session id is null!");
+				
+				L.t(getClass(), "Sending error code to client...");
+				getOutputStream().writeInt(AnswerCodes.SendMessageToServer.SESSION_ID_ERROR);
+				L.t(getClass(), "Sent error code to client!");
+				return;
+			}else if(!SessionManager.getInstance().isValidId(sessionId)) {
+				L.e(getClass(), "Cannot receive message! Session id is invalid!");
+				
+				L.t(getClass(), "Sending error code to client...");
+				getOutputStream().writeInt(AnswerCodes.SendMessageToServer.SESSION_ID_ERROR);
+				L.t(getClass(), "Sent error code to client!");
+				return;
+			}
 			Message m = receiveMessage();
 			
 			if(m != null) {
@@ -107,6 +125,24 @@ public class ReceiveService extends ServerService{
 		}
 	}
 	
+	private String receiveSessionId() {
+		try {
+			int size = getInputStream().readInt();
+			if(size > 0) {
+				byte[] encryptedSessionId = new byte[size];
+				getInputStream().readFully(encryptedSessionId, 0, size);
+				
+				String sessionId = (String) RSA.decryptF(encryptedSessionId);
+				return sessionId;
+			}
+			L.e(getClass(), "Received invalid data (session id)!");
+			return null;
+		} catch (IOException e) {
+			L.e(getClass(), "Failed to receive session id!");
+			return null;
+		}
+	}
+
 	/**
 	 * Receive the message from the connected client
 	 * @param inputStream the socket's input stream
