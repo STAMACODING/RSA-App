@@ -87,7 +87,15 @@ public class SignUpService extends ServerService {
 							storePublicKey(unregisteredUser.getName(), publicKeyClient);
 
 							L.i(this.getClass(), "Registered new user (0): " + unregisteredUser.toString());
-							L.i(this.getClass(), "Currently registered users:\n" + UserDatabaseService.getInstance().toString());
+							
+							String table = (String) UserDatabaseService.getInstance().executeAndWait(new Callable<Object>() {
+
+								@Override
+								public String call() throws Exception {
+									return UserDatabaseService.getInstance().toString();
+								}
+							});
+							L.i(this.getClass(), "Currently registered users:\n" + table);
 							
 							getOutputStream().writeInt(AnswerCodes.SignUp.SIGNED_UP);
 						}else {
