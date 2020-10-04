@@ -7,16 +7,16 @@ import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.message.Message;
-import com.stamacoding.rsaApp.network.global.service.ServerSocketService;
+import com.stamacoding.rsaApp.network.global.service.ServerService;
 import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.Server;
 import com.stamacoding.rsaApp.network.server.manager.MessageManager;
 import com.stamacoding.rsaApp.security.rsa.RSA;
 
 /**
- * {@link ServerSocketService} sending messages to requesting clients using a {@link ServerSocket}.
+ * {@link ServerService} sending messages to requesting clients using a {@link ServerSocket}.
  */
-public class SendService extends ServerSocketService {
+public class SendService extends ServerService {
 	
 	/** The only instance of this class */
 	private volatile static SendService singleton = new SendService();

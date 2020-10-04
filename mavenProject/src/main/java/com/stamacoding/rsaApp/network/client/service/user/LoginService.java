@@ -7,14 +7,14 @@ import com.stamacoding.rsaApp.network.client.Config;
 import com.stamacoding.rsaApp.network.client.service.message.ReceiveService;
 import com.stamacoding.rsaApp.network.client.service.message.SendService;
 import com.stamacoding.rsaApp.network.global.answerCodes.AnswerCodes;
-import com.stamacoding.rsaApp.network.global.service.ClientSocketService;
+import com.stamacoding.rsaApp.network.global.service.ClientService;
 import com.stamacoding.rsaApp.network.global.session.LoginState;
 import com.stamacoding.rsaApp.network.global.session.Session;
 import com.stamacoding.rsaApp.network.global.user.Password;
 import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.security.rsa.RSA;
 
-public class LoginService extends ClientSocketService{
+public class LoginService extends ClientService{
 
 	/** The only instance of this class */
 	private volatile static LoginService singleton = new LoginService();

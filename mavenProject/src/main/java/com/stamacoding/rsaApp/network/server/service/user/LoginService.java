@@ -4,14 +4,14 @@ import java.io.IOException;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.answerCodes.AnswerCodes;
-import com.stamacoding.rsaApp.network.global.service.ServerSocketService;
+import com.stamacoding.rsaApp.network.global.service.ServerService;
 import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.Server;
 import com.stamacoding.rsaApp.network.server.service.message.SendService;
 import com.stamacoding.rsaApp.security.rsa.RSA;
 
-public class LoginService extends ServerSocketService{
+public class LoginService extends ServerService{
 	
 	/** The only instance of this class */
 	private volatile static LoginService singleton = new LoginService();

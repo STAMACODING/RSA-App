@@ -5,11 +5,11 @@ import java.io.IOException;
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.Config;
 import com.stamacoding.rsaApp.network.client.service.message.ChatDatabaseService;
-import com.stamacoding.rsaApp.network.global.service.ClientSocketService;
+import com.stamacoding.rsaApp.network.global.service.ClientService;
 import com.stamacoding.rsaApp.network.global.session.LoginState;
 import com.stamacoding.rsaApp.network.global.session.Session;
 
-public class SessionService extends ClientSocketService{
+public class SessionService extends ClientService{
 	/** The only instance of this class */
 	private volatile static SessionService singleton = new SessionService();
 

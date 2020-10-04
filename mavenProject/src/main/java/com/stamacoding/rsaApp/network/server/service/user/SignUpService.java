@@ -1,20 +1,20 @@
 package com.stamacoding.rsaApp.network.server.service.user;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.answerCodes.AnswerCodes;
-import com.stamacoding.rsaApp.network.global.service.ServerSocketService;
+import com.stamacoding.rsaApp.network.global.service.ServerService;
 import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.Server;
-import com.stamacoding.rsaApp.network.server.manager.UserManager;
 import com.stamacoding.rsaApp.network.server.service.message.SendService;
 import com.stamacoding.rsaApp.security.passwordHashing.PasswordHasher;
 import com.stamacoding.rsaApp.security.rsa.Key;
 import com.stamacoding.rsaApp.security.rsa.RSA;
 
-public class SignUpService extends ServerSocketService {
+public class SignUpService extends ServerService {
 	
 	/** The only instance of this class */
 	private volatile static SignUpService singleton = new SignUpService();
@@ -67,13 +67,29 @@ public class SignUpService extends ServerSocketService {
 						// Hash password
 						unregisteredUser.getPassword().setSalt(PasswordHasher.generateSalt());
 						
-						UserManager.getInstance().add(unregisteredUser);
-						storePublicKey(unregisteredUser.getName(), publicKeyClient);
-
-						L.i(this.getClass(), "Registered new user (0): " + unregisteredUser.toString());
-						L.d(this.getClass(), "Currently registered users:\n" + UserDatabaseService.getInstance().toString());
+						L.t(getClass(), "Storing user...");
+						boolean storedUser = (boolean) UserDatabaseService.getInstance().executeAndWait(new Callable<Object>() {
+							
+							@Override
+							public Boolean call() throws Exception {
+								return UserDatabaseService.getInstance().storeUser(unregisteredUser);
+							}
+						});
 						
-						getOutputStream().writeInt(AnswerCodes.SignUp.SIGNED_UP);
+						if(storedUser) {
+							storePublicKey(unregisteredUser.getName(), publicKeyClient);
+
+							L.i(this.getClass(), "Registered new user (0): " + unregisteredUser.toString());
+							L.d(this.getClass(), "Currently registered users:\n" + UserDatabaseService.getInstance().toString());
+							
+							getOutputStream().writeInt(AnswerCodes.SignUp.SIGNED_UP);
+						}else {
+							L.d(this.getClass(), "Couldn't store user!");
+							
+							L.t(getClass(), "Sending error code to client...");
+							getOutputStream().writeInt(AnswerCodes.SignUp.FAILED_TO_STORE);
+							L.t(getClass(), "Sent error code to client!");
+						}
 					}else {
 						L.d(this.getClass(), "Username is already in use!");
 						
@@ -101,8 +117,9 @@ public class SignUpService extends ServerSocketService {
 
 	}
 
-	private void storePublicKey(String username, Key publicKeyClient) {
+	private boolean storePublicKey(String username, Key publicKeyClient) {
 		L.t(getClass(), "Storing public key...");
 		// TODO
+		return true;
 	}
 }

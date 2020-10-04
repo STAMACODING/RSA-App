@@ -12,7 +12,8 @@ import javax.crypto.spec.PBEKeySpec;
 import com.stamacoding.rsaApp.logger.L;
 
 public class PasswordHasher {
-	public final static int SALT_LENGTH = 16;
+	public final static int SALT_LENGTH = 12;
+	public final static int SALT_STRING_LENGTH = ((4 * SALT_LENGTH / 3) + 3) & ~3;
 	public final static int HASHING_STRENGTH = 65535;
 	
 	public static byte[] generateSalt() {

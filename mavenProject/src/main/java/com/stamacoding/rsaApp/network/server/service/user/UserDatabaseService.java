@@ -8,11 +8,10 @@ import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.service.message.ChatDatabaseService;
-import com.stamacoding.rsaApp.network.global.service.database.DatabaseConfiguration;
-import com.stamacoding.rsaApp.network.global.service.database.DatabaseService;
+import com.stamacoding.rsaApp.network.global.service.executor.database.DatabaseConfiguration;
+import com.stamacoding.rsaApp.network.global.service.executor.database.DatabaseService;
 import com.stamacoding.rsaApp.network.global.user.Password;
 import com.stamacoding.rsaApp.network.global.user.User;
-import com.stamacoding.rsaApp.network.server.manager.UserManager;
 import com.stamacoding.rsaApp.security.passwordHashing.PasswordHasher;
 
 public class UserDatabaseService extends DatabaseService{
@@ -38,44 +37,14 @@ public class UserDatabaseService extends DatabaseService{
 		return singleton;
 	}
 	
-	@Override
-	public void onStart() {
-		super.onStart();
-		
-	}
-
-	@Override
-	public void onRepeat() {
-		// Check if there is any message to store or update
-		User u = UserManager.getInstance().poll();
-		
-		if(u != null) {
-			L.d(this.getClass(), "Got user to store/update: " + u.toString());
-			
-			// Update message if is is already stored in the chat database
-			if(!u.isStored()) {
-				if(!storeUser(u) && !u.isStored()) {
-					UserManager.getInstance().add(u);
-				}
-			}
-			
-			// Store new message
-			else if(!updateUser(u) && u.isUpdateRequested()) {
-				UserManager.getInstance().add(u);
-			}
-		}
-	}
-	
 	/**
 	 * updates the login Data of a user in the DB
 	 * @param u the Object of the new User
 	 * @return
 	 */
-	private boolean updateUser(User u) {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot update user! You aren't connected to the user database");
-			return false;
-		}
+	public boolean updateUser(User u) {
+		validateThread();
+		validateConnection();
 		
 		if(!u.isStored()) {
 			L.e(this.getClass(), "Cannot update unstored user!");
@@ -115,11 +84,9 @@ public class UserDatabaseService extends DatabaseService{
 	 * @param u the Object of the new user
 	 * @return whether the storing process was executed correctly
 	 */
-	private boolean storeUser(User u) {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot store user! You aren't connected to the chat database");
-			return false;
-		}
+	public boolean storeUser(User u) {
+		validateThread();
+		validateConnection();
 		
 		if(u.isStored()) {
 			L.e(this.getClass(), "Cannot store already stored user!");
@@ -155,11 +122,9 @@ public class UserDatabaseService extends DatabaseService{
 		return false;
 	}
 	
-	private ArrayList<User> getUsers() {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot get users! You aren't connected to the user database");
-			return null;
-		}
+	public ArrayList<User> getUsers() {
+		validateThread();
+		validateConnection();
 		
 		try {
 			Statement stm = getConnection().createStatement();
@@ -188,10 +153,10 @@ public class UserDatabaseService extends DatabaseService{
 	}
 	
 	public User getUser(String username) {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot get user! You aren't connected to the user database");
-			return null;
-		}
+		validateThread();
+		validateConnection();
+		
+		
 		try {
 			PreparedStatement stm = getConnection().prepareStatement("SELECT "
 					+ "id, name, "
@@ -214,11 +179,10 @@ public class UserDatabaseService extends DatabaseService{
 		return null;
 	}
 	
-	private User getUser(long id) {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot get user! You aren't connected to the user database");
-			return null;
-		}
+	public User getUser(long id) {
+		validateThread();
+		validateConnection();
+		
 		try {
 			PreparedStatement stm = getConnection().prepareStatement("SELECT "
 					+ "id, name, "
@@ -251,10 +215,8 @@ public class UserDatabaseService extends DatabaseService{
 	}
 
 	private boolean deleteUser(long id){
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot delete user! You aren't connected to the chat database");
-			return false;
-		}
+		validateThread();
+		validateConnection();
 		
 		try {
 			int userId = (int) id;
@@ -273,10 +235,9 @@ public class UserDatabaseService extends DatabaseService{
 	
 	
 	public String toString() {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot print database! You aren't connected to the user database");
-			return "[ NOT CONNECTED TO DATABASE ]";
-		}
+		validateThread();
+		validateConnection();
+		
 		ArrayList<User> users = getUsers();
 		
 		StringBuilder sb = new StringBuilder();
@@ -308,10 +269,9 @@ public class UserDatabaseService extends DatabaseService{
 	}
 	
 	public boolean isPasswordCorrect(User registeredUser) {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot check if username is available! You aren't connected to the user database");
-			return false;
-		}
+		validateThread();
+		validateConnection();
+		
 		if(registeredUser.getPassword().getClearPassword() == null) {
 			L.e(this.getClass(), "Users clear password is not allowed to be null!");
 			return false;
@@ -326,10 +286,9 @@ public class UserDatabaseService extends DatabaseService{
 	}
 	
 	public boolean isUsernameAvailable(String username) {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot check if username is available! You aren't connected to the user database");
-			return false;
-		}
+		validateThread();
+		validateConnection();
+		
 		try {
 			PreparedStatement stm = getConnection().prepareStatement("SELECT name FROM Users WHERE name = ?;");
 			stm.setString(1, username);
@@ -356,11 +315,11 @@ public class UserDatabaseService extends DatabaseService{
 					+ "id INTEGER PRIMARY KEY CHECK ((id > 0)), "
 					+ "name VARCHAR (15) NOT NULL UNIQUE CHECK (LENGTH(name) > 0), "
 					+ "password TEXT NOT NULL, "
-					+ "salt VARCHAR (" + PasswordHasher.SALT_LENGTH + ") NOT NULL CHECK (LENGTH(salt) = " + PasswordHasher.SALT_LENGTH + " ));");
+					+ "salt VARCHAR (" + PasswordHasher.SALT_STRING_LENGTH + ") NOT NULL CHECK (LENGTH(salt) = " + PasswordHasher.SALT_STRING_LENGTH + " ));");
 		} catch (SQLException e) {
 			L.e(this.getClass(), "Failed to initialize database!", e);
 		}
-		L.d(this.getClass(), "Logging user database...\n" + this.toString());
+		L.i(this.getClass(), "Logging user database...\n" + this.toString());
 	}
 	
 	public static void main(String[] args) {

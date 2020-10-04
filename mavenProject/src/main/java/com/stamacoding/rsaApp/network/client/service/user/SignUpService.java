@@ -7,14 +7,14 @@ import java.io.IOException;
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.Config;
 import com.stamacoding.rsaApp.network.global.answerCodes.AnswerCodes;
-import com.stamacoding.rsaApp.network.global.service.ClientSocketService;
+import com.stamacoding.rsaApp.network.global.service.ClientService;
 import com.stamacoding.rsaApp.network.global.session.LoginState;
 import com.stamacoding.rsaApp.network.global.user.Password;
 import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.security.rsa.KeyPair;
 import com.stamacoding.rsaApp.security.rsa.RSA;
 
-public class SignUpService extends ClientSocketService{
+public class SignUpService extends ClientService{
 	/** The only instance of this class */
 	private volatile static SignUpService singleton = new SignUpService();
 	
@@ -74,6 +74,9 @@ public class SignUpService extends ClientSocketService{
 			int answer = getInputStream().readInt();
 			
 			switch(answer) {
+			case AnswerCodes.SignUp.FAILED_TO_STORE:
+				L.e(this.getClass(), "Failed to sign up! Server database error!");
+				return LoginState.NONE;
 			case AnswerCodes.SignUp.USERNAME_UNAVAILABLE:
 				L.e(this.getClass(), "Failed to sign up! Your username is already in use!");
 				return LoginState.NONE;

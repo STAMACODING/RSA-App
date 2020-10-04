@@ -67,7 +67,8 @@ public class MainService extends Service{
 		ReceiveService.getInstance().setStopRequested(true);
 		SendService.getInstance().setStopRequested(true);
 		
-		// Unfinished
+		SignUpService.getInstance().setStopRequested(true);
+		LoginService.getInstance().setStopRequested(true);
 		SessionService.getInstance().setStopRequested(true);
 	}
 }

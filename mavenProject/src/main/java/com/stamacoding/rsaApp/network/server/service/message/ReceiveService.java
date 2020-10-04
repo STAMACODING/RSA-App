@@ -10,7 +10,7 @@ import com.stamacoding.rsaApp.network.global.message.Message;
 import com.stamacoding.rsaApp.network.global.message.data.LocalData;
 import com.stamacoding.rsaApp.network.global.message.data.SendState;
 import com.stamacoding.rsaApp.network.global.message.data.ServerData;
-import com.stamacoding.rsaApp.network.global.service.ServerSocketService;
+import com.stamacoding.rsaApp.network.global.service.ServerService;
 import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.Server;
@@ -18,10 +18,10 @@ import com.stamacoding.rsaApp.network.server.manager.MessageManager;
 import com.stamacoding.rsaApp.network.server.service.user.UserDatabaseService;
 
 /**
- *  {@link ServerSocketService} receiving messages from clients using a {@link ServerSocket}. After receiving a message
+ *  {@link ServerService} receiving messages from clients using a {@link ServerSocket}. After receiving a message
  *  the message gets forwarded using the {@link MessageManager} and the {@link SendService}.
  */
-public class ReceiveService extends ServerSocketService{
+public class ReceiveService extends ServerService{
 	public static class AnswerCodes{
 		public final static int RECEIVED_VALID_MESSAGE = 0;
 		public final static int RECEIVED_INVALID_MESSAGE = -1;
@@ -83,6 +83,7 @@ public class ReceiveService extends ServerSocketService{
 				
 				L.t(this.getClass(), "Adding message to the message manager to forward it...");
 				// 5. Add the message to the message manager to forward it
+				// TODO FORWARD USING SEND SERVICE
 				MessageManager.getInstance().manage(m);
 				
 				// 6. Answer client

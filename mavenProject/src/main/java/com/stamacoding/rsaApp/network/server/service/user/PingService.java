@@ -3,11 +3,11 @@ package com.stamacoding.rsaApp.network.server.service.user;
 import java.io.IOException;
 
 import com.stamacoding.rsaApp.logger.L;
-import com.stamacoding.rsaApp.network.global.service.ServerSocketService;
+import com.stamacoding.rsaApp.network.global.service.ServerService;
 import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.service.message.SendService;
 
-public class PingService extends ServerSocketService{
+public class PingService extends ServerService{
 
 	
 	/** The only instance of this class */

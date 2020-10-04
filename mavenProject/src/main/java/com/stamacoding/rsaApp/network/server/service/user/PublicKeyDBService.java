@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.stamacoding.rsaApp.logger.L;
-import com.stamacoding.rsaApp.network.global.service.database.DatabaseConfiguration;
-import com.stamacoding.rsaApp.network.global.service.database.DatabaseService;
+import com.stamacoding.rsaApp.network.global.service.executor.database.DatabaseConfiguration;
+import com.stamacoding.rsaApp.network.global.service.executor.database.DatabaseService;
 import com.stamacoding.rsaApp.security.rsa.Key;
 
 public class PublicKeyDBService extends DatabaseService{	

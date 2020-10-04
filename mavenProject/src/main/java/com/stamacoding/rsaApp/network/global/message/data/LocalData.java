@@ -3,7 +3,6 @@ package com.stamacoding.rsaApp.network.global.message.data;
 import java.io.Serializable;
 
 import com.stamacoding.rsaApp.logger.L;
-import com.stamacoding.rsaApp.network.client.service.message.ChatDatabaseService;
 
 /**
  * Stores information about a message that is relevant to the client only. This information is not sent to the server and is also not encrypted.
@@ -56,22 +55,6 @@ public class LocalData implements Serializable{
 	}
 	
 	/**
-	 * Gets whether the message needs to be updated in the chat database.
-	 * @return whether the message needs to be updated in the chat database
-	 */
-	private boolean isUpdateRequested() {
-		return updateRequested;
-	}
-
-	/**
-	 * Sets whether the message needs to be updated in the chat database.
-	 * @param updateRequested whether the message needs to be updated in the chat database
-	 */
-	public void setUpdateRequested(boolean updateRequested) {
-		this.updateRequested = updateRequested;
-	}
-	
-	/**
 	 * Gets the message's send state.
 	 * @return the message's send state
 	 */
@@ -87,30 +70,6 @@ public class LocalData implements Serializable{
 		if(sendState == null) L.f(this.getClass(), new IllegalArgumentException("SendState sendState is not allowed to be null!"));
 		
 		this.sendState = sendState;
-	}
-	
-	/**
-	 * Checks whether the message should get stored in the chat database by the {@link ChatDatabaseService}.
-	 * @return whether the message should get stored in the chat database by the {@link ChatDatabaseService}
-	 */
-	public boolean isToStore() {
-		return getId() == -1;
-	}
-
-	/**
-	 * Checks whether the message should get updated by the {@link ChatDatabaseService}.
-	 * @return whether the message should get updated by the {@link ChatDatabaseService}
-	 */
-	public boolean isToUpdate() {
-		return this.isUpdateRequested() && !isToStore();
-	}
-
-	/**
-	 * Checks whether the message should be sent using the client's or server's send service.
-	 * @return whether the message should be sent using the client's or server's send service
-	 */
-	public boolean isToSend() {
-		return getSendState().equals(SendState.PENDING);
 	}
 	
 	@Override

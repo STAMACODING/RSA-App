@@ -3,22 +3,23 @@ package com.stamacoding.rsaApp.network.client.service.message;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.Client;
 import com.stamacoding.rsaApp.network.client.Config;
-import com.stamacoding.rsaApp.network.client.manager.MessageManager;
 import com.stamacoding.rsaApp.network.global.message.Message;
 import com.stamacoding.rsaApp.network.global.message.data.SendState;
-import com.stamacoding.rsaApp.network.global.service.ClientSocketService;
+import com.stamacoding.rsaApp.network.global.service.ClientService;
 import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.server.Server;
+import com.stamacoding.rsaApp.network.server.manager.MessageManager;
 import com.stamacoding.rsaApp.security.rsa.RSA;
 
 /**
  * {@link Service} receiving messages from the server and forwarding them to the {@link MessageManager}.
  */
-public class ReceiveService extends ClientSocketService{
+public class ReceiveService extends ClientService{
 	
 	/** The only instance of this class */
 	private volatile static ReceiveService singleton = new ReceiveService();
@@ -68,8 +69,17 @@ public class ReceiveService extends ClientSocketService{
 				// 6. Log the received messages
 				logMessages(messages);
 				
-				// 7. Add the message to the message manager (message will automatically get stored in the chat database)
-				MessageManager.getInstance().manage(messages.toArray(new Message[messages.size()]));
+				// 7. Store messages
+				ChatDatabaseService.getInstance().execute(new Callable<Object>() {
+					
+					@Override
+					public Object call() throws Exception {
+						for(int i=0; i<messages.size(); i++) {
+							ChatDatabaseService.getInstance().storeMessage(messages.get(i));
+						}
+						return null;
+					}
+				});
 			}else {
 				// 4. -> When the message ArrayList is null the server didn't respond -> No new messages available
 				L.d(this.getClass(), "No new messages available");

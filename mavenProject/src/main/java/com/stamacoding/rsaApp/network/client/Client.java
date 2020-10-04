@@ -4,12 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.logger.Level;
 import com.stamacoding.rsaApp.logger.file.FileMode;
-import com.stamacoding.rsaApp.network.client.manager.MessageManager;
 import com.stamacoding.rsaApp.network.client.service.MainService;
+import com.stamacoding.rsaApp.network.client.service.message.SendService;
 import com.stamacoding.rsaApp.network.global.TextUtils;
 import com.stamacoding.rsaApp.network.global.message.Message;
 import com.stamacoding.rsaApp.network.global.message.data.LocalData;
@@ -131,7 +132,14 @@ public class Client {
 		MainService.getInstance().launch();
 		if(input.equals("y")) {
 			Message m = new Message(new LocalData(-1, SendState.PENDING), new ProtectedData(message, System.currentTimeMillis()), new ServerData(Config.USER_NAME, userReceiving));
-			MessageManager.getInstance().manage(m);
+			
+			SendService.getInstance().execute(new Callable<Object>() {
+				
+				@Override
+				public Object call() throws Exception {
+					return SendService.getInstance().send(m);
+				}
+			});
 		}
 	}
 }

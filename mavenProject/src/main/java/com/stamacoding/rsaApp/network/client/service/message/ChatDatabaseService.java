@@ -8,8 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import com.stamacoding.rsaApp.logger.L;
-import com.stamacoding.rsaApp.network.client.Client;
-import com.stamacoding.rsaApp.network.client.manager.MessageManager;
 import com.stamacoding.rsaApp.network.global.TextUtils;
 import com.stamacoding.rsaApp.network.global.message.Message;
 import com.stamacoding.rsaApp.network.global.message.data.LocalData;
@@ -17,8 +15,9 @@ import com.stamacoding.rsaApp.network.global.message.data.ProtectedData;
 import com.stamacoding.rsaApp.network.global.message.data.SendState;
 import com.stamacoding.rsaApp.network.global.message.data.ServerData;
 import com.stamacoding.rsaApp.network.global.service.Service;
-import com.stamacoding.rsaApp.network.global.service.database.DatabaseConfiguration;
-import com.stamacoding.rsaApp.network.global.service.database.DatabaseService;
+import com.stamacoding.rsaApp.network.global.service.executor.database.DatabaseConfiguration;
+import com.stamacoding.rsaApp.network.global.service.executor.database.DatabaseService;
+import com.stamacoding.rsaApp.network.server.manager.MessageManager;
 
 /**
  * {@link Service} storing and updating messages in the chat database using the {@link MessageManager}.
@@ -46,45 +45,14 @@ public class ChatDatabaseService extends DatabaseService{
 	public static ChatDatabaseService getInstance() {
 		return singleton;
 	}
-
-	/**
-	 * If {@link Client#pollToStoreOrUpdate()} returns a message, this message will get updated/stored.
-	 * @see Service#onRepeat()
-	 */
-	@Override
-	public void onRepeat() {
-		// Check if there is any message to store or update
-		Message m = MessageManager.getInstance().pollToStoreOrUpdate();
-		
-		if(m != null) {
-			L.d(this.getClass(), "Got message to store/update: " + m.toString());
-			
-			// Update message if is is already stored in the chat database
-			if(m.getLocalData().isToUpdate()) {
-				if(!updateMessage(m) && m.getLocalData().isToUpdate()) {
-					L.e(this.getClass(), "Failed to update message : " + m.toString());
-				}
-			}
-			
-			// Store new message
-			else{
-				if(!storeMessage(m) && !m.isStored()) {
-					L.e(this.getClass(), "Failed to store message : " + m.toString());
-				}
-			}
-			
-		}
-	}
 	
 	/**
 	 * Updates the message in the chat database
 	 * @param m the message to update
 	 */
-	private boolean updateMessage(Message m) {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot update message! You aren't connected to the chat database");
-			return false;
-		}
+	public boolean updateMessage(Message m) {
+		validateThread();
+		validateConnection();
 		
 		if(!m.isStored()) {
 			L.e(this.getClass(), "Cannot update unstored message!");
@@ -112,7 +80,6 @@ public class ChatDatabaseService extends DatabaseService{
 			pst.executeUpdate();
 			
 			L.i(this.getClass(), "Updated message: " + m.toString());
-			m.getLocalData().setUpdateRequested(false);
 			pst.close();
 			L.i(this.getClass(), "Logging database content \n" + toString());
 			return true;
@@ -126,11 +93,9 @@ public class ChatDatabaseService extends DatabaseService{
 	 * Stores the message in the chat database
 	 * @param m the message to store
 	 */
-	private boolean storeMessage(Message m) {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot store message! You aren't connected to the chat database");
-			return false;
-		}
+	public boolean storeMessage(Message m) {
+		validateThread();
+		validateConnection();
 		
 		if(m.isStored()) {
 			L.e(this.getClass(), "Cannot store already stored message!");
@@ -158,7 +123,6 @@ public class ChatDatabaseService extends DatabaseService{
 			m.getLocalData().setId(id);
 			
 			L.i(this.getClass(), "Stored message: " + m.toString());
-			m.getLocalData().setUpdateRequested(false);
 			pst.close();
 
 			L.i(this.getClass(), "Logging database content \n" + toString());
@@ -169,19 +133,13 @@ public class ChatDatabaseService extends DatabaseService{
 		return false;
 	}
 	
-	private boolean deleteMessage(Message m) {
-		if(!m.isStored()) {
-			L.e(this.getClass(), "Cannot delete an unstored message!");
-			return false;
-		}
+	public boolean deleteMessage(Message m) {
 		return deleteMessage(m.getLocalData().getId());
 	}
 	
-	private boolean deleteMessage(long id){
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot delete message! You aren't connected to the chat database");
-			return false;
-		}
+	public boolean deleteMessage(long id){
+		validateThread();
+		validateConnection();
 		
 		try {
 			PreparedStatement pst = getConnection().prepareStatement("DELETE FROM Messages WHERE id = ?;");
@@ -199,11 +157,9 @@ public class ChatDatabaseService extends DatabaseService{
 	}
 	
 	
-	private Message getMessage(long id) {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot get message! You aren't connected to the chat database");
-			return null;
-		}
+	public Message getMessage(long id) {
+		validateThread();
+		validateConnection();
 		
 		try {
 			Statement stm = getConnection().createStatement();
@@ -229,11 +185,9 @@ public class ChatDatabaseService extends DatabaseService{
 		return null;
 	}
 	
-	private ArrayList<Message> getMessagesToSend() {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot get pending messages! You aren't connected to the chat database");
-			return null;
-		}
+	public ArrayList<Message> getMessagesToSend() {
+		validateThread();
+		validateConnection();
 		
 		try {
 			Statement stm = getConnection().createStatement();
@@ -241,7 +195,7 @@ public class ChatDatabaseService extends DatabaseService{
 					+ "id, textMessage, "
 					+ "date, sendState, "
 					+ "sending, receiving "
-					+ "FROM Messages WHERE sendState = 0 OR sendState = -1;");
+					+ "FROM Messages WHERE sendState = " + SendState.asInt(SendState.PENDING) + " OR sendState = " + SendState.asInt(SendState.FAILED) + ";");
 			
 			if(res != null) {
 				ArrayList<Message> messages = new ArrayList<Message>();
@@ -249,28 +203,25 @@ public class ChatDatabaseService extends DatabaseService{
 				while(res.next()) {
 					SendState databaseSendState = SendState.parseInt(res.getInt(4));
 					Message m = new Message(
-							new LocalData(res.getInt(1), SendState.PENDING), 
+							new LocalData(res.getInt(1), SendState.parseInt(res.getInt(4))), 
 							new ProtectedData(res.getString(2), res.getLong(3)), 
 							new ServerData(res.getString(5), res.getString(6)));
-					if(databaseSendState != SendState.PENDING) m.getLocalData().setUpdateRequested(true);
 					messages.add(m);
 				}
-				L.d(this.getClass(), "Got (" + messages.size() + ") pending messages");
+				L.d(this.getClass(), "Got (" + messages.size() + ") to send");
 				return messages;
 			}
-			L.d(this.getClass(), "Got (0) pending messages");
+			L.d(this.getClass(), "Got (0) to send");
 			return null;
 		} catch (SQLException e) {
-			L.e(this.getClass(), "Failed to get pending messages", e);
+			L.e(this.getClass(), "Failed to get pending/failed messages", e);
 		}
 		return null;
 	}
 
-	private ArrayList<Message> getMessages() {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot get messages! You aren't connected to the chat database");
-			return null;
-		}
+	public ArrayList<Message> getMessages() {
+		validateThread();
+		validateConnection();
 		
 		try {
 			Statement stm = getConnection().createStatement();
@@ -301,11 +252,9 @@ public class ChatDatabaseService extends DatabaseService{
 		return null;
 	}
 	
-	private boolean deleteMessages() {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot delete messages! You aren't connected to the chat database");
-			return false;
-		}
+	public boolean deleteMessages() {
+		validateThread();
+		validateConnection();
 		
 		try {
 			Statement stm = getConnection().createStatement();
@@ -321,10 +270,9 @@ public class ChatDatabaseService extends DatabaseService{
 	}
 	
 	public String toString() {
-		if(!isConnected()) {
-			L.e(this.getClass(), "Cannot print database! You aren't connected to the chat database");
-			return "[ NOT CONNECTED TO DATBASE ]";
-		}
+		validateThread();
+		validateConnection();
+		
 		ArrayList<Message> messages = getMessages();
 		
 		StringBuilder sb = new StringBuilder();
@@ -376,6 +324,7 @@ public class ChatDatabaseService extends DatabaseService{
 		}
 		L.d(this.getClass(), "Logging chat database...\n" + this.toString());
 
-		MessageManager.getInstance().manage(getMessagesToSend());
+		ArrayList<Message> oldPendingMessages = getMessagesToSend();
+		// TODO send pending messages
 	}
 }
