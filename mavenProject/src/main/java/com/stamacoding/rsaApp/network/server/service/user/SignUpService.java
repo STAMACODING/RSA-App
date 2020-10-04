@@ -9,6 +9,7 @@ import com.stamacoding.rsaApp.network.global.service.ServerService;
 import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.Server;
+import com.stamacoding.rsaApp.network.server.service.database.UserDatabaseService;
 import com.stamacoding.rsaApp.network.server.service.message.SendService;
 import com.stamacoding.rsaApp.security.passwordHashing.PasswordHasher;
 import com.stamacoding.rsaApp.security.rsa.Key;

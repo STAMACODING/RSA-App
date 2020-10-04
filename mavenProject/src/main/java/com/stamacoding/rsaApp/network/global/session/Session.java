@@ -1,23 +1,25 @@
 package com.stamacoding.rsaApp.network.global.session;
 
+import com.stamacoding.rsaApp.network.global.TextUtils;
+
 public class Session {
-	private long id;
+	private String id;
 	private LoginState state = LoginState.NONE;
 	
-	public Session(long id) {
+	public Session(String id) {
 		setId(id);
 	}
 	
-	public Session(long id, LoginState state) {
-		setId(id);
+	public Session(String sessionID, LoginState state) {
+		setId(sessionID);
 		setState(state);
 	}
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	
@@ -28,5 +30,24 @@ public class Session {
 
 	public void setState(LoginState state) {
 		this.state = state;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[ ");
+		if(getId() != null) {
+			sb.append(TextUtils.setLength(getId(), 12));
+		}else {
+			sb.append("null");
+		}
+		sb.append(" : ");
+		if(getState() != null) {
+			sb.append(getState().toString());
+		}else {
+			sb.append("null");
+		}
+		sb.append(" ]");
+		return sb.toString();
 	}
 }

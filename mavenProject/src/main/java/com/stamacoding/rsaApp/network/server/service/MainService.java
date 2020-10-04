@@ -3,12 +3,13 @@ package com.stamacoding.rsaApp.network.server.service;
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.server.Config;
+import com.stamacoding.rsaApp.network.server.service.database.UserDatabaseService;
 import com.stamacoding.rsaApp.network.server.service.message.ReceiveService;
 import com.stamacoding.rsaApp.network.server.service.message.SendService;
+import com.stamacoding.rsaApp.network.server.service.user.InactiveUserService;
 import com.stamacoding.rsaApp.network.server.service.user.LoginService;
 import com.stamacoding.rsaApp.network.server.service.user.PingService;
 import com.stamacoding.rsaApp.network.server.service.user.SignUpService;
-import com.stamacoding.rsaApp.network.server.service.user.UserDatabaseService;
 
 /**
  * <p>{@link Service} handling all message transfers on the server.</p>
@@ -16,7 +17,7 @@ import com.stamacoding.rsaApp.network.server.service.user.UserDatabaseService;
  * <ul>
  *  <li>{@link ReceiveService}</li>
  *  <li>{@link SendService}</li>
- *  <li>Not documentated new ones (coming soon)</li>
+ *  <li>Not documented new ones (coming soon)</li>
  * </ul>
  */
 public class MainService extends Service{
@@ -52,7 +53,7 @@ public class MainService extends Service{
 		SendService.getInstance().launch();
 		ReceiveService.getInstance().launch();
 		
-		// TODO: Unfinished
+		InactiveUserService.getInstance().launch();
 		PingService.getInstance().launch();
 		SignUpService.getInstance().launch();
 		LoginService.getInstance().launch();
@@ -69,6 +70,7 @@ public class MainService extends Service{
 		SignUpService.getInstance().setStopRequested(true);
 		LoginService.getInstance().setStopRequested(true);
 		PingService.getInstance().setStopRequested(true);
+		InactiveUserService.getInstance().setStopRequested(true);
 		
 		UserDatabaseService.getInstance().setStopRequested(true);
 	}

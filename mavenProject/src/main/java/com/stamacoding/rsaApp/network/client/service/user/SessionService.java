@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.Config;
 import com.stamacoding.rsaApp.network.client.service.message.ChatDatabaseService;
+import com.stamacoding.rsaApp.network.global.answerCodes.AnswerCodes;
 import com.stamacoding.rsaApp.network.global.service.ClientService;
 import com.stamacoding.rsaApp.network.global.session.LoginState;
 import com.stamacoding.rsaApp.network.global.session.Session;
@@ -37,8 +38,26 @@ public class SessionService extends ClientService{
 			L.w(getClass(), "Not logged in. Cannot ping sth. to the server!");
 		}else {
 			try {
-				L.d(this.getClass(), "Pinging");
-				getOutputStream().writeLong(getSession().getId());
+				L.d(this.getClass(), "Active session: " + getSession().toString());
+				getOutputStream().writeUTF(getSession().getId());
+				
+				int answer = getInputStream().readInt();
+				switch(answer) {
+				case AnswerCodes.Ping.LOGGED_OUT:
+					L.e(getClass(), "Unexspected but true: You are logged out!");
+					getSession().setState(LoginState.SIGNED_IN);
+					
+					L.i(getClass(), "Launching login service to login again...");
+					LoginService.getInstance().setLoginState(LoginState.SIGNED_IN);
+					LoginService.getInstance().launch();
+					
+					L.d(getClass(), "Stopping session service...");
+					setStopRequested(true);
+					break;
+				case AnswerCodes.Ping.STILL_LOGGED_IN:
+					L.t(getClass(), "Still logged in :)");
+					break;
+				}
 			} catch (IOException e) {
 				L.e(this.getClass(), "Connection error", e);
 			}

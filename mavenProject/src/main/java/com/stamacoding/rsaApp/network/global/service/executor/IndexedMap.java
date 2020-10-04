@@ -88,4 +88,12 @@ public class IndexedMap<K, V>{
 		return getKeys().indexOf(key);
 	}
 	
+	public boolean contains(K key) {
+		return getKeys().contains(key);
+	}
+	
+	public boolean containsValue(V value) {
+		return getValues().contains(value);
+	}
+	
 }

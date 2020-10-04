@@ -14,6 +14,8 @@ import com.stamacoding.rsaApp.network.global.user.Password;
 import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.security.rsa.RSA;
 
+import javafx.scene.AmbientLight;
+
 public class LoginService extends ClientService{
 
 	/** The only instance of this class */
@@ -72,18 +74,21 @@ public class LoginService extends ClientService{
 			long answer = getInputStream().readLong();
 			L.t(getClass(), "Received: " + answer);
 			
-			if(answer < 0) {
-				int answerCode = (int) answer;
-				switch(answerCode) {
-				case AnswerCodes.LogIn.INVALID_DATA_FROM_CLIENT:
-					L.e(this.getClass(), "Failed to log in! Server received invalid data from client.");
-					return LoginState.SIGNED_IN;
-				case AnswerCodes.LogIn.WRONG_USERNAME_PASSWORD:
-					L.e(this.getClass(), "Failed to log in! Invalid password or username.");
-					return LoginState.SIGNED_IN;
-				}
-			}else {
-				Session s = new Session(answer, LoginState.LOGGED_IN);
+			int answerCode = (int) answer;
+			switch(answerCode) {
+			case AnswerCodes.LogIn.INVALID_DATA_FROM_CLIENT:
+				L.e(this.getClass(), "Failed to log in! Server received invalid data from client.");
+				return LoginState.SIGNED_IN;
+			case AnswerCodes.LogIn.WRONG_USERNAME_PASSWORD:
+				L.e(this.getClass(), "Failed to log in! Invalid password or username.");
+				return LoginState.SIGNED_IN;
+			case AnswerCodes.LogIn.ALREADY_LOGGED_IN:
+				L.e(this.getClass(), "Failed to log in! There is already someone logged in with your username!");
+				return LoginState.SIGNED_IN;
+			case AnswerCodes.LogIn.LOGGED_IN:
+				String sessionID = getInputStream().readUTF();
+				
+				Session s = new Session(sessionID, LoginState.LOGGED_IN);
 				L.d(getClass(), "Setting session service's session : " + s.toString());
 				SessionService.getInstance().setSession(s);
 				return LoginState.LOGGED_IN;

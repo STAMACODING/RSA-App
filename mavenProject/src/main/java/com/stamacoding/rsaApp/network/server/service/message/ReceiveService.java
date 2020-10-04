@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.concurrent.Callable;
 
 import com.stamacoding.rsaApp.logger.L;
+import com.stamacoding.rsaApp.network.global.answerCodes.AnswerCodes;
 import com.stamacoding.rsaApp.network.global.message.Message;
 import com.stamacoding.rsaApp.network.global.message.data.LocalData;
 import com.stamacoding.rsaApp.network.global.message.data.SendState;
@@ -16,18 +17,13 @@ import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.Server;
 import com.stamacoding.rsaApp.network.server.manager.MessageManager;
-import com.stamacoding.rsaApp.network.server.service.user.UserDatabaseService;
+import com.stamacoding.rsaApp.network.server.service.database.UserDatabaseService;
 
 /**
  *  {@link ServerService} receiving messages from clients using a {@link ServerSocket}. After receiving a message
  *  the message gets forwarded using the {@link MessageManager} and the {@link SendService}.
  */
 public class ReceiveService extends ServerService{
-	public static class AnswerCodes{
-		public final static int RECEIVED_VALID_MESSAGE = 0;
-		public final static int RECEIVED_INVALID_MESSAGE = -1;
-		public final static int RECEIVED_INVALID_DATA = -2;
-	}
 	
 	/** The only instance of this class */
 	private volatile static ReceiveService singleton = new ReceiveService();
@@ -85,7 +81,7 @@ public class ReceiveService extends ServerService{
 					L.e(this.getClass(), "Message's sending and/or receiving user isn't signed up!");
 					
 					L.t(getClass(), "Sending error code to client...");
-					getOutputStream().writeInt(AnswerCodes.RECEIVED_INVALID_MESSAGE);
+					getOutputStream().writeInt(AnswerCodes.SendMessageToServer.RECEIVED_INVALID_MESSAGE);
 					L.t(getClass(), "Sent error code to client!");
 					return;
 				}
@@ -97,12 +93,12 @@ public class ReceiveService extends ServerService{
 				
 				// 6. Answer client
 				L.t(getClass(), "Sending success code to client...");
-				getOutputStream().writeInt(AnswerCodes.RECEIVED_VALID_MESSAGE);
+				getOutputStream().writeInt(AnswerCodes.SendMessageToServer.RECEIVED_VALID_MESSAGE);
 				L.t(getClass(), "Sent success code to client!");
 			}else {
 				// 3. -> If the server failed to receive the message
 				L.e(this.getClass(), "Received invalid data (failed to receive message), sending error code to client...");
-				getOutputStream().writeInt(AnswerCodes.RECEIVED_INVALID_DATA);
+				getOutputStream().writeInt(AnswerCodes.SendMessageToServer.RECEIVED_INVALID_DATA);
 				L.t(getClass(), "Sent error code to client!");
 			}
 		} catch (IOException e) {

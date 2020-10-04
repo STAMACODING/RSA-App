@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.Config;
+import com.stamacoding.rsaApp.network.global.answerCodes.AnswerCodes;
 import com.stamacoding.rsaApp.network.global.message.Message;
 import com.stamacoding.rsaApp.network.global.message.data.SendState;
 import com.stamacoding.rsaApp.network.global.service.Service;
@@ -87,13 +88,13 @@ public class SendService extends ClientExecutorService {
 			int answer = getInputStream().readInt();
 			
 			switch(answer) {
-			case ReceiveService.AnswerCodes.RECEIVED_VALID_MESSAGE:
+			case AnswerCodes.SendMessageToServer.RECEIVED_VALID_MESSAGE:
 				L.i(this.getClass(), "Successfully sent message to the server: " + m.toString());
 				return true;
-			case ReceiveService.AnswerCodes.RECEIVED_INVALID_DATA:
+			case AnswerCodes.SendMessageToServer.RECEIVED_INVALID_DATA:
 				L.e(this.getClass(), "Server received invalid data (failed to send message)");
 				return false;
-			case ReceiveService.AnswerCodes.RECEIVED_INVALID_MESSAGE:
+			case AnswerCodes.SendMessageToServer.RECEIVED_INVALID_MESSAGE:
 				L.e(this.getClass(), "Server received message from/to unregistered user (failed to send message)");
 				return false;
 			}

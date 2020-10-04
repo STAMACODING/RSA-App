@@ -9,8 +9,11 @@ import com.stamacoding.rsaApp.network.global.service.ServerService;
 import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.Server;
+import com.stamacoding.rsaApp.network.server.manager.SessionManager;
+import com.stamacoding.rsaApp.network.server.service.database.UserDatabaseService;
 import com.stamacoding.rsaApp.network.server.service.message.SendService;
 import com.stamacoding.rsaApp.security.rsa.RSA;
+import com.stamacoding.rsaApp.security.sessionId.SessionId;
 
 public class LoginService extends ServerService{
 	
@@ -55,14 +58,22 @@ public class LoginService extends ServerService{
 					}
 				});
 				if(passwordCorrect) {
-					L.i(this.getClass(), "User successfully logged in: " + user.getName());
 					
-					// TODO store session id and mark user as logged in
-					long sessionId = (long) (Math.random() * Long.MAX_VALUE);
+					String sessionId = SessionManager.getInstance().logIn(user.getName());
 					
-					L.t(this.getClass(), "Sending session id to user: " + user.getName());
-					getOutputStream().writeLong(sessionId);
-					L.t(this.getClass(), "Sent session id to user: " + user.getName());
+					if(sessionId != null) {
+						L.i(this.getClass(), "User successfully logged in: " + user.getName());
+						
+						L.t(this.getClass(), "Sending success answer code to user: " + user.getName());
+						getOutputStream().writeInt(AnswerCodes.LogIn.LOGGED_IN);
+						L.t(this.getClass(), "Sent success answer code to user: " + user.getName());
+						
+						L.t(this.getClass(), "Sending session id(" + sessionId + ") to user: " + user.getName());
+						getOutputStream().writeUTF(sessionId);
+						L.t(this.getClass(), "Sent session id to user: " + user.getName());
+					}else {
+						L.i(this.getClass(), "Already logged in: " + user.getName());
+					}
 				}else {
 					L.w(this.getClass(), "Wrong username/password!: " + user.toString());
 					getOutputStream().writeInt(AnswerCodes.LogIn.WRONG_USERNAME_PASSWORD);
