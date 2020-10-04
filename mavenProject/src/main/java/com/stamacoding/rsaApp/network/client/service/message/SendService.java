@@ -41,12 +41,13 @@ public class SendService extends ClientExecutorService {
 		validateThread();
 		L.d(this.getClass(), "New message to send: " + m.toString());
 		
-		m.encrypt();
-		L.d(this.getClass(), "Encrypted message: " + m.toString());
+		Message encryptedClone = m.clone();
+		encryptedClone.encrypt();
+		L.d(this.getClass(), "Encrypted message: " + encryptedClone.toString());
 		try {
-			transferMessage(m);
+			transferMessage(encryptedClone);
 
-			if(receiveAnswer(m)) {
+			if(receiveAnswer(encryptedClone)) {
 				updateMessageState(m, SendState.SENT);
 				return true;
 			}else {
@@ -109,13 +110,18 @@ public class SendService extends ClientExecutorService {
 	private void updateMessageState(Message m, SendState s) {
 		L.d(this.getClass(), "Updating message state");
 		m.getLocalData().setSendState(s);
-		
+	
 		ChatDatabaseService.getInstance().execute(new Callable<Object>() {
 			
 			@Override
 			public Object call() throws Exception {
-				return ChatDatabaseService.getInstance().updateMessage(m);
+				if(m.isStored()) {
+					return ChatDatabaseService.getInstance().updateMessage(m);
+				}else {
+					return ChatDatabaseService.getInstance().storeMessage(m);
+				}
 			}
 		});
+
 	}
 }

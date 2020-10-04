@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.TextUtils;
@@ -325,6 +326,15 @@ public class ChatDatabaseService extends DatabaseService{
 		L.d(this.getClass(), "Logging chat database...\n" + this.toString());
 
 		ArrayList<Message> oldPendingMessages = getMessagesToSend();
-		// TODO send pending messages
+		for(int i=0; i<oldPendingMessages.size(); i++) {
+			Message m = oldPendingMessages.get(i);
+			SendService.getInstance().execute(new Callable<Object>() {
+				
+				@Override
+				public Object call() throws Exception {
+					return SendService.getInstance().send(m);
+				}
+			});
+		}
 	}
 }
