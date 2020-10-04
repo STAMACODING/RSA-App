@@ -28,7 +28,7 @@ public class Client {
 		L.Config.Console.set(true, Level.INFO, false);
 		L.Config.File.set(true, Level.INFO, true, 4 * 1024 * 1024, FileMode.ONE_PER_THREAD);
 		
-		System.out.print(TextUtils.heading("RSA-App Client 1.0.0-alpha"));
+		System.out.print(TextUtils.heading("RSA-App Client v0.1.0"));
 		System.out.print(TextUtils.box(""));
 		Scanner s = new Scanner(System.in);
 		

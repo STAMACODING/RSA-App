@@ -18,7 +18,7 @@ public class Server {
 		L.Config.Console.set(true, Level.INFO, false);
 		L.Config.File.set(true, Level.INFO, true, 4 * 1024 * 1024, FileMode.ONE_PER_THREAD);
 		
-		System.out.print(TextUtils.heading("RSA-App Server 1.0.0-alpha"));
+		System.out.print(TextUtils.heading("RSA-App Server v0.1.0"));
 		System.out.print(TextUtils.box(""));
 		Scanner s = new Scanner(System.in);
 		
