@@ -71,11 +71,10 @@ public class LoginService extends ClientService{
 			getOutputStream().flush();
 			
 			L.d(this.getClass(), "Retrieving answer");
-			long answer = getInputStream().readLong();
+			int answer = getInputStream().readInt();
 			L.t(getClass(), "Received: " + answer);
 			
-			int answerCode = (int) answer;
-			switch(answerCode) {
+			switch(answer) {
 			case AnswerCodes.LogIn.INVALID_DATA_FROM_CLIENT:
 				L.e(this.getClass(), "Failed to log in! Server received invalid data from client.");
 				return LoginState.SIGNED_IN;

@@ -40,6 +40,7 @@ public class SessionService extends ClientService{
 			try {
 				L.d(this.getClass(), "Active session: " + getSession().toString());
 				getOutputStream().writeUTF(getSession().getId());
+				getOutputStream().flush();
 				
 				int answer = getInputStream().readInt();
 				switch(answer) {
