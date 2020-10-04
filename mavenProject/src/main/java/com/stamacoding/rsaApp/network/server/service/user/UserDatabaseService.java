@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.service.message.ChatDatabaseService;
+import com.stamacoding.rsaApp.network.global.TextUtils;
 import com.stamacoding.rsaApp.network.global.service.executor.database.DatabaseConfiguration;
 import com.stamacoding.rsaApp.network.global.service.executor.database.DatabaseService;
 import com.stamacoding.rsaApp.network.global.user.Password;
@@ -257,9 +258,9 @@ public class UserDatabaseService extends DatabaseService{
 		for(int i=0; i<users.size(); i++) {
 			User u = users.get(i);
 			sb.append(String.format("| %-18s | %-18s | %-18s |\n", 
-					u.getId(),
-					u.getName(),
-					u.getPassword().toString()));
+					TextUtils.cut(String.valueOf(u.getId()), 18),
+					TextUtils.cut(u.getName().toString(), 18),
+					TextUtils.cut(u.getPassword().toString(), 18)));
 			if(i+1<users.size()) {
 				for(int j=0; j<64; j++) sb.append("-");
 				sb.append('\n');

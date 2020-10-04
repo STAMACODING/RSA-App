@@ -124,17 +124,17 @@ public class Password implements Serializable{
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[ (");
+		sb.append("[ ");
 		if(getClearPassword() != null) {
+			sb.append('(');
 			sb.append(TextUtils.setLength(String.valueOf(getClearPassword()), 12));
 			if(getSalt() != null) {
 				sb.append(", ");
 				sb.append(TextUtils.setLength(getSaltAsString(), 10));
 			}
-			sb.append(")");
+			sb.append(") § ");
 		}
 		if(getHashedPassword() != null) {
-			sb.append(" => ");
 			sb.append(TextUtils.setLength(getHashedPasswordAsString(), 20));
 		}
 		sb.append(" ]");
