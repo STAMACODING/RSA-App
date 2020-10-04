@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.client.service.message.ChatDatabaseService;
@@ -324,5 +325,13 @@ public class UserDatabaseService extends DatabaseService{
 	
 	public static void main(String[] args) {
 		UserDatabaseService.getInstance().launch();
+		UserDatabaseService.getInstance().execute(new Callable<Object>() {
+			
+			@Override
+			public Object call() throws Exception {
+				UserDatabaseService.getInstance().storeUser(new User("Josef", new Password("Joseef123".toCharArray(), PasswordHasher.generateSalt())));
+				return null;
+			}
+		});
 	}
 }

@@ -1,6 +1,7 @@
 package com.stamacoding.rsaApp.network.server.service.user;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.answerCodes.AnswerCodes;
@@ -46,16 +47,22 @@ public class LoginService extends ServerService{
 				User user = (User) RSA.decryptF(encryptedUser);
 				L.d(this.getClass(), "Client wants to login as: " + user.toString());
 				
-				if(UserDatabaseService.getInstance().isPasswordCorrect(user)) {
-					User loggedIn = UserDatabaseService.getInstance().getUser(user.getName());
-					L.i(this.getClass(), "User successfully logged in: " + loggedIn.toString());
+				boolean passwordCorrect = (boolean) UserDatabaseService.getInstance().executeAndWait(new Callable<Object>() {
+					
+					@Override
+					public Boolean call() throws Exception {
+						return UserDatabaseService.getInstance().isPasswordCorrect(user);
+					}
+				});
+				if(passwordCorrect) {
+					L.i(this.getClass(), "User successfully logged in: " + user.getName());
 					
 					// TODO store session id and mark user as logged in
 					long sessionId = (long) (Math.random() * Long.MAX_VALUE);
 					
-					L.t(this.getClass(), "Sending session id to user: " + loggedIn.toString());
+					L.t(this.getClass(), "Sending session id to user: " + user.getName());
 					getOutputStream().writeLong(sessionId);
-					L.t(this.getClass(), "Sent session id to user: " + loggedIn.toString());
+					L.t(this.getClass(), "Sent session id to user: " + user.getName());
 				}else {
 					L.w(this.getClass(), "Wrong username/password!: " + user.toString());
 					getOutputStream().writeInt(AnswerCodes.LogIn.WRONG_USERNAME_PASSWORD);

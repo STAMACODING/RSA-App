@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Callable;
 
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.message.Message;
@@ -71,8 +72,16 @@ public class ReceiveService extends ServerService{
 				// 4. Log the message
 				L.i(this.getClass(), "Received message: " + m.toString());
 				
-				if(UserDatabaseService.getInstance().isUsernameAvailable(m.getServerData().getReceiving())
-						|| UserDatabaseService.getInstance().isUsernameAvailable(m.getServerData().getSending())) {
+				boolean userNamesAvailable = (boolean) UserDatabaseService.getInstance().executeAndWait(new Callable<Object>() {
+					
+					@Override
+					public Boolean call() throws Exception {
+						return UserDatabaseService.getInstance().isUsernameAvailable(m.getServerData().getReceiving()) ||
+							UserDatabaseService.getInstance().isUsernameAvailable(m.getServerData().getSending());
+					}
+				});
+				
+				if(userNamesAvailable) {
 					L.e(this.getClass(), "Message's sending and/or receiving user isn't signed up!");
 					
 					L.t(getClass(), "Sending error code to client...");

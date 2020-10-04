@@ -63,8 +63,15 @@ public class SignUpService extends ServerService {
 					L.d(this.getClass(), "Client wants to register as: " + unregisteredUser.toString());
 					L.d(this.getClass(), "The user's public key is: " + publicKeyClient.toString());
 					
-					if(UserDatabaseService.getInstance().isUsernameAvailable(unregisteredUser.getName())) {
-						// Hash password
+					boolean usernameAvailable = (boolean) UserDatabaseService.getInstance().executeAndWait(new Callable<Object>() {
+
+						@Override
+						public Boolean call() throws Exception {
+							return UserDatabaseService.getInstance().isUsernameAvailable(unregisteredUser.getName());
+						}
+					});
+					if(usernameAvailable) {
+						L.d(getClass(), "Hashing password...");
 						unregisteredUser.getPassword().setSalt(PasswordHasher.generateSalt());
 						
 						L.t(getClass(), "Storing user...");
@@ -80,7 +87,7 @@ public class SignUpService extends ServerService {
 							storePublicKey(unregisteredUser.getName(), publicKeyClient);
 
 							L.i(this.getClass(), "Registered new user (0): " + unregisteredUser.toString());
-							L.d(this.getClass(), "Currently registered users:\n" + UserDatabaseService.getInstance().toString());
+							L.i(this.getClass(), "Currently registered users:\n" + UserDatabaseService.getInstance().toString());
 							
 							getOutputStream().writeInt(AnswerCodes.SignUp.SIGNED_UP);
 						}else {

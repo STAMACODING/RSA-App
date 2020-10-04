@@ -62,8 +62,8 @@ public abstract class ExecutorService extends Service{
 	
 	protected void validateThread() {
 		if(!Thread.currentThread().getName().equals(getServiceClass().getSimpleName())) {
-			L.f(this.getClass(), "You are not allowed to invoke the method directly. Use the execute() or executeAndWait()"
-					+ " to run the method using the service's thread.");
+			L.f(this.getClass(), new IllegalStateException( "You are not allowed to invoke the method directly. Use the execute() or executeAndWait()"
+					+ " to run the method using the service's thread."));
 		}
 	}
 }
