@@ -9,7 +9,7 @@ import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.Server;
 import com.stamacoding.rsaApp.network.server.service.message.SendService;
-import com.stamacoding.rsaApp.security.Security;
+import com.stamacoding.rsaApp.security.rsa.RSA;
 
 public class LoginService extends ServerSocketService{
 	
@@ -43,7 +43,7 @@ public class LoginService extends ServerSocketService{
 				byte[] encryptedUser = new byte[length];
 				getInputStream().readFully(encryptedUser, 0, length);
 				
-				User user = (User) Security.decryptF(encryptedUser);
+				User user = (User) RSA.decryptF(encryptedUser);
 				L.d(this.getClass(), "Client wants to login as: " + user.toString());
 				
 				if(UserDatabaseService.getInstance().isPasswordCorrect(user)) {

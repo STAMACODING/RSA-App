@@ -13,7 +13,7 @@ import com.stamacoding.rsaApp.network.global.service.database.DatabaseService;
 import com.stamacoding.rsaApp.network.global.user.Password;
 import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.network.server.manager.UserManager;
-import com.stamacoding.rsaApp.security.Security;
+import com.stamacoding.rsaApp.security.passwordHashing.PasswordHasher;
 
 public class UserDatabaseService extends DatabaseService{
 	/** The only instance of this class */
@@ -94,8 +94,8 @@ public class UserDatabaseService extends DatabaseService{
 					+ "salt = ?, "
 					+ "WHERE id = ?;");
 			pst.setString(1, u.getName());
-			pst.setBytes(2, u.getPassword().getHashedPassword());
-			pst.setString(3, u.getPassword().getSalt());
+			pst.setString(2, u.getPassword().getHashedPasswordAsString());
+			pst.setString(3, u.getPassword().getSaltAsString());
 			pst.setLong(4, u.getId());
 			
 			pst.executeUpdate();
@@ -136,8 +136,8 @@ public class UserDatabaseService extends DatabaseService{
 					+ "(name, password, salt) VALUES( "
 					+ "?, ?, ?);");
 			pst.setString(1, u.getName());
-			pst.setBytes(2, u.getPassword().getHashedPassword());
-			pst.setString(3, u.getPassword().getSalt());
+			pst.setString(2, u.getPassword().getHashedPasswordAsString());
+			pst.setString(3, u.getPassword().getSaltAsString());
 			
 			pst.executeUpdate();
 			
@@ -172,7 +172,7 @@ public class UserDatabaseService extends DatabaseService{
 				ArrayList<User> users = new ArrayList<User>();
 				
 				while(res.next()) {
-					User u = new User(res.getLong(1), res.getString(2), new Password(res.getBytes(3), res.getString(4)));
+					User u = new User(res.getLong(1), res.getString(2), new Password(res.getString(3), res.getString(4)));
 					users.add(u);
 				}
 				L.d(this.getClass(), "Got (" + users.size() + ") users");
@@ -202,7 +202,7 @@ public class UserDatabaseService extends DatabaseService{
 			ResultSet res = stm.executeQuery();
 			
 			if(res != null && res.next()) {
-				User u = new User(res.getLong(1), username, new Password(res.getBytes(3), res.getString(4)));
+				User u = new User(res.getLong(1), username, new Password(res.getString(3), res.getString(4)));
 				return u;
 			}else {
 				L.w(this.getClass(), "Didn't find any user with the name \"" + username + "\"");
@@ -229,7 +229,7 @@ public class UserDatabaseService extends DatabaseService{
 			ResultSet res = stm.executeQuery();
 			
 			if(res != null && res.next()) {
-				User u = new User(id, res.getString(2), new Password(res.getBytes(3), res.getString(4)));
+				User u = new User(id, res.getString(2), new Password(res.getString(3), res.getString(4)));
 				return u;
 			}else {
 				L.w(this.getClass(), "Didn't find any user with the id \"" + id + "\"");
@@ -355,8 +355,8 @@ public class UserDatabaseService extends DatabaseService{
 			statement.execute("CREATE TABLE IF NOT EXISTS Users ("
 					+ "id INTEGER PRIMARY KEY CHECK ((id > 0)), "
 					+ "name VARCHAR (15) NOT NULL UNIQUE CHECK (LENGTH(name) > 0), "
-					+ "password TINYBLOB NOT NULL, "
-					+ "salt VARCHAR (" + Security.SALT_LENGTH + ") NOT NULL CHECK (LENGTH(salt) = " + Security.SALT_LENGTH + " ));");
+					+ "password TEXT NOT NULL, "
+					+ "salt VARCHAR (" + PasswordHasher.SALT_LENGTH + ") NOT NULL CHECK (LENGTH(salt) = " + PasswordHasher.SALT_LENGTH + " ));");
 		} catch (SQLException e) {
 			L.e(this.getClass(), "Failed to initialize database!", e);
 		}

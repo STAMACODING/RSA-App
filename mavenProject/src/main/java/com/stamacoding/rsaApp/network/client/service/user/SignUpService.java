@@ -11,8 +11,8 @@ import com.stamacoding.rsaApp.network.global.service.ClientSocketService;
 import com.stamacoding.rsaApp.network.global.session.LoginState;
 import com.stamacoding.rsaApp.network.global.user.Password;
 import com.stamacoding.rsaApp.network.global.user.User;
-import com.stamacoding.rsaApp.security.Security;
 import com.stamacoding.rsaApp.security.rsa.KeyPair;
+import com.stamacoding.rsaApp.security.rsa.RSA;
 
 public class SignUpService extends ClientSocketService{
 	/** The only instance of this class */
@@ -61,7 +61,7 @@ public class SignUpService extends ClientSocketService{
 			L.d(this.getClass(), "Connected to server successfully");
 			
 			L.d(this.getClass(), "Encrypting user information (" + Config.USER_NAME + ", ************)");
-			byte[] you = Security.encryptF(new User(Config.USER_NAME, new Password(Config.USER_PASSWORD)));
+			byte[] you = RSA.encryptF(new User(Config.USER_NAME, new Password(Config.USER_PASSWORD)));
 			
 			L.d(this.getClass(), "Sending user information");
 			getOutputStream().writeInt(you.length);
@@ -130,7 +130,7 @@ public class SignUpService extends ClientSocketService{
 		L.d(this.getClass(), "Transferring public key of client to server.");
 		L.t(this.getClass(), "Encrypting public key to transfer to server...");
 		
-		byte[] publicKeyByte = Security.encryptF(clientKey.getPublicKey());
+		byte[] publicKeyByte = RSA.encryptF(clientKey.getPublicKey());
 		try {
 			getOutputStream().writeInt(publicKeyByte.length);
 			getOutputStream().write(publicKeyByte);

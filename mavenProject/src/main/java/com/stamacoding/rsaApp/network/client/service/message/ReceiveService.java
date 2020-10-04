@@ -13,7 +13,7 @@ import com.stamacoding.rsaApp.network.global.message.data.SendState;
 import com.stamacoding.rsaApp.network.global.service.ClientSocketService;
 import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.server.Server;
-import com.stamacoding.rsaApp.security.Security;
+import com.stamacoding.rsaApp.security.rsa.RSA;
 
 /**
  * {@link Service} receiving messages from the server and forwarding them to the {@link MessageManager}.
@@ -106,7 +106,7 @@ public class ReceiveService extends ClientSocketService{
 				messages = new byte[length];
 			    getInputStream().readFully(messages, 0, length);
 			    
-			    return (ArrayList<Message>) Security.decryptF(messages);
+			    return (ArrayList<Message>) RSA.decryptF(messages);
 			}
 			return null;
 		} catch (IOException e) {

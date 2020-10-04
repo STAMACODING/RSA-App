@@ -10,8 +10,9 @@ import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.Server;
 import com.stamacoding.rsaApp.network.server.manager.UserManager;
 import com.stamacoding.rsaApp.network.server.service.message.SendService;
-import com.stamacoding.rsaApp.security.Security;
+import com.stamacoding.rsaApp.security.passwordHashing.PasswordHasher;
 import com.stamacoding.rsaApp.security.rsa.Key;
+import com.stamacoding.rsaApp.security.rsa.RSA;
 
 public class SignUpService extends ServerSocketService {
 	
@@ -47,7 +48,7 @@ public class SignUpService extends ServerSocketService {
 				getInputStream().readFully(encryptedUser, 0, userLength);
 				
 				L.t(this.getClass(), "Decrypting client's user data...");
-				User unregisteredUser = (User) Security.decryptF(encryptedUser);
+				User unregisteredUser = (User) RSA.decryptF(encryptedUser);
 				
 				// Reading public key
 				L.t(this.getClass(), "Reading client's public key...");
@@ -57,14 +58,14 @@ public class SignUpService extends ServerSocketService {
 					getInputStream().readFully(publicKey, 0, keyLength);
 					
 					L.t(this.getClass(), "Decrypting client's public key...");
-					Key publicKeyClient = (Key) Security.decryptF(publicKey);
+					Key publicKeyClient = (Key) RSA.decryptF(publicKey);
 					
 					L.d(this.getClass(), "Client wants to register as: " + unregisteredUser.toString());
 					L.d(this.getClass(), "The user's public key is: " + publicKeyClient.toString());
 					
 					if(UserDatabaseService.getInstance().isUsernameAvailable(unregisteredUser.getName())) {
 						// Hash password
-						unregisteredUser.getPassword().setSalt(Security.generatePasswordSalt(), false);
+						unregisteredUser.getPassword().setSalt(PasswordHasher.generateSalt());
 						
 						UserManager.getInstance().add(unregisteredUser);
 						storePublicKey(unregisteredUser.getName(), publicKeyClient);

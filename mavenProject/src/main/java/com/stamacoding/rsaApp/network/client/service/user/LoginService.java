@@ -12,7 +12,7 @@ import com.stamacoding.rsaApp.network.global.session.LoginState;
 import com.stamacoding.rsaApp.network.global.session.Session;
 import com.stamacoding.rsaApp.network.global.user.Password;
 import com.stamacoding.rsaApp.network.global.user.User;
-import com.stamacoding.rsaApp.security.Security;
+import com.stamacoding.rsaApp.security.rsa.RSA;
 
 public class LoginService extends ClientSocketService{
 
@@ -61,7 +61,7 @@ public class LoginService extends ClientSocketService{
 			L.d(this.getClass(), "Connected to server successfully");
 			
 			L.d(this.getClass(), "Encrypting user information (" + Config.USER_NAME + ", ************)");
-			byte[] you = Security.encryptF(new User(Config.USER_NAME, new Password(Config.USER_PASSWORD)));
+			byte[] you = RSA.encryptF(new User(Config.USER_NAME, new Password(Config.USER_PASSWORD)));
 			
 			L.d(this.getClass(), "Sending user information");
 			getOutputStream().writeInt(you.length);

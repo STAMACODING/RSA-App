@@ -113,8 +113,12 @@ public class TextUtils {
 	
 	public static String cut(String s, int length) {
 		if(s.length() > length) {
-			return s.substring(0, length-1-3) + "..."; 
+			return s.substring(0, length-3) + "..."; 
 		}
 		return s;
+	}
+	
+	public static String setLength(String s, int length) {
+		return String.format("%-" + length + "s", cut(s, length));
 	}
 }

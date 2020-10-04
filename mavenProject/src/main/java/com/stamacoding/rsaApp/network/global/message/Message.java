@@ -9,7 +9,7 @@ import com.stamacoding.rsaApp.network.global.message.data.LocalData;
 import com.stamacoding.rsaApp.network.global.message.data.ProtectedData;
 import com.stamacoding.rsaApp.network.global.message.data.SendState;
 import com.stamacoding.rsaApp.network.global.message.data.ServerData;
-import com.stamacoding.rsaApp.security.Security;
+import com.stamacoding.rsaApp.security.rsa.RSA;
 
 /**
  *  An instance of this class represents a message with all its different attributes.
@@ -167,7 +167,7 @@ public class Message implements Serializable{
 			return;
 		}
 		
-		setEncryptedServerData(Security.encryptF(getServerData()));
+		setEncryptedServerData(RSA.encryptF(getServerData()));
 		this.serverData = null;
 	}
 	
@@ -181,7 +181,7 @@ public class Message implements Serializable{
 			return;
 		}
 		
-		setServerData((ServerData) Security.decryptF(getEncryptedServerData()));
+		setServerData((ServerData) RSA.decryptF(getEncryptedServerData()));
 		this.encryptedServerData = null;
 	}
 	
@@ -195,7 +195,7 @@ public class Message implements Serializable{
 			return;
 		}
 		
-		setEncryptedProtectedData(Security.encryptF(getProtectedData()));
+		setEncryptedProtectedData(RSA.encryptF(getProtectedData()));
 		this.protectedData = null;
 	}
 	
@@ -209,7 +209,7 @@ public class Message implements Serializable{
 			return;
 		}
 		
-		setProtectedData((ProtectedData) Security.decryptF(getEncryptedProtectedData()));
+		setProtectedData((ProtectedData) RSA.decryptF(getEncryptedProtectedData()));
 		this.encryptedProtectedData = null;
 	}
 	

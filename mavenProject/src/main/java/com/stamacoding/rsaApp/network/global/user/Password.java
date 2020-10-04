@@ -2,10 +2,11 @@ package com.stamacoding.rsaApp.network.global.user;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Base64;
 
 import com.stamacoding.rsaApp.logger.L;
-import com.stamacoding.rsaApp.security.Security;
-import com.stamacoding.rsaApp.security.rsa.Convert;
+import com.stamacoding.rsaApp.network.global.TextUtils;
+import com.stamacoding.rsaApp.security.passwordHashing.PasswordHasher;
 
 public class Password implements Serializable{
 	/**
@@ -14,7 +15,7 @@ public class Password implements Serializable{
 	private static final long serialVersionUID = -8095912014936434287L;
 	
 	
-	private String salt = null;
+	private byte[] salt = null;
 	private char[] clearPassword = null;
 	private byte[] hashedPassword = null;
 	
@@ -22,43 +23,63 @@ public class Password implements Serializable{
 		setClearPassword(clearPassword);
 	}
 	
-	public Password(char[] clearPassword, String salt) {
+	public Password(char[] clearPassword, byte[] salt) {
 		setClearPassword(clearPassword);
-		setSalt(salt, false);
+		setSalt(salt);
 	}
 	
-	public Password(byte[] hashedPassword, String salt) {
+	public Password(byte[] hashedPassword, byte[] salt) {
 		setHashedPassword(hashedPassword);
-		setSalt(salt, true);
+		setSaltWithoutAutoHashing(salt);
+	}
+	
+	public Password(String hashedPassword, String salt) {
+		setHashedPassword(Base64.getDecoder().decode(hashedPassword));
+		setSaltWithoutAutoHashing(Base64.getDecoder().decode(salt));
 	}
 
-	public final String getSalt() {
+	public final byte[] getSalt() {
 		return salt;
 	}
+	public final String getSaltAsString() {
+		if(salt == null) return null;
+		return Base64.getEncoder().encodeToString(salt);
+	}
 
-	public final void setSalt(String salt, boolean isAlreadyHashed) {
+	public final void setSalt(byte[] salt) {
 		this.salt = salt;
 		if(getSalt() == null) setHashedPassword(null);
-		else if(!isAlreadyHashed) setHashedPassword(Security.hashPassword(getClearPassword(), getSalt()));
+		else setHashedPassword(PasswordHasher.hashPassword(getClearPassword(), getSalt()));
+	}
+	
+	private final void setSaltWithoutAutoHashing(byte[] salt) {
+		this.salt = salt;
+		if(getSalt() == null) setHashedPassword(null);;
 	}
 
 	public final char[] getClearPassword() {
 		return clearPassword;
 	}
 
-	private final void setClearPassword(char[] clearPassword) {
+	public final void setClearPassword(char[] clearPassword) {
 		if(clearPassword == null || clearPassword.length == 0 || clearPassword.length > 30) {
 			L.f(this.getClass(), new IllegalArgumentException("Password cannot be null and it's length should be between 1 and 30!"));
 		}
 		this.clearPassword = clearPassword;
+		if(getSalt() != null) {
+			setHashedPassword(PasswordHasher.hashPassword(getClearPassword(), getSalt()));
+		}
 	}
 
 	public final byte[] getHashedPassword() {
 		return hashedPassword;
 	}
+	public final String getHashedPasswordAsString() {
+		if(hashedPassword == null) return null;
+		return Base64.getEncoder().encodeToString(hashedPassword);
+	}
 
 	private final void setHashedPassword(byte[] hashedPassword) {
-		if(hashedPassword == null) L.f(this.getClass(), new IllegalArgumentException("HashedPassword is not allowed to get set to null!"));
 		this.hashedPassword = hashedPassword;
 	}
 
@@ -67,9 +88,9 @@ public class Password implements Serializable{
 	}
 	
 	public final boolean check(char[] clearPassword) {
-		if(getHashedPassword() == null) L.f(this.getClass(), new IllegalStateException("Cannot check password. Password is not hashed!"));
+		if(getSalt() == null) L.f(this.getClass(), new IllegalStateException("Cannot check password. Salt is null!"));
 		
-		return Security.checkPassword(clearPassword, getHashedPassword());
+		return PasswordHasher.checkPassword(clearPassword, getHashedPassword(), getSalt());
 	}
 
 	@Override
@@ -78,7 +99,7 @@ public class Password implements Serializable{
 		int result = 1;
 		result = prime * result + Arrays.hashCode(clearPassword);
 		result = prime * result + Arrays.hashCode(hashedPassword);
-		result = prime * result + ((salt == null) ? 0 : salt.hashCode());
+		result = prime * result + Arrays.hashCode(salt);
 		return result;
 	}
 
@@ -88,17 +109,14 @@ public class Password implements Serializable{
 			return true;
 		if (obj == null)
 			return false;
-		if (this.getClass() != obj.getClass())
+		if (getClass() != obj.getClass())
 			return false;
 		Password other = (Password) obj;
 		if (!Arrays.equals(clearPassword, other.clearPassword))
 			return false;
 		if (!Arrays.equals(hashedPassword, other.hashedPassword))
 			return false;
-		if (salt == null) {
-			if (other.salt != null)
-				return false;
-		} else if (!salt.equals(other.salt))
+		if (!Arrays.equals(salt, other.salt))
 			return false;
 		return true;
 	}
@@ -106,25 +124,20 @@ public class Password implements Serializable{
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append('{');
-		if(isHashed()) {
-			sb.append("@#0##?#1#!#1###~");
-		}else {
-			sb.append("****************");
+		sb.append("[ (");
+		if(getClearPassword() != null) {
+			sb.append(TextUtils.setLength(String.valueOf(getClearPassword()), 12));
+			if(getSalt() != null) {
+				sb.append(", ");
+				sb.append(TextUtils.setLength(getSaltAsString(), 10));
+			}
+			sb.append(")");
 		}
-		sb.append('}');
+		if(getHashedPassword() != null) {
+			sb.append(" => ");
+			sb.append(TextUtils.setLength(getHashedPasswordAsString(), 20));
+		}
+		sb.append(" ]");
 		return sb.toString();
-	}
-	
-	public final byte[] getStorablePassword() {
-		return Convert.serialize(getHashedPassword());
-	}
-	public final byte[] getStorableSalt() {
-		return Convert.serialize(getSalt());
-	}
-
-	public static void main(String[] args) {
-		Password pw = new Password("dsfsfHenri".toCharArray(), Security.generatePasswordSalt());
-		System.out.println(pw.toString());
 	}
 }

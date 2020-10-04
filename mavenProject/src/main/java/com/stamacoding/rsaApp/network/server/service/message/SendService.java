@@ -11,7 +11,7 @@ import com.stamacoding.rsaApp.network.global.service.ServerSocketService;
 import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.Server;
 import com.stamacoding.rsaApp.network.server.manager.MessageManager;
-import com.stamacoding.rsaApp.security.Security;
+import com.stamacoding.rsaApp.security.rsa.RSA;
 
 /**
  * {@link ServerSocketService} sending messages to requesting clients using a {@link ServerSocket}.
@@ -96,7 +96,7 @@ public class SendService extends ServerSocketService {
 		
 		if(messageCount > 0) {
 			L.t(getClass(), "Encrypting messages before sending to " + username);
-			byte[] messagesToSend = Security.encryptF(messages);
+			byte[] messagesToSend = RSA.encryptF(messages);
 			
 			L.d(this.getClass(), "Found " + messageCount + " messages belonging to (" + username + ")");
 			
