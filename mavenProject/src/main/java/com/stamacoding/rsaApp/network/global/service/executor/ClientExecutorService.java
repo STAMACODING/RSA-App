@@ -11,28 +11,33 @@ public abstract class ClientExecutorService extends ClientService{
 	protected ClientExecutorService(String serverIp, int port) {
 		super(serverIp, port);
 	}
+	
+	@Override
+	public void onRepeat() {
+		if(getCallables().size() > 0) {
+			super.onRepeat();
+		}
+	}
 
 	@Override
 	public void onAccept() {
-		if(getCallables().size() > 0) {
-			try {
-				boolean waitingExecute = getCallables().getValue(0) == null;
-				Callable<Object> c = getCallables().getKey(0);
-				Object res = getCallables().getKey(0).call();
-				getCallables().put(0, res);
-				
-				if(waitingExecute) {
-					synchronized (c) {
-						c.notify();
-						c.wait();
-						getCallables().remove(0);
-					}
-				}else {
+		try {
+			boolean waitingExecute = getCallables().getValue(0) == null;
+			Callable<Object> c = getCallables().getKey(0);
+			Object res = getCallables().getKey(0).call();
+			getCallables().put(0, res);
+			
+			if(waitingExecute) {
+				synchronized (c) {
+					c.notify();
+					c.wait();
 					getCallables().remove(0);
 				}
-			} catch (Exception e) {
-				L.f(getServiceClass(), "Callable failed!", e);
+			}else {
+				getCallables().remove(0);
 			}
+		} catch (Exception e) {
+			L.f(getServiceClass(), "Callable failed!", e);
 		}
 	}
 	

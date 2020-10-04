@@ -12,7 +12,6 @@ import com.stamacoding.rsaApp.network.global.message.data.SendState;
 import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.global.service.executor.ClientExecutorService;
 import com.stamacoding.rsaApp.network.server.manager.MessageManager;
-import com.stamacoding.rsaApp.network.server.service.message.ReceiveService;
 import com.stamacoding.rsaApp.security.rsa.RSA;
 
 
