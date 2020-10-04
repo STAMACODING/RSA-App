@@ -75,6 +75,7 @@ public class LoginService extends ServerService{
 						L.t(this.getClass(), "Sent encrypted session id to user: " + user.getName());
 					}else {
 						L.i(this.getClass(), "Already logged in: " + user.getName());
+						getOutputStream().writeInt(AnswerCodes.LogIn.ALREADY_LOGGED_IN);
 					}
 				}else {
 					L.w(this.getClass(), "Wrong username/password!: " + user.toString());
