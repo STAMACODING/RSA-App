@@ -1,38 +1,31 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
+name: Bug Report
+about: Du hast einen Bug gefunden? Erstelle einen Bug-Report, und wir kümmern uns so bald wie möglich um das Problem!
+title: 'Bug: Bugname'
+labels: 'bug'
 assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Bugbeschreibung**
+Eine simple Beschreibung des Bugs.
+
+**Weißt du genau, wie man den Bug reproduzieren kann?**
+Ja [x] / Nein [ ]
 
 **To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+Falls du "Ja" angekreuzt hast, erkläre die Schritte zum Reproduzieren:
+1. Gehe zu '...'
+2. Starte '...'
+3. Klicke auf '...'
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Erwartetes Verhalten**
+Eine Beschreibung dessen, was anstatt des Bugs passieren sollte.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Screenshots / Logs**
+Wenn du Screenshots hast, hänge sie diesem Issue an. Log-Dateien findest du im Ordner `log/`.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
-
-**Additional context**
-Add any other context about the problem here.
+**Meta-Informationen:**
+1. Programversion: v.0.1.0
+2. Commit-Hash: 23w22a12j3j4ae...
+3. OS: Windows 10, 64bit
