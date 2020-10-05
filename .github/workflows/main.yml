@@ -4,10 +4,7 @@
 name: Maven Auto Build
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
+  release:
     branches:
       - master
 
