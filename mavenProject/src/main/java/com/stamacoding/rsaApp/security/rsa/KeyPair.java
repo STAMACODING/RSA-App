@@ -1,17 +1,16 @@
 package com.stamacoding.rsaApp.security.rsa;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
+
 import com.stamacoding.rsaApp.logger.L;
+import com.stamacoding.rsaApp.security.rsa.Key.Type;
 
 /**
  * Represents a RSA key pair consisting of a public and a fitting private key. Invoking the constructor {@link #KeyPair()} automatically generates the both keys.
  */
 public class KeyPair {
-	
-	public static final int N_MAXIMUM = 65536;
-	public static final int N_MINIMUM = 1000;
-	
-	public static final int PQ_MAXIMUM = (int) Math.sqrt(N_MAXIMUM);
-	public static final int PQ_MINIMUM = (int) Math.sqrt(N_MINIMUM);
+	private static SecureRandom RANDOM = new SecureRandom();
 	
 	/**
 	 * The private key (d, n).
@@ -56,42 +55,30 @@ public class KeyPair {
 	}
 	
 	private void generate() {
-		int p, q, n, phi, e, d;
-		// Generate p and q
+		BigInteger p, q, n, phi, e, d;
 
-		p = KeyMathUtils.primeNumb(PQ_MINIMUM, PQ_MAXIMUM);
-		q = KeyMathUtils.primeNumb(PQ_MINIMUM, PQ_MAXIMUM, p);
-		// Calculate n and phi(n)
-		n = p * q;
-		phi = (p-1)*(q-1);
-		
-		d = -1;
+		p = BigInteger.probablePrime(RSA.DEFAULT_BIT_COUNT/2, RANDOM);
 		do {
-			// Calculate e
-			e = KeyMathUtils.primeNumb(2, phi);
-			
-			// Calculate d
-			d = KeyMathUtils.modularInverse(e, phi);
-		}while(d == -1 || d == e);
+			q = BigInteger.probablePrime(RSA.DEFAULT_BIT_COUNT/2, RANDOM);
+		}while(p.equals(q));
 		
-		L.t("RSA", this.getClass(), "p\t=>\t" + p);
-		L.t("RSA", this.getClass(), "q\t=>\t" + q);
-		L.t("RSA", this.getClass(), "n\t=>\t" + n + " = " + p + " * " + q);
-		L.t("RSA", this.getClass(), "phi\t=>\t" + phi + " = (" + p + " - 1) * (" + q + " - 1) = " + (p-1) + " * " + (q-1));
-		L.t("RSA", this.getClass(), "e\t=>\t" + e);
-		L.t("RSA", this.getClass(), "d\t=>\t" + d);
+		n = p.multiply(q);
+		phi = (p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE)));
 		
-		Key privateKey = new Key(d, n);
-		Key publicKey = new Key(e, n);
+		do e = new BigInteger(phi.bitLength(), RANDOM);
+		while (e.compareTo(BigInteger.ONE) <= 0
+		    || e.compareTo(phi) >= 0
+		    || !e.gcd(phi).equals(BigInteger.ONE));
+		d = e.modInverse(phi);
+		
+		Key privateKey = new Key(d, n, Type.PRIVATE);
+		Key publicKey = new Key(e, n, Type.PUBLIC);
 		setPrivateKey(privateKey);
 		setPublicKey(publicKey);
-		
-		L.t("RSA", this.getClass(), this.toString());
 	}
-	
 	
 	@Override
 	public String toString() {
-		return "private" + getPrivateKey() + " <> public" + getPublicKey();
+		return getPublicKey().toString() + getPrivateKey().toString();
 	}
 }

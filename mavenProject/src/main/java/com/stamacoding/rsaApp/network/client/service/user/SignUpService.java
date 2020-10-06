@@ -98,7 +98,7 @@ public class SignUpService extends ClientService{
 	 * creates a RSA-KeyPair and stores the private key at /mavenProject/PrivateKey.txt
 	 */
 	private boolean transferNewKeyPair() {
-		KeyPair clientKey = new KeyPair();
+		KeyPair kp = new KeyPair();
 		L.d(this.getClass(), "Writing private key of client to 'PrivateKey.txt'");
 		File dest = new File("PrivateKey.txt");
 		if (!dest.exists())
@@ -115,10 +115,10 @@ public class SignUpService extends ClientService{
 			L.e(this.getClass(), "Failed to store private key. Couldn't open private key file for writing.", e);
 			return false;
 		}
-		int exp = clientKey.getPrivateKey().getExp();
-		int mod = clientKey.getPrivateKey().getMod();
+		int mod = kp.getPrivateKey().getMod();
+		int exp = kp.getPrivateKey().getExp();
 		try {
-			destWrit.write("(" + exp + ", " + mod + ")");
+			destWrit.write("(" + mod + ", " + exp + ")");
 		} catch (IOException e) {
 			L.e(this.getClass(), "Failed to store private key. Couldn't write to private key file.", e);
 			return false;
@@ -129,11 +129,10 @@ public class SignUpService extends ClientService{
 				L.w(this.getClass(), "Failed to close private key file.");
 			}
 		}
-		
 		L.d(this.getClass(), "Transferring public key of client to server.");
 		L.t(this.getClass(), "Encrypting public key to transfer to server...");
 		
-		byte[] publicKeyByte = RSA.encryptF(clientKey.getPublicKey());
+		byte[] publicKeyByte = RSA.encryptF(kp.getPublicKey());
 		try {
 			getOutputStream().writeInt(publicKeyByte.length);
 			getOutputStream().write(publicKeyByte);

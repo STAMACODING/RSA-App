@@ -3,8 +3,10 @@ package com.stamacoding.rsaApp.network.global.message;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Base64;
 
 import com.stamacoding.rsaApp.logger.L;
+import com.stamacoding.rsaApp.network.global.TextUtils;
 import com.stamacoding.rsaApp.network.global.message.data.LocalData;
 import com.stamacoding.rsaApp.network.global.message.data.ProtectedData;
 import com.stamacoding.rsaApp.network.global.message.data.SendState;
@@ -237,7 +239,8 @@ public class Message implements Serializable{
 			sb.append(new SimpleDateFormat("dd.MM.yy HH:mm:ss").format(getProtectedData().getDate()));
 			sb.append(")");
 		}else {
-			sb.append("????????\" (created at ????)");
+			sb.append(TextUtils.cut(Base64.getEncoder().encodeToString(getEncryptedProtectedData()), 12));
+			sb.append("\"");
 		}
 		sb.append(" [");
 		sb.append(getLocalData().getSendState().toString());
@@ -320,7 +323,7 @@ public class Message implements Serializable{
 	public static Message exampleMessage(boolean encrypted) {
 		Message m = new Message();
 		m.setLocalData(new LocalData(-1, SendState.PENDING));
-		m.setProtectedData(new ProtectedData(randomString(1, 15), System.currentTimeMillis()));
+		m.setProtectedData(new ProtectedData(randomString(5, 15), System.currentTimeMillis()));
 		m.setServerData(new ServerData(randomString(1, 15), randomString(1, 15)));
 		
 		if(encrypted) {
