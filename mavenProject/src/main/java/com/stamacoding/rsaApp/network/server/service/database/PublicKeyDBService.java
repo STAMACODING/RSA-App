@@ -41,8 +41,7 @@ public class PublicKeyDBService extends DatabaseService{
 			Statement statement = getConnection().createStatement();
 			statement.execute("CREATE TABLE IF NOT EXISTS publicKeys ("
 					+ "userId INTEGER PRIMARY KEY CHECK (userId > 0), "
-					+ "exponent INT NOT NULL CHECK (exponent>1),"
-					+ "mod INT NOT NULL CHECK (mod>1) )"); // check max length 
+					+ "publicKey STRING NOT NULL CHECK (publicKey>1))"); // check max length 
 		} catch (SQLException e) {
 			L.e(this.getClass(), "Failed to initialize database!", e);
 		}
@@ -57,10 +56,10 @@ public class PublicKeyDBService extends DatabaseService{
 	/**
 	 * stores new public Key for not stored userId
 	 * @param uID
-	 * @param pubKey
+	 * @param publicKey
 	 * @return whether Key and userId were stored successfully
 	 */
-	public boolean storePublicKey(long uID, int exponent, int mod) {
+	public boolean storePublicKey( long uID, String publicKey) {
 		if(!isConnected()) {
 			L.e(this.getClass(), "Cannot store key! You aren't connected to the user database");
 			return false;
@@ -68,11 +67,10 @@ public class PublicKeyDBService extends DatabaseService{
 		
 		try {
 			PreparedStatement pst = getConnection().prepareStatement("INSERT INTO publicKeys"
-					+ " (userId, exponent, mod)" 
-					+ " VALUES(?, ?, ?);");
+					+ " (userId, publicKey)" 
+					+ " VALUES(?, ?);");
 			pst.setString(1, Long.toString(uID));
-			pst.setString(2, String.valueOf( exponent));
-			pst.setString(3, String.valueOf( mod));
+			pst.setString(2, String.valueOf( publicKey));
 		
 			pst.executeUpdate();
 			
@@ -90,10 +88,10 @@ public class PublicKeyDBService extends DatabaseService{
 	 * updates the Key for a certain userId
 	 * !!! this should happen very rarely and only if the private key changed
 	 * @param uID
-	 * @param pubKey
+	 * @param publicKey
 	 * @return whether the update was successful
 	 */
-	public boolean updatePublicKey(long uID, int exponent, int mod) {
+	public boolean updatePublicKey(long uID, String publicKey) {
 		if(!isConnected()) {
 			L.e(this.getClass(), "Cannot update key! You aren't connected to the key database");
 			return false;
@@ -101,13 +99,11 @@ public class PublicKeyDBService extends DatabaseService{
 		
 		try {
 			PreparedStatement pst = getConnection().prepareStatement("UPDATE publicKeys SET "
-					+ "exponent = ?, "
-					+ "mod = ? "
+					+ "publicKey = ?, "
 					+ "WHERE userId = ?;");
 			
-			pst.setString(1,String.valueOf(exponent));
-			pst.setString(2, String.valueOf(mod));
-			pst.setString(3, Long.toString(uID));
+			pst.setString(1,String.valueOf(publicKey));
+			pst.setString(2, Long.toString(uID));
 		
 			pst.executeUpdate();
 			
@@ -124,7 +120,7 @@ public class PublicKeyDBService extends DatabaseService{
 	/**
 	 * Gives the stored public key for a userId
 	 * @param userId
-	 * @return the long of the public Key
+	 * @return the Key of the public Key
 	 */
 	public Key getPublicKey(long userId) {
 		
@@ -135,7 +131,7 @@ public class PublicKeyDBService extends DatabaseService{
 		
 		
 		try {
-			PreparedStatement stm = getConnection().prepareStatement("SELECT exponent, mod FROM publicKeys "
+			PreparedStatement stm = getConnection().prepareStatement("SELECT publicKey FROM publicKeys "
 					+ "WHERE userId = ?;");
 			
 			stm.setString(1, Long.toString(userId));
@@ -148,10 +144,10 @@ public class PublicKeyDBService extends DatabaseService{
 			
 			if(res != null && res.next()) {
 				
-				int exponent = res.getInt(1);
-				int mod = res.getInt(2);
+				String pubKey = res.getString(1);
 				
-				Key publicKey = new Key(exponent, mod);
+				
+				Key publicKey = new Key(pubKey, publicKey); // which valid value for Type keyType ??
 				
 				L.d(this.getClass(), "Returns public key" + publicKey.toString()  + " for userId: " + userId + "" );
 				return publicKey;
