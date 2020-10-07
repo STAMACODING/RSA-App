@@ -9,6 +9,7 @@ import com.stamacoding.rsaApp.network.global.service.ServerService;
 import com.stamacoding.rsaApp.network.global.user.User;
 import com.stamacoding.rsaApp.network.server.Config;
 import com.stamacoding.rsaApp.network.server.Server;
+import com.stamacoding.rsaApp.network.server.service.database.PublicKeyDBService;
 import com.stamacoding.rsaApp.network.server.service.database.UserDatabaseService;
 import com.stamacoding.rsaApp.network.server.service.message.SendService;
 import com.stamacoding.rsaApp.security.passwordHashing.PasswordHasher;
@@ -135,7 +136,19 @@ public class SignUpService extends ServerService {
 
 	private boolean storePublicKey(String username, Key publicKeyClient) {
 		L.t(getClass(), "Storing public key...");
-		// TODO
-		return true;
+		
+		boolean notFinished = true;
+		if(notFinished) return true;
+		
+		boolean result = (boolean) PublicKeyDBService.getInstance().executeAndWait(new Callable<Object>() {
+
+			@Override
+			public Boolean call() throws Exception {
+				// TODO
+				// PLS SPEICHERUNG PER NUTZERNAME :D
+				return PublicKeyDBService.getInstance().storePublicKey(username, publicKeyClient);
+			}
+		});
+		return result;
 	}
 }

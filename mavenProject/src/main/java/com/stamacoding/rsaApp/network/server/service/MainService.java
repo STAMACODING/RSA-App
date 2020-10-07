@@ -3,6 +3,7 @@ package com.stamacoding.rsaApp.network.server.service;
 import com.stamacoding.rsaApp.logger.L;
 import com.stamacoding.rsaApp.network.global.service.Service;
 import com.stamacoding.rsaApp.network.server.Config;
+import com.stamacoding.rsaApp.network.server.service.database.PublicKeyDBService;
 import com.stamacoding.rsaApp.network.server.service.database.UserDatabaseService;
 import com.stamacoding.rsaApp.network.server.service.message.ReceiveService;
 import com.stamacoding.rsaApp.network.server.service.message.SendService;
@@ -49,6 +50,7 @@ public class MainService extends Service{
 		
 		L.i(getClass(), "Launching subservices...");
 		
+		PublicKeyDBService.getInstance().launch();
 		UserDatabaseService.getInstance().launch();
 		SendService.getInstance().launch();
 		ReceiveService.getInstance().launch();

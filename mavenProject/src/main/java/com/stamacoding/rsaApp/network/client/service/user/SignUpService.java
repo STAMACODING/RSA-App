@@ -118,7 +118,7 @@ public class SignUpService extends ClientService{
 		int mod = kp.getPrivateKey().getMod();
 		int exp = kp.getPrivateKey().getExp();
 		try {
-			destWrit.write("(" + mod + ", " + exp + ")");
+			destWrit.write("(" + exp + ", " + mod + ")");
 		} catch (IOException e) {
 			L.e(this.getClass(), "Failed to store private key. Couldn't write to private key file.", e);
 			return false;

@@ -147,7 +147,7 @@ public class PublicKeyDBService extends DatabaseService{
 				String pubKey = res.getString(1);
 				
 				
-				Key publicKey = new Key(pubKey, publicKey); // which valid value for Type keyType ??
+				Key publicKey = new Key(pubKey, publicKey); // which valid value for Type keyType ??: Type.PRIVATE => private Key; Type.PUBLIC => public Key
 				
 				L.d(this.getClass(), "Returns public key" + publicKey.toString()  + " for userId: " + userId + "" );
 				return publicKey;
